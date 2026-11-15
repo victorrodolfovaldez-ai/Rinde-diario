@@ -3,7 +3,16 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#eceff1">
+<meta name="theme-color" content="#edf0f3" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#10151a" media="(prefers-color-scheme: dark)">
+<meta name="description" content="Dieta, entrenamiento y salud día a día. Tus datos quedan en tu dispositivo.">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Rinde Diario">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
 </head>
 <body>
@@ -828,6 +837,12 @@ svg.exp{width:72px;height:60px;display:block;background:var(--accent-soft);borde
 #registro li:has(> button) > .ed-b{grid-column:2;grid-row:1 / span 2}
 #registro li:has(> button) > button:not(.ed-b){grid-column:3;grid-row:1 / span 2}
 #registro li:has(> button) > .ed-f{grid-column:1 / -1}
+
+/* v31.5: instalar */
+.pwa-card{border-color:var(--c-hoy);background:linear-gradient(140deg,var(--surface) 0%,var(--c-hoy-s) 100%)}
+.pwa-row{display:flex;gap:14px;align-items:center}
+.pwa-ic{width:56px;height:56px;border-radius:14px;flex:none}
+.pwa-ios{margin:0;padding-left:20px;font-size:15px;line-height:1.5}
 
 /* v32.3: editar comidas y áreas táctiles */
 #registro li{flex-wrap:wrap}
@@ -1796,6 +1811,11 @@ h2.sect[id]{scroll-margin-top:12px}
   <!-- MÁS -->
   <section class="view" id="v-mas" hidden>
     <div class="vhead"><h2>Más</h2><p>Perfil, preferencias, datos y la base científica de la app.</p></div>
+<div class="card pwa-card" id="pwa-card" hidden>
+      <div class="pwa-row"><img alt="" width="56" height="56" class="pwa-ic" id="pwa-ic"><div><h2>Instalá Rinde Diario</h2><p class="sub" id="pwa-sub">Se abre como una app, en pantalla completa y sin conexión. Tus datos quedan en este dispositivo, igual que ahora.</p></div></div>
+      <ol class="pwa-ios" id="pwa-ios" hidden><li>Tocá <b>Compartir</b> (el cuadrado con la flecha, abajo).</li><li>Elegí <b>Agregar a pantalla de inicio</b>.</li><li>Tocá <b>Agregar</b>.</li></ol>
+      <div class="lib-btns"><button class="primary" type="button" id="pwa-go">Instalar</button><button class="ghost" type="button" id="pwa-no">Ahora no</button></div>
+    </div>
 <div class="grp-list">
 <details class="grp" id="grp-mas-perfil">
       <summary><span class="gi" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><circle cx="12" cy="8.5" r="4"/><path d="M4.5 20.5a7.5 7.5 0 0 1 15 0"/></svg></span><span class="gt"><b>Perfil y objetivos</b><small>Tus datos, tus metas y el nivel de detalle</small></span><span class="gc" aria-hidden="true"></span></summary>
@@ -2101,7 +2121,7 @@ h2.sect[id]{scroll-margin-top:12px}
 <div class="card" id="ab-card">
       <h2>Acerca de Rinde Diario</h2>
       <ul class="log" id="ab-list"></ul>
-      <p class="note">Rinde Diario funciona sin conexión y guarda todo en este navegador. Si abrís la app desde claude.ai con tu cuenta, además se sincroniza con tu espacio privado. No se instala como aplicación (PWA): el formato de un solo archivo no lo permite.</p>
+      <p class="note">Rinde Diario funciona sin conexión y guarda todo en este navegador. Si abrís la app desde claude.ai con tu cuenta, además se sincroniza con tu espacio privado. Desde la página publicada (por ejemplo, en GitHub Pages) se puede instalar como app y funciona sin conexión; dentro de Claude se usa como página.</p>
     </div>
       </div>
     </details>
@@ -4525,7 +4545,7 @@ var FT=[["Aceite de coco",884,0,"F","Otros",null,null,0,100],["Aceite de girasol
 
 
   /* ---------- v31: indicadores de Mi día, lecturas, papelera, registro, copias automáticas, privacidad, fórmulas ---------- */
-  var APPV="31.4";
+  var APPV="31.5";
   function viewOf(n){var sc=n&&n.closest?n.closest("section.view"):null;return sc?sc.id.slice(2):null;}
   var LST="rendicion-papelera",LSO="rendicion-oplog";
   function opLog(op,d){try{var a=JSON.parse(localStorage.getItem(LSO)||"[]");if(!Array.isArray(a))a=[];a.push({t:new Date().toISOString(),op:String(op).slice(0,30),d:String(d||"").slice(0,200)});if(a.length>300)a=a.slice(-300);localStorage.setItem(LSO,JSON.stringify(a));}catch(e){}safe(renderLog);}
@@ -5495,7 +5515,7 @@ var FT=[["Aceite de coco",884,0,"F","Otros",null,null,0,100],["Aceite de girasol
     ["Observaciones de salud","obs-t","salud","nota sintoma observacion consulta medico"],["Privacidad: modo discreto y tapar la pantalla","pv-blur","mas","privacidad ocultar difuminar inactividad"],
     ["Papelera: recuperar lo que borré","tr-card","mas","borrado recuperar eliminar papelera"],["Registro de operaciones","log-card","mas","historial auditoria cambios log"],
     ["Copias automáticas del navegador","snap-card","mas","respaldo indexeddb recuperacion"],["Fórmulas que usa la app","fm-card","mas","formula calculo ecuacion fuente dots wilks e1rm"],
-    ["Acerca de: versión y espacio usado","ab-card","mas","version almacenamiento espacio info"],["Accesos rápidos de Mi día","qk-card","mas","atajos botones inicio personalizar accesos rapidos"],["Evolución del peso: promedio, esperado y semanas","peso-card","salud","peso balanza promedio tendencia grafico"],["Racha y últimos 14 días","s-racha","nutricion","racha cumplido constancia dias seguidos historial"],["Tendencias y análisis: entrenamiento, nutrición, cuerpo y salud","tendencias","salud","analisis tendencias graficos estadisticas evolucion progreso resumen"],["Exportar solo una parte de mis datos","dt-parts","mas","exportar parcial seleccionar copia"]];
+    ["Acerca de: versión y espacio usado","ab-card","mas","version almacenamiento espacio info"],["Instalar la app en el teléfono o la computadora","pwa-card","mas","instalar aplicacion pantalla de inicio pwa sin conexion offline"],["Accesos rápidos de Mi día","qk-card","mas","atajos botones inicio personalizar accesos rapidos"],["Evolución del peso: promedio, esperado y semanas","peso-card","salud","peso balanza promedio tendencia grafico"],["Racha y últimos 14 días","s-racha","nutricion","racha cumplido constancia dias seguidos historial"],["Tendencias y análisis: entrenamiento, nutrición, cuerpo y salud","tendencias","salud","analisis tendencias graficos estadisticas evolucion progreso resumen"],["Exportar solo una parte de mis datos","dt-parts","mas","exportar parcial seleccionar copia"]];
   var CMD={items:[],sel:0,ret:null};
   function nrm(t){return String(t).toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"");}
   function shown(node,stop){for(var p=node;p&&p!==stop;p=p.parentNode){if(p.nodeType===1&&(p.hidden||getComputedStyle(p).display==="none"))return false;}return true;}
@@ -5609,6 +5629,24 @@ var FT=[["Aceite de coco",884,0,"F","Otros",null,null,0,100],["Aceite de girasol
       {l:"Presión",v:bp?bp.s+"/"+bp.di:"–",s:bp?"el "+fd(bp.d)+" · mmHg":cfg.mods.bp?"todavía sin mediciones":"control apagado",d:null,sens:1,go:"bp-card",hide:!cfg.mods.bp}];
     I.filter(function(x){return !x.hide;}).forEach(function(x){var b=el("button",null,"ind-i");b.type="button";b.appendChild(el("span",x.l,"label"));var v=el("b",x.v,x.sens?"sens":"");b.appendChild(v);b.appendChild(el("small",x.s));
       if(x.d){var dd=el("span",x.d.t,"dl "+x.d.c);b.appendChild(dd);}b.addEventListener("click",function(){var tg=$(x.go);if(tg){var f=tg.querySelector&&tg.querySelector(":scope > summary, :scope > h2");reveal(f||tg,viewOf(tg)||"salud");}});box.appendChild(b);});}
+
+  /* ---------- Instalar como app (PWA) ---------- */
+  /* Solo actúa si la página trae su manifiesto (la versión publicada). Dentro de Claude no hay manifiesto: no se registra nada. */
+  var PWA={ev:null};
+  function pwaNo(){try{return localStorage.getItem("rd-pwa-no")==="1";}catch(e){return false;}}
+  function pwaShow(mode){var c=$("pwa-card");if(!c||pwaNo())return;c.hidden=false;if(!$("pwa-ic").getAttribute("src"))$("pwa-ic").src="icons/icon-192.png";var ios=mode==="ios";$("pwa-ios").hidden=!ios;$("pwa-go").hidden=ios;
+    $("pwa-sub").textContent=ios?"En el iPhone se instala desde Safari, en tres toques. Se abre como una app y tus datos quedan en este dispositivo.":"Se abre como una app, en pantalla completa y sin conexión. Tus datos quedan en este dispositivo, igual que ahora.";}
+  (function(){var man=document.querySelector('link[rel="manifest"]'),standalone=(window.matchMedia&&matchMedia("(display-mode: standalone)").matches)||navigator.standalone===true;
+    if(!man||standalone)return;
+    window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();PWA.ev=e;pwaShow("prompt");});
+    window.addEventListener("appinstalled",function(){PWA.ev=null;$("pwa-card").hidden=true;toast("Rinde Diario quedó instalada. Buscala entre tus aplicaciones.");opLog("instalar","App instalada en este dispositivo");});
+    if(/iPad|iPhone|iPod/.test(navigator.userAgent||"")&&!window.MSStream)pwaShow("ios");
+    if("serviceWorker" in navigator&&(location.protocol==="https:"||location.hostname==="localhost"||location.hostname==="127.0.0.1")){
+      window.addEventListener("load",function(){navigator.serviceWorker.register("sw.js").then(function(reg){
+        reg.addEventListener("updatefound",function(){var w=reg.installing;if(!w)return;w.addEventListener("statechange",function(){if(w.state==="installed"&&navigator.serviceWorker.controller)
+          toast("Hay una versión nueva de Rinde Diario.",{label:"Actualizar",ms:15000,undo:function(){location.reload();}});});});}).catch(function(){});});}})();
+  $("pwa-go").addEventListener("click",function(){if(!PWA.ev)return;var e=PWA.ev;PWA.ev=null;e.prompt();(e.userChoice||Promise.resolve({})).then(function(r){if(r&&r.outcome==="accepted")$("pwa-card").hidden=true;});});
+  $("pwa-no").addEventListener("click",function(){try{localStorage.setItem("rd-pwa-no","1");}catch(e){}$("pwa-card").hidden=true;toast("Listo. Si después la querés instalar, usá «Instalar app» en el menú del navegador.");});
   /* Accesos rápidos configurables: [etiqueta, ícono, destino] */
   var QK={comidas:["Comida",'<path d="M7 3v8M5 3v5a2 2 0 0 0 4 0V3M7 11v10M16.5 21V3c-2 0-3.5 2.5-3.5 6v4h3.5"/>',"qa-txt"],
     peso:["Peso y sueño",'<rect x="3.5" y="4" width="17" height="16.5" rx="3"/><path d="M8.5 9a5 5 0 0 1 7 0L12 12.5"/>',"peso"],

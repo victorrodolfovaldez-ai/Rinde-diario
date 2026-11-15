@@ -16,6 +16,15 @@ Las ilustraciones y los pictogramas son SVG propios embebidos en el archivo: la 
 
 Lo secundario está en apartados que empiezan cerrados. El buscador (Ctrl K o la lupa) encuentra cualquier herramienta aunque esté dentro de uno, y lo abre.
 
+## Instalarla como app
+
+Abrí la página publicada en el teléfono o en la computadora:
+
+- **Android y computadora (Chrome o Edge):** en Más aparece «Instalá Rinde Diario». También se puede desde el menú del navegador → **Instalar app**.
+- **iPhone (Safari):** **Compartir → Agregar a pantalla de inicio**.
+
+Instalada, se abre en pantalla completa y funciona sin conexión. Cuando se publica una versión nueva, la app avisa y ofrece actualizar.
+
 ## Cómo usarla
 
 Abrí `index.html` en el navegador o publicala con GitHub Pages. Los datos se guardan en el navegador de cada dispositivo (`localStorage`). Para pasarlos a otro dispositivo, usá **Más → Datos y copias de seguridad → Tus datos → Descargar copia** y después **Importar**. Los enlaces viejos `#analisis` y `#semana` llevan a Salud y progreso, y `#plan` a Nutrición.

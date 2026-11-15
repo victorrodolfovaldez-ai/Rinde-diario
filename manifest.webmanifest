@@ -1,0 +1,24 @@
+{
+  "name": "Rinde Diario",
+  "short_name": "Rinde Diario",
+  "description": "Dieta, entrenamiento y salud día a día. Tus datos quedan en tu dispositivo.",
+  "lang": "es-AR",
+  "dir": "ltr",
+  "id": "./",
+  "start_url": "./#hoy",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#edf0f3",
+  "theme_color": "#1c5ca6",
+  "categories": ["health", "fitness", "food"],
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "Anotar una comida", "short_name": "Comida", "url": "./#nutricion", "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }] },
+    { "name": "Entreno de hoy", "short_name": "Entreno", "url": "./#entreno", "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }] },
+    { "name": "Salud y progreso", "short_name": "Salud", "url": "./#salud", "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }] }
+  ]
+}
