@@ -838,6 +838,20 @@ svg.exp{width:72px;height:60px;display:block;background:var(--accent-soft);borde
 #registro li:has(> button) > button:not(.ed-b){grid-column:3;grid-row:1 / span 2}
 #registro li:has(> button) > .ed-f{grid-column:1 / -1}
 
+/* v31.6: salvar el día */
+.sv-card{border-color:var(--c-nut);background:linear-gradient(140deg,var(--surface) 0%,var(--c-nut-s) 100%)}
+.sv-card[data-mode="pasado"]{border-color:var(--bad)}
+.sv-rows{display:grid;gap:6px;margin:10px 0}
+.sv-row{display:grid;grid-template-columns:minmax(0,7.5em) minmax(0,1fr) auto;gap:8px;align-items:baseline;font-size:14px}
+.sv-row b{font-weight:600;font-variant-numeric:tabular-nums}
+.sv-st{font-size:12.5px;padding:2px 8px;border-radius:999px;background:var(--surface-2);white-space:nowrap}
+.sv-st.ok{color:var(--ok)}.sv-st.warn{color:var(--warn)}.sv-st.bad{color:var(--bad)}
+.sv-h{font-size:15px;margin:12px 0 4px;line-height:1.4}
+.sv-l li > span{display:flex;flex-direction:column;gap:2px;min-width:0}
+.sv-l li small{color:var(--muted);font-size:13px;line-height:1.45}
+.sv-tips{margin:10px 0 0;padding-left:18px;display:grid;gap:6px;font-size:14px;line-height:1.45}
+@media (max-width:380px){.sv-row{grid-template-columns:minmax(0,1fr) auto}.sv-row b{grid-column:1/-1;order:3}}
+
 /* v31.5: instalar */
 .pwa-card{border-color:var(--c-hoy);background:linear-gradient(140deg,var(--surface) 0%,var(--c-hoy-s) 100%)}
 .pwa-row{display:flex;gap:14px;align-items:center}
@@ -944,6 +958,15 @@ h2.sect[id]{scroll-margin-top:12px}
 <div class="now" id="ahora" data-state="open">
       <span class="label">Ahora</span>
       <p id="ahora-texto">Anotá cada comida antes de comerla, no después.</p>
+    </div>
+<div class="card sv-card" id="sv-card" hidden>
+      <h2 id="sv-title">Salvar el día<span class="kd kd-est">Estimación</span></h2>
+      <p class="sub" id="sv-sub"></p>
+      <div class="sv-rows" id="sv-rows"></div>
+      <h3 class="sv-h" id="sv-h" hidden></h3>
+      <ul class="log sv-l" id="sv-list"></ul>
+      <ul class="sv-tips" id="sv-tips"></ul>
+      <p class="note">Porciones calculadas con la tabla de alimentos de la app y tus objetivos de hoy. Son estimaciones para ordenar la comida, no indicaciones médicas.</p>
     </div>
 <p class="tip warn" id="sueno-tip" hidden></p>
 <p class="tip bad" id="lab-alert" hidden></p>
@@ -1378,22 +1401,23 @@ h2.sect[id]{scroll-margin-top:12px}
     </div>
 <div class="card" id="zn-card">
       <h2>Comidas de la zona y para salir<span class="kd kd-est">Estimación</span></h2>
-      <p class="sub">Valores de referencia por unidad de las comidas típicas de Tucumán y el norte, y de sanguchería y pizzería para cuando salís del plan. Elegí cuántas y para qué comida, y tocá «Anotar». Si la pesás, anotala por gramos: es más exacto.</p>
+      <p class="sub">Valores de referencia por unidad: típicas del norte, árabes de Tucumán (kepi, hummus, niños envueltos), caseras, altas en proteína, postres, bebidas, sanguchería y cadenas, para cuando salís del plan. Elegí cuántas y para qué comida, y tocá «Anotar». Si la pesás, anotala por gramos: es más exacto.</p>
       <div class="grid2">
         <div class="field"><label for="zn-q">Cantidad</label><select id="zn-q"></select></div>
         <div class="field"><label for="zn-m">Comida</label><select id="zn-m"></select></div>
       </div>
-      <div class="chseg" id="zn-seg" role="group" aria-label="Qué comidas ver"><button type="button" data-g="tip" aria-pressed="true">Típicas de la zona</button><button type="button" data-g="san" aria-pressed="false">Sanguchería y pizzería</button></div>
+      <div class="chseg" id="zn-seg" role="group" aria-label="Qué comidas ver"><button type="button" data-g="tip" aria-pressed="true">Del norte</button><button type="button" data-g="arabe" aria-pressed="false">Árabes</button><button type="button" data-g="casa" aria-pressed="false">Caseras</button><button type="button" data-g="prot" aria-pressed="false">Altas en proteína</button><button type="button" data-g="dulce" aria-pressed="false">Postres y panadería</button><button type="button" data-g="beb" aria-pressed="false">Bebidas</button><button type="button" data-g="san" aria-pressed="false">Sanguchería y pizzería</button><button type="button" data-g="cad" aria-pressed="false">Cadenas</button></div>
+      <p class="tip warn zn-cad" id="zn-cad" hidden>Las cadenas no publican una tabla oficial accesible en la Argentina. Estos valores son de terceros (fatsecret, Fitia, Nutrola) y pueden no coincidir con el producto de hoy.</p>
       <ul class="log zn-l" id="zn-list"></ul>
       <details>
         <summary>Cómo se calcularon</summary>
-        <p class="sub" style="margin-top:8px">No hay una tabla oficial con análisis de laboratorio de estos platos ya preparados. Cada valor se calculó con una receta típica y la tabla de alimentos de la app (pesos en crudo). Harina de maíz, maíz blanco, poroto, chorizo y grasa de cerdo se tomaron de la base del USDA (SR Legacy). El aceite que absorbe una fritura es una estimación. Como comparación, una empanada tucumana al horno en versión light publicada por el Dr. Cormillot da 145 kcal.</p>
+        <p class="sub" style="margin-top:8px">No hay una tabla oficial con análisis de laboratorio de estos platos ya preparados. Cada valor se calculó con una receta típica y la tabla de alimentos de la app (pesos en crudo). Harina de maíz, maíz blanco, poroto, chorizo y grasa de cerdo se tomaron de la base del USDA (SR Legacy). El aceite que absorbe una fritura es una estimación. Cuando falta el dato de un ingrediente, el plato lo dice y el valor real es algo mayor. Las bebidas con alcohol y las cadenas usan valores publicados: se indica de dónde sale cada uno. Como comparación, una empanada tucumana al horno en versión light publicada por el Dr. Cormillot da 145 kcal.</p>
         <ul class="zn-how" id="zn-how"></ul>
-        <p class="note">Fuentes de los ingredientes nuevos, cada 100 g: harina de maíz 363 kcal, 8,5 g de proteína (USDA 20017); maíz blanco 365 kcal, 9,4 g (FDC 168920); poroto blanco seco 333 kcal, 23,4 g (USDA 16049); chorizo de cerdo crudo 296 kcal, 13,6 g (USDA 07019); grasa de cerdo 902 kcal (FDC 171401); muzzarella 299 kcal, 22,2 g (FDC 170845); harina de trigo común 364 kcal, 10,3 g (USDA 20081); pan de hamburguesa o pancho 279 kcal, 9,8 g (FDC 172796); salchicha 290 kcal, 10,3 g (FDC 172968). En las frituras y las papas fritas, el aceite absorbido es estimado.</p>
+        <p class="note">Fuentes de los ingredientes nuevos, cada 100 g: harina de maíz 363 kcal, 8,5 g de proteína (USDA 20017); maíz blanco 365 kcal, 9,4 g (FDC 168920); poroto blanco seco 333 kcal, 23,4 g (USDA 16049); chorizo de cerdo crudo 296 kcal, 13,6 g (USDA 07019); grasa de cerdo 902 kcal (FDC 171401); muzzarella 299 kcal, 22,2 g (FDC 170845); harina de trigo común 364 kcal, 10,3 g (USDA 20081); pan de hamburguesa o pancho 279 kcal, 9,8 g (FDC 172796); salchicha 290 kcal, 10,3 g (FDC 172968); tahini 595 kcal, 17 g (FDC 168604); garbanzo cocido 164 kcal, 8,9 g (FDC 173757); chivo 109 kcal, 20,6 g (FDC 175303); hoja de parra 93 kcal, 5,6 g (FDC 168575); maní 567 kcal, 25,8 g (FDC 172430); azúcar 387 kcal (FDC 169655); leche entera 61 kcal, 3,2 g (FDC 171265); miel de caña, calculada como melaza, 290 kcal (FDC 168820); grasa vacuna 899 kcal (Argenfoods, código 160); lomo 116 kcal, 20 g, y asado 170 kcal, 18,4 g (Argenfoods, carnes). Recetas: El Tribuno y Cocineros Argentinos para el kepi; Saberes y sabores norteños (Ministerio de Desarrollo Social, 2010) para los platos del norte. En las frituras y las papas fritas, el aceite absorbido es estimado.</p>
       </details>
     </div>
 <div class="card">
-      <button class="primary" type="button" id="h-ver">Tengo hambre ahora</button>
+      <div class="lib-btns"><button class="primary" type="button" id="h-ver">Tengo hambre ahora</button><button class="ghost" type="button" id="sv-open">Cómo cerrar el día</button></div>
       <div class="answer" id="h-resp" hidden><h3 id="h-titulo"></h3><ul id="h-lista"></ul></div>
     </div>
 <div class="card">
@@ -2173,7 +2197,7 @@ h2.sect[id]{scroll-margin-top:12px}
 var FT=[["Aceite de coco",884,0,"F","Otros",null,null,0,100],["Aceite de girasol",884,0,"F","Otros",null,null,0,100],["Aceite de oliva",884,0,"F","Otros",null,null,0,100],["Aceituna verde pulpa encurtida",145,1,"F","Otros",null,null,4,15],["Acelga",19,1.8,"V","Verduras",null,null,3.7,0.2],["Almendra",579,21,"F","Otros",null,null,22,50],["Apio",16,0.7,"V","Verduras",null,null,3,0.2],["Arroz blanco",360,7,"O","Cereales y panes",null,null,80,0.6],["Arroz integral",362,7.5,"O","Cereales y panes",null,null,76,2.7],["Arveja fresca",81,5.4,"V","Verduras",null,null,14,0.4],["Arveja fresca enlatada",68,4.4,"V","Verduras",null,null,12,0.4],["Atún en agua",116,26,"P","Pescados",null,null,0,1],["Avena arrollada",375,13,"O","Cereales y panes",null,null,60,7],["Banana",89,1.1,"O","Frutas",null,null,23,0.3],["Barra de arroz (Yogu Bar Gallo)",400,5,"O","Cereales y panes",20,"barra",75,9],["Berenjena",25,1,"V","Verduras",null,null,6,0.2],["Brócoli",34,2.8,"V","Verduras",null,null,7,0.4],["Cebolla",40,1.1,"V","Verduras",null,null,9,0.1],["Champiñones",22,3.1,"V","Verduras",null,null,3.3,0.3],["Chaucha",31,1.8,"V","Verduras",null,null,7,0.2],["Choclo enlatado en grano",81,2.3,"O","Verduras",null,null,17,1],["Choclo fresco",86,3.3,"O","Verduras",null,null,19,1.2],["Choco enlatado cremoso",72,1.7,"O","Verduras",null,null,17,0.5],["Coco rallado",660,6.9,"F","Otros",null,null,24,65],["Durazno fresco",39,0.9,"O","Frutas",null,null,10,0.3],["Espinaca",23,2.9,"V","Verduras",null,null,3.6,0.4],["Fideos secos",371,13,"O","Cereales y panes",null,null,75,1.5],["Frutilla cruda",32,0.7,"O","Frutas",null,null,7.7,0.3],["Garbanzos",364,19,"O","Cereales y panes",null,null,61,6],["Granola",433,10,"O","Cereales y panes",null,null,64,15],["Hamburguesas industrializadas de pollo",200,14,"P","Carnes",null,null,8,12],["Harina de Trigo integral",340,13,"O","Cereales y panes",null,null,72,2.5],["Harina de arroz",366,6,"O","Cereales y panes",null,null,80,1.4],["Huevo de gallina clara",52,11,"P","Huevos",35,"clara",0.7,0.2],["Huevo de gallina entero",143,12.6,"O","Huevos",50,"huevo",0.7,9.5],["Hígado",135,20,"P","Carnes",null,null,4,3.6],["Jamón cocido",105,17,"O","Carnes",15,"feta",1.5,3.5],["Kiwi",61,1.1,"O","Frutas",null,null,15,0.5],["Leche de vaca parcialmente descremada",40,3,"O","Lácteos",null,null,4.8,1],["Leche en polvo deslactosada con vitaminas A y D",496,26,"O","Lácteos",null,null,38,26],["Leche parcialmente descremada Fluida deslactosada con vitaminas A y D",40,3,"O","Lácteos",null,null,4.8,1],["Lechuga",15,1.4,"V","Verduras",null,null,2.9,0.2],["Lentejas",352,24,"O","Cereales y panes",null,null,60,1],["Manteca",717,0.9,"F","Otros",null,null,0.1,81],["Mantequilla de maní sin azúcar",588,25,"F","Otros",null,null,20,50],["Manzana con piel",52,0.3,"O","Frutas",null,null,14,0.2],["Masa de empanadas",300,7,"O","Cereales y panes",null,null,50,8],["Masa para tacos comercial",300,8,"O","Cereales y panes",25,"tortilla",50,7.5],["Mayonesa",680,1,"F","Otros",null,null,0.6,75],["Mayonesa reducida en calorías",300,1,"F","Otros",null,null,6,30],["Merluza",80,17,"P","Pescados",null,null,0,1.3],["Mermelada de frutas",250,0.4,"O","Otros",null,null,62,0.1],["Miel",304,0.3,"O","Otros",null,null,82,0],["Morrón rojo",31,1,"V","Verduras",null,null,6,0.3],["Morrón verde ó amarillo",20,0.9,"V","Verduras",null,null,4.6,0.2],["Mostaza",66,4,"V","Otros",null,null,5,4],["Naranja",47,0.9,"O","Frutas",null,null,12,0.1],["Nuez Pelada",654,15,"F","Otros",null,null,14,65],["Palta",160,2,"F","Frutas",null,null,8.5,15],["Pan Lactal con salvado",230,10.8,"O","Cereales y panes",25,"rebanada",41,2.5],["Pan frances",270,9,"O","Cereales y panes",null,null,56,1],["Pan lactal",258,10,"O","Cereales y panes",25,"rebanada",46,3.8],["Pan rallado",395,13,"O","Cereales y panes",null,null,72,6],["Papa",77,2,"O","Verduras",null,null,17,0.1],["Pera",57,0.4,"O","Frutas",null,null,15,0.1],["Pollo sin piel",120,22,"P","Carnes",null,null,0,3.5],["Proteína de suero de leche",400,80,"P","Otros",30,"scoop",8,5.3],["Puerro",61,1.5,"V","Verduras",null,null,14,0.3],["Queso Cuartirolo",290,20,"O","Lácteos",null,null,2,22],["Queso Reggianito",390,32,"O","Lácteos",null,null,3,28],["Queso de máquina",340,25,"O","Lácteos",10,"feta",1,26],["Queso descremado untable",150,15,"O","Lácteos",null,null,4,8],["Quinoa (peso en crudo)",368,14,"O","Cereales y panes",null,null,64,6],["Ravioles frescos",260,10,"O","Cereales y panes",null,null,35,9],["Remolacha",43,1.6,"V","Verduras",null,null,10,0.1],["Ricota",150,11,"O","Lácteos",null,null,4,10],["Rúcula",25,2.6,"V","Verduras",null,null,3.7,0.7],["Semilla de Lino",534,18,"F","Otros",null,null,29,42],["Semilla de chía",486,17,"F","Otros",null,null,42,31],["Sorrentinos",250,10,"O","Cereales y panes",null,null,35,8],["Tomate conserva en lata",25,1.2,"V","Verduras",null,null,4.5,0.2],["Tomate fresco",18,0.9,"V","Verduras",null,null,3.9,0.2],["Trigo Burgol",342,12,"O","Cereales y panes",null,null,76,1.3],["Turron",392,8.8,"O","Otros",25,"turrón",60,13],["Uva fresca",69,0.7,"O","Frutas",null,null,18,0.2],["Vacuno, asado vacio",250,18,"P","Carnes",null,null,0,20],["Vacuno, bife angosto",190,21,"P","Carnes",null,null,0,12],["Vacuno, bola de lomo",125,21,"P","Carnes",null,null,0,4.5],["Vacuno, carne picada especial",200,19,"P","Carnes",null,null,0,14],["Vacuno, cuadril",140,21,"P","Carnes",null,null,0,6.2],["Vacuno, nalga",125,21,"P","Carnes",null,null,0,4.5],["Vacuno, paleta",150,20,"P","Carnes",null,null,0,7.8],["Yogur descremado",45,4,"O","Lácteos",null,null,6,0.5],["Yogur descremado bebible",40,3,"O","Lácteos",null,null,6,0.4],["Yogur entero natural",62,3.5,"O","Lácteos",null,null,4.7,3.2],["Yogur griego comercial",100,7,"O","Lácteos",100,"pote",9,4],["Zanahoria",41,0.9,"V","Verduras",null,null,9.6,0.2],["Zapallito",17,1.2,"V","Verduras",null,null,3.1,0.2],["Zapallo",26,1,"V","Verduras",null,null,6.5,0.1],
 ["Harina de maíz (para tamales)",363,8.5,"O","Cereales y panes",null,null,76.6,3.7],["Maíz blanco pisado (para locro)",365,9.4,"O","Cereales y panes",null,null,74.3,4.7],
 ["Poroto blanco seco",333,23.4,"O","Cereales y panes",null,null,60.2,0.8],["Chorizo de cerdo crudo",296,13.6,"O","Carnes",null,null,3.8,25.1],["Grasa de cerdo",902,0,"F","Otros",null,null,0,100],
-["Muzzarella",299,22.2,"O","Lácteos",null,null,2.4,22.1],["Harina de trigo común (000)",364,10.3,"O","Cereales y panes",null,null,76.3,1],["Pan de hamburguesa o de pancho",279,9.8,"O","Cereales y panes",60,"pan",50.1,3.9],["Salchicha tipo viena",290,10.3,"O","Carnes",50,"salchicha",4.2,25.8]];
+["Muzzarella",299,22.2,"O","Lácteos",null,null,2.4,22.1],["Harina de trigo común (000)",364,10.3,"O","Cereales y panes",null,null,76.3,1],["Pan de hamburguesa o de pancho",279,9.8,"O","Cereales y panes",60,"pan",50.1,3.9],["Salchicha tipo viena",290,10.3,"O","Carnes",50,"salchicha",4.2,25.8],["Tahini (pasta de sésamo)", 595, 17, "F", "Otros", null, null, 21.2, 53.8],["Garbanzo cocido", 164, 8.9, "O", "Cereales y panes", null, null, 27.4, 2.6],["Chivo o cabrito", 109, 20.6, "P", "Carnes", null, null, 0, 2.3],["Hoja de parra", 93, 5.6, "V", "Verduras", 3, "hoja", 17.3, 2.1],["Maní", 567, 25.8, "F", "Otros", null, null, 16.1, 49.2],["Grasa vacuna", 899, 0, "F", "Otros", null, null, 0, 99.9],["Vacuno, lomo", 116, 20, "P", "Carnes", null, null, 0, 4],["Vacuno, asado de tira", 170, 18.4, "P", "Carnes", null, null, 0, 10.7],["Azúcar", 387, 0, "O", "Otros", null, null, 100, 0],["Leche entera", 61, 3.2, "O", "Lácteos", null, null, 4.8, 3.3],["Miel de caña", 290, 0, "O", "Otros", null, null, 74.7, 0.1]];
 
   var FTI={};FT.forEach(function(f,i){FTI[f[0]]=i;});
   var IWHEY=FTI["Proteína de suero de leche"],ICLARA=FTI["Huevo de gallina clara"];
@@ -4220,7 +4244,7 @@ var FT=[["Aceite de coco",884,0,"F","Otros",null,null,0,100],["Aceite de girasol
     var c=t.closest(".card,.chbox,details"),h=c&&c.querySelector("h2,summary,.label");t.setAttribute("aria-label","Tabla"+(h?": "+txt0(h).slice(0,60):""));});}
   function render(){applyAX();if(!cfg.cycleFrom){cfg.cycleFrom=today();lsSet(LSC,cfg);}
     var w7=wavg(today(),7);WREF=w7.n?w7.v:null;document.body.classList.toggle("basic",cfg.athlete===false);computePH();var n=new Date();$("fecha").textContent=DIA[n.getDay()]+" "+n.getDate()+" de "+MES[n.getMonth()];
-    safe(renderHoy);safe(renderMedidas);safe(renderEntreno);safe(renderSemana);safe(renderPlan);safe(renderSalud);safe(renderPerfil);safe(renderMods);safe(renderTeoria);safe(renderCoach);safe(renderSuplHoy);safe(renderSuplMas);safe(renderPG);safe(renderTRT);safe(renderBC);safe(renderCharts);safe(renderFatIdx);safe(renderPDist);safe(renderRc);safe(renderQA);safe(renderGreet);safe(renderFrase);safe(renderDash);safe(renderZona);safe(renderWU);safe(renderInj);safe(renderNA);safe(renderIns);safe(renderObs);safe(renderMR);safe(renderPriv);safe(renderAbout);safe(tblA11y);safe(applyLevels);safe(renderQuick);safe(renderHoyCons);safe(renderDia);safe(renderEntHero);safe(renderNutHero);safe(renderSalHero);safe(grpSync);if(FX.on)fxLoad();if(!$("lib-card").contains(document.activeElement))renderLib();}
+    safe(renderHoy);safe(renderMedidas);safe(renderEntreno);safe(renderSemana);safe(renderPlan);safe(renderSalud);safe(renderPerfil);safe(renderMods);safe(renderTeoria);safe(renderCoach);safe(renderSuplHoy);safe(renderSuplMas);safe(renderPG);safe(renderTRT);safe(renderBC);safe(renderCharts);safe(renderFatIdx);safe(renderPDist);safe(renderRc);safe(renderQA);safe(renderGreet);safe(renderFrase);safe(renderDash);safe(renderZona);safe(renderSalva);safe(renderWU);safe(renderInj);safe(renderNA);safe(renderIns);safe(renderObs);safe(renderMR);safe(renderPriv);safe(renderAbout);safe(tblA11y);safe(applyLevels);safe(renderQuick);safe(renderHoyCons);safe(renderDia);safe(renderEntHero);safe(renderNutHero);safe(renderSalHero);safe(grpSync);if(FX.on)fxLoad();if(!$("lib-card").contains(document.activeElement))renderLib();}
 
   /* ---------- Temporizador de descanso ---------- */
   var RT={dur:120,end:0,left:120,run:false,done:false,paused:false},ac=null,wl=null,rtTick=null,rtDoneT=null;
@@ -4545,7 +4569,7 @@ var FT=[["Aceite de coco",884,0,"F","Otros",null,null,0,100],["Aceite de girasol
 
 
   /* ---------- v31: indicadores de Mi día, lecturas, papelera, registro, copias automáticas, privacidad, fórmulas ---------- */
-  var APPV="31.5";
+  var APPV="31.6";
   function viewOf(n){var sc=n&&n.closest?n.closest("section.view"):null;return sc?sc.id.slice(2):null;}
   var LST="rendicion-papelera",LSO="rendicion-oplog";
   function opLog(op,d){try{var a=JSON.parse(localStorage.getItem(LSO)||"[]");if(!Array.isArray(a))a=[];a.push({t:new Date().toISOString(),op:String(op).slice(0,30),d:String(d||"").slice(0,200)});if(a.length>300)a=a.slice(-300);localStorage.setItem(LSO,JSON.stringify(a));}catch(e){}safe(renderLog);}
@@ -4773,7 +4797,15 @@ var FT=[["Aceite de coco",884,0,"F","Otros",null,null,0,100],["Aceite de girasol
 
 
   /* ---------- Comidas de la zona ---------- */
-  var TIPRX=[[/hamburgues.*pollo/,null],[/lomit.*complet/,"Lomito completo"],[/lomit/,"Lomito simple"],[/hamburgues.*complet/,"Hamburguesa completa"],[/hamburgues/,"Hamburguesa con queso"],
+  var TIPRX=[[/(kep?p?[ie]|kebbe|kibbe|quepi).*(crud|naie)/,"Kepi crudo"],[/(kep?p?[ie]|kebbe|kibbe|quepi).*rellen/,"Kepi relleno frito"],[/(kep?p?[ie]|kebbe|kibbe|quepi).*(magr|light|sin aceite)/,"Kepi magro en asadera"],[/(kep?p?[ie]|kebbe|kibbe|quepi).*(frit|croquet|bolit)/,"Kepi frito"],[/\b(kep?p?[ie]|kebbe|kibbe|quepi)s?\b/,"Kepi al horno"],
+    [/pollo.*h?um+[ou]s/,"Pollo con hummus"],[/\bh?um+[ou]s\b/,"Hummus"],[/falafel/,"Falafel"],[/ninos envueltos|hojas? de parra|yabra|sarma/,"Niños envueltos"],[/tab+o?ul+e|tabbouleh/,"Tabule"],[/lajmay|lehmeyun|sfiha|esfiha/,"Lajmayin"],[/fatay/,"Fatay"],
+    [/mote/,"Guiso de mote con carne"],[/sopa de mani/,"Sopa de maní"],[/picante de pollo/,"Picante de pollo"],[/guiso carrero/,"Guiso carrero"],[/carbonada/,"Carbonada"],[/tamal.*saltena/,"Tamal salteño"],[/humita.*saltena/,"Humita salteña en chala"],
+    [/empanad.*saltena/,"Empanada salteña"],[/empanad.*catamar/,"Empanada catamarqueña"],[/empanad.*santiag/,"Empanada santiagueña"],[/empanad.*rioja/,"Empanada riojana"],[/saltena/,"Salteña boliviana"],[/tortilla.*parrilla/,"Tortilla a la parrilla"],[/tortilla.*rescoldo/,"Tortilla al rescoldo"],
+    [/sopaipilla/,"Sopaipilla"],[/pan casero/,"Pan casero"],[/tijtincha/,"Tijtincha"],[/calapurca/,"Calapurca"],[/cabrito.*plancha/,"Cabrito a la plancha con ensalada"],[/cabrito/,"Cabrito al asador"],[/chivit?o/,"Chivito a la parrilla"],[/sajta/,"Sajta de pollo"],[/pique macho/,"Pique macho"],
+    [/milanes.*polenta.*pollo|milanes.*pollo.*polenta/,"Milanesa de pollo con polenta al horno"],[/milanes.*polenta.*frit/,"Milanesa de carne con polenta frita"],[/milanes.*polenta/,"Milanesa de carne con polenta al horno"],[/milanes.*napolitan.*pollo|milanes.*pollo.*napolitan/,"Milanesa napolitana de pollo al horno"],[/milanes.*napolitan/,"Milanesa napolitana de carne al horno"],
+    [/noquis?.*(salsa|tuco)/,"Ñoquis con salsa de tomate"],[/noquis?/,"Ñoquis de papa"],[/pastel de papa/,"Pastel de papa"],[/tortilla (de )?papas?/,"Tortilla de papa"],[/gramajo/,"Revuelto gramajo"],[/bife a la criolla/,"Bife a la criolla"],[/arroz con pollo/,"Arroz con pollo"],[/polenta/,"Polenta con salsa y queso"],[/puchero/,"Puchero"],[/guiso de arroz/,"Guiso de arroz"],[/estofado/,"Estofado de carne con papas"],
+    [/arroz con leche/,"Arroz con leche"],[/\bflan\b/,"Flan casero"],[/torta frita/,"Torta frita"],[/bizcochit/,"Bizcochito de grasa"],[/churro/,"Churro simple"],[/panqueque/,"Panqueque"],[/rosquete/,"Rosquete"],[/alfenique/,"Alfeñique"],[/frangollo/,"Frangollo con leche"],[/mate cocido.*azucar/,"Mate cocido con leche y azúcar"],[/mate cocido/,"Mate cocido con leche"],
+    [/hamburgues.*pollo/,null],[/lomit.*complet/,"Lomito completo"],[/lomit/,"Lomito simple"],[/hamburgues.*complet/,"Hamburguesa completa"],[/hamburgues/,"Hamburguesa con queso"],
     [/super ?pancho/,"Superpancho"],[/pancho|hot ?dog/,"Pancho"],[/tostado/,"Tostado de jamón y queso"],[/miga/,"Sándwich de miga de jamón y queso"],[/papas? fritas?/,"Papas fritas"],
     [/fugazz?et/,"Fugazzeta"],[/napolitan/,"Pizza napolitana"],[/pizza.*(especial|jamon|morron)/,"Pizza especial"],[/pizza|porcion(es)? de muzza/,"Pizza de muzzarella"],[/faina/,"Fainá"],
     [/empanad.*jamon/,"Empanada de jamón y queso"],[/empanad.*frit|frit.*empanad/,"Empanada tucumana frita"],[/empanad.*pollo/,"Empanada de pollo"],[/empanad/,"Empanada tucumana"],[/humita/,"Humita en chala"],[/tamal/,"Tamal tucumano"],[/locro/,"Locro"],
@@ -4782,16 +4814,22 @@ var FT=[["Aceite de coco",884,0,"F","Otros",null,null,0,100],["Aceite de girasol
   document.querySelectorAll("#zn-seg button").forEach(function(b){b.addEventListener("click",function(){znShow(b.dataset.g);});});
   function tipMatch(n){var t=nrm(n);for(var i=0;i<TIPRX.length;i++){if(TIPRX[i][0].test(t)){var nm=TIPRX[i][1];if(!nm)return null;return rcBook().filter(function(r){return r.tipica&&r.t===nm;})[0]||null;}}return null;}
   function tipMac(r){var m=recMacro(r.items.map(function(x){return {i:x[0],g:x[2]};}));return m;}
-  var ZNG="tip";
-  function znShow(g){ZNG=g;document.querySelectorAll("#zn-seg button").forEach(function(b){b.setAttribute("aria-pressed",b.dataset.g===g?"true":"false");});document.querySelectorAll("#zn-list li").forEach(function(li){li.hidden=li.dataset.g!==g;});}
+  var ZNG="tip",ZORD=["tip","arabe","casa","prot","dulce","beb","san","cad"],ZNAME={tip:"Típicas del norte",arabe:"Árabes de Tucumán",casa:"Caseras, de rotisería y de bodegón",prot:"Altas en proteína",dulce:"Postres, panadería y meriendas",beb:"Bebidas",san:"Sanguchería y pizzería",cad:"Cadenas (no oficial)"};
+  function znShow(g){ZNG=g;document.querySelectorAll("#zn-seg button").forEach(function(b){b.setAttribute("aria-pressed",b.dataset.g===g?"true":"false");});document.querySelectorAll("#zn-list li").forEach(function(li){li.hidden=li.dataset.g!==g;});var zc=$("zn-cad");if(zc)zc.hidden=g!=="cad";}
   function renderZona(){var ul=$("zn-list");if(!ul)return;var Q=$("zn-q");if(!Q.options.length){[1,2,3,4,5,6].forEach(function(n){opt(Q,String(n),String(n));});var M=$("zn-m");["Desayuno","Almuerzo","Merienda","Cena","Colación","Antes de entrenar","Después de entrenar"].forEach(function(m){opt(M,m,m);});var h=new Date().getHours();M.value=h<11?"Desayuno":h<16?"Almuerzo":h<19?"Merienda":"Cena";}
     if(ul.childNodes.length)return;var how=$("zn-how");
-    var lastG="";rcBook().filter(function(r){return r.tipica;}).sort(function(a,b){return (a.grp==="san")-(b.grp==="san");}).forEach(function(r){if(r.grp!==lastG){lastG=r.grp;how.appendChild(el("li",r.grp==="san"?"Sanguchería y pizzería":"Típicas de la zona","zn-g"));}
+    var lastG="",ZO=ZORD;rcBook().filter(function(r){return r.tipica;}).sort(function(a,b){return ZO.indexOf(a.grp)-ZO.indexOf(b.grp);}).forEach(function(r){if(r.grp!==lastG){lastG=r.grp;how.appendChild(el("li",ZNAME[r.grp]||"Otras","zn-g"));}
       var m=tipMac(r),li=el("li"),sp=el("span");li.dataset.g=r.grp;li.hidden=r.grp!==ZNG;sp.appendChild(el("b",r.t));sp.appendChild(el("small",r.tipica+" · "+fmt(m.k)+" kcal · "+m.p+" g prot. · "+m.c+" g carb. · "+m.fa+" g grasa"));li.appendChild(sp);
       var b=el("button","Anotar","chip");b.type="button";b.setAttribute("aria-label","Anotar "+r.t);b.addEventListener("click",function(){var q=+$("zn-q").value||1,mm=$("zn-m").value,it={id:"zn"+Date.now().toString(36)+Math.random().toString(36).slice(2,5),n:(mm+" · "+r.t+(q>1?" × "+q:"")).slice(0,200),k:Math.round(m.k*q),p:Math.round(m.p*q),c:Math.round(m.c*q),f:Math.round(m.fa*q),m:0};
         var rr=rec();rr.e.push(it);save();toast("Anoté "+(q>1?q+" × ":"")+r.t+": "+fmt(it.k)+" kcal y "+it.p+" g de proteína.",{undo:function(){var r2=rec();r2.e=r2.e.filter(function(y){return y.id!==it.id;});save();}});});
       li.appendChild(b);ul.appendChild(li);
-      how.appendChild(el("li",r.t+": "+r.items.map(function(x){return fmt(x[2])+" g de "+FT[x[0]][0].toLowerCase();}).join(", ")+". "+r.note));});}
+      how.appendChild(el("li",r.t+": "+r.items.map(function(x){return fmt(x[2])+" g de "+FT[x[0]][0].toLowerCase();}).join(", ")+". "+r.note));});
+    var pubG="";PUBS.forEach(function(x){var m={k:x[3],p:x[4],c:x[5],fa:x[6]},li=el("li"),sp=el("span");li.dataset.g=x[1];li.hidden=x[1]!==ZNG;sp.appendChild(el("b",x[0]));
+      sp.appendChild(el("small",x[2]+" · "+fmt(m.k)+" kcal"+(m.p||m.c||m.fa?" · "+dec0(m.p)+" g prot. · "+dec0(m.c)+" g carb. · "+dec0(m.fa)+" g grasa":" · solo calorías")));li.appendChild(sp);
+      var b=el("button","Anotar","chip");b.type="button";b.setAttribute("aria-label","Anotar "+x[0]);b.addEventListener("click",function(){var q=+$("zn-q").value||1,mm=$("zn-m").value,it={id:"zn"+Date.now().toString(36)+Math.random().toString(36).slice(2,5),n:(mm+" · "+x[0]+(q>1?" × "+q:"")).slice(0,200),k:Math.round(m.k*q),p:Math.round(m.p*q),c:Math.round(m.c*q),f:Math.round(m.fa*q),m:0};
+        var rr=rec();rr.e.push(it);save();toast("Anoté "+(q>1?q+" × ":"")+x[0]+": "+fmt(it.k)+" kcal.",{undo:function(){var r2=rec();r2.e=r2.e.filter(function(y){return y.id!==it.id;});save();}});});
+      li.appendChild(b);ul.appendChild(li);if(x[1]!==pubG){pubG=x[1];how.appendChild(el("li",(ZNAME[x[1]]||"Otras")+": valores publicados","zn-g"));}how.appendChild(el("li",x[0]+" ("+x[2]+"): "+x[7]));});
+    znShow(ZNG);}
 
   /* ---------- Calentamiento del día: se arma con los ejercicios de la rutina ---------- */
   var WUG={sup:{t:"Hombros y pecho",m:["pecho","hombros","tríceps"],d:["Rotación externa con banda, 2 × 15","Separar la banda frente al pecho (pull-apart), 2 × 15","Flexiones lentas, 1 × 8 a 10"]},
@@ -5279,7 +5317,103 @@ var FT=[["Aceite de coco",884,0,"F","Otros",null,null,0,100],["Aceite de girasol
     ["Fugazzeta","A1N1C1","Una porción: masa, muzzarella y cebolla.",[[105,45],[1,5],[104,55],[17,40]],"1 porción","san"],
     ["Pizza especial","A1N1C1","Una porción: muzzarella, jamón y morrón.",[[105,45],[1,4],[80,20],[104,40],[36,15],[53,15]],"1 porción","san"],
     ["Fainá","A1N1C1","Una porción de fainá de harina de garbanzo con aceite.",[[28,30],[1,6]],"1 porción","san"],
-    ["Empanada de jamón y queso","A1N1C1","Al horno. Tapa de 30 g con jamón y muzzarella.",[[46,30],[36,15],[104,20]],"1 empanada","san"]];
+    ["Empanada de jamón y queso","A1N1C1","Al horno. Tapa de 30 g con jamón y muzzarella.",[[46,30],[36,15],[104,20]],"1 empanada","san"],
+    ["Kepi al horno", "A1N1", "Una porción de asadera: carne magra, burgol, cebolla y aceite (proporción de El Tribuno, 2 de carne por 1 de burgol).", [[90, 117], [82, 58], [17, 25], [1, 5]], "1 porción", "arabe"],
+    ["Kepi frito", "A1N1C1", "Croqueta: carne y burgol casi en partes iguales (Cocineros Argentinos). El aceite que absorbe, unos 6 g, es estimado.", [[90, 35], [82, 29], [17, 6], [1, 6]], "1 kepi", "arabe"],
+    ["Kepi crudo", "A1N1", "Kebbe naie con aceite de oliva. Lleva carne cruda: solo con carne fresca y de confianza.", [[90, 117], [82, 42], [17, 20], [2, 10]], "1 porción", "arabe"],
+    ["Kepi relleno frito", "A1N1", "Bola de kepi rellena de carne y cebolla, frita; sin nueces. El aceite absorbido es estimado.", [[90, 55], [82, 30], [17, 15], [1, 9]], "1 bola", "arabe"],
+    ["Kepi magro en asadera", "A1N1", "Más carne y menos burgol, sin aceite, en asadera antiadherente. La mejor opción del grupo para un déficit.", [[90, 150], [82, 40], [17, 30]], "1 porción", "arabe"],
+    ["Hummus", "A1N1C1", "Garbanzo cocido, tahini y aceite de oliva; el limón no suma.", [[109, 60], [108, 15], [2, 7]], "1 porción", "arabe"],
+    ["Falafel", "A1N1C1", "Una bolita de garbanzo remojado (pesado en seco), cebolla y harina, frita; unos 3 g de aceite absorbido (estimado).", [[28, 15], [17, 3], [105, 1], [1, 3]], "1 falafel", "arabe"],
+    ["Niños envueltos", "A1N1", "Seis rollitos de hoja de parra con arroz, carne y cebolla.", [[111, 18], [7, 30], [91, 40], [17, 10], [1, 5]], "6 niños", "arabe"],
+    ["Tabule", "A1N1", "Burgol, tomate, cebolla y aceite de oliva. Faltan datos de perejil y menta (suman muy poco): el valor real es algo mayor.", [[82, 30], [81, 60], [17, 15], [2, 10]], "1 porción", "arabe"],
+    ["Lajmayin", "A1N1C1", "Masa fina con carne, tomate y cebolla (sfiha).", [[105, 35], [1, 3], [91, 25], [81, 10], [17, 10]], "1 lajmayin", "arabe"],
+    ["Fatay", "A1N1C1", "Masa cerrada en triángulo con carne, cebolla y tomate.", [[105, 30], [1, 3], [91, 25], [17, 15], [81, 10]], "1 fatay", "arabe"],
+    ["Guiso de mote con carne", "A1N1", "Mote, carne, cebolla y grasa. El mote se calculó con maíz blanco pisado.", [[100, 70], [91, 80], [17, 40], [113, 10]], "1 plato", "tip"],
+    ["Sopa de maní", "A1N1", "Maní, carne, papa, cebolla y aceite; el caldo no suma.", [[112, 30], [91, 60], [63, 100], [17, 30], [1, 5]], "1 plato", "tip"],
+    ["Picante de pollo", "A1N1", "Pollo sin piel, papa, cebolla, tomate y aceite. Con presas con piel tiene más grasa. Faltan datos de arvejas, ají y el arroz que lo acompaña: el valor real es algo mayor.", [[65, 180], [63, 150], [17, 60], [81, 40], [1, 10]], "1 plato", "tip"],
+    ["Guiso carrero", "A1N1", "Arroz, carne fresca, cebolla, tomate, papa y aceite.", [[7, 70], [91, 100], [17, 50], [81, 40], [63, 80], [1, 10]], "1 plato", "tip"],
+    ["Carbonada", "A1N1", "Carne, papa, choclo, cebolla y aceite. Faltan datos de zapallo, batata y durazno: el valor real es algo mayor.", [[91, 100], [63, 100], [21, 80], [17, 40], [1, 8]], "1 plato", "tip"],
+    ["Tamal salteño", "A1N1", "Masa de maíz con grasa y relleno de carne y cebolla. Se calculó con harina de maíz amarilla.", [[99, 60], [113, 15], [91, 30], [17, 10]], "1 tamal", "tip"],
+    ["Humita salteña en chala", "A1N1", "Choclo rallado, cebolla, grasa y un poco de azúcar. Faltan datos de quesillo o queso de cabra: el valor real es algo mayor.", [[21, 150], [17, 20], [113, 8], [116, 3]], "1 humita", "tip"],
+    ["Empanada salteña", "A1N1C1", "Al horno. Masa con grasa; relleno de carne, papa, cebolla y huevo duro.", [[105, 30], [113, 6], [91, 30], [63, 15], [17, 15], [34, 5]], "1 empanada", "tip"],
+    ["Empanada catamarqueña", "A1N1C1", "Al horno. Carne, cebolla, papa y huevo. Faltan datos de pasas y aceitunas: el valor real es algo mayor.", [[105, 30], [113, 6], [91, 35], [17, 15], [63, 10], [34, 5]], "1 empanada", "tip"],
+    ["Empanada santiagueña", "A1N1C1", "Al horno. Más cebolla y más grasa que las otras.", [[105, 30], [113, 8], [91, 30], [17, 30], [34, 5]], "1 empanada", "tip"],
+    ["Empanada riojana", "A1N1C1", "Al horno. Carne, papa, cebolla y huevo. Faltan datos de pasas y aceitunas: el valor real es algo mayor.", [[105, 30], [113, 6], [91, 30], [63, 20], [17, 10], [34, 5]], "1 empanada", "tip"],
+    ["Tortilla a la parrilla", "D1M1", "Harina y grasa vacuna, a la parrilla.", [[105, 70], [113, 10]], "1 tortilla", "tip"],
+    ["Tortilla al rescoldo", "D1M1", "Harina y grasa, cocida en las brasas.", [[105, 90], [113, 8]], "1 tortilla", "tip"],
+    ["Sopaipilla", "M1", "Versión de harina, frita; unos 6 g de aceite absorbido (estimado).", [[105, 35], [113, 4], [1, 6]], "1 sopaipilla", "tip"],
+    ["Pan casero", "D1M1", "Harina y grasa vacuna; la levadura no suma.", [[105, 55], [113, 5]], "1 pan", "tip"],
+    ["Tijtincha", "A1N1", "Mote con carne y grasa. El original lleva cerdo; se calculó con carne vacuna y maíz blanco pisado.", [[100, 60], [91, 60], [113, 5]], "1 plato", "tip"],
+    ["Calapurca", "A1N1", "Mote, carne, papa, cebolla y grasa. El mote se calculó con maíz blanco pisado.", [[100, 50], [91, 70], [63, 80], [17, 30], [113, 5]], "1 plato", "tip"],
+    ["Cabrito al asador", "A1N1", "200 g de cabrito crudo sin hueso. El dato es de chivo adulto (USDA); el cabrito lechal puede variar.", [[110, 200]], "1 porción", "tip"],
+    ["Chivito a la parrilla", "A1N1", "250 g de chivo crudo sin hueso.", [[110, 250]], "1 porción", "tip"],
+    ["Salteña boliviana", "A1N1C1", "Masa con manteca y azúcar; relleno de carne, papa, cebolla y huevo. Faltan datos de la gelatina y el caldo del relleno: el valor real es algo mayor.", [[105, 45], [43, 8], [116, 5], [91, 40], [63, 25], [34, 5], [17, 10]], "1 salteña", "tip"],
+    ["Sajta de pollo", "A1N1", "Pollo, papa, cebolla y aceite. Faltan datos de chuño y ají amarillo: el valor real es algo mayor.", [[65, 150], [63, 150], [17, 50], [1, 10]], "1 plato", "tip"],
+    ["Pique macho", "A1N1", "Lomo, papas fritas (15 g de aceite absorbido, estimado), cebolla, tomate y huevo. Faltan datos de la salchicha: el valor real es algo mayor.", [[114, 150], [63, 150], [1, 15], [17, 50], [81, 50], [34, 50]], "1 plato", "tip"],
+    ["Milanesa de carne con polenta al horno", "A1N1", "Nalga rebozada en huevo y harina de maíz, 5 g de aceite.", [[90, 150], [34, 25], [99, 25], [1, 5]], "1 milanesa", "casa"],
+    ["Milanesa de carne con polenta frita", "A1N1", "La misma, frita: unos 15 g de aceite absorbido (estimado).", [[90, 150], [34, 25], [99, 25], [1, 15]], "1 milanesa", "casa"],
+    ["Milanesa de pollo con polenta al horno", "A1N1", "Pollo rebozado en huevo y harina de maíz, 5 g de aceite.", [[65, 150], [34, 25], [99, 25], [1, 5]], "1 milanesa", "casa"],
+    ["Milanesa napolitana de carne al horno", "A1N1", "Milanesa al horno con muzzarella y tomate. Faltan datos de el jamón, si lleva: el valor real es algo mayor.", [[90, 150], [62, 30], [34, 25], [1, 3], [104, 40], [81, 30]], "1 milanesa", "casa"],
+    ["Milanesa napolitana de pollo al horno", "A1N1", "Milanesa de pollo al horno con muzzarella y tomate. Faltan datos de el jamón, si lleva: el valor real es algo mayor.", [[65, 150], [62, 30], [34, 25], [1, 3], [104, 40], [81, 30]], "1 milanesa", "casa"],
+    ["Ñoquis de papa", "A1N1", "Papa, harina y huevo, sin salsa.", [[63, 250], [105, 60], [34, 15]], "1 plato", "casa"],
+    ["Ñoquis con salsa de tomate", "A1N1", "Los mismos ñoquis con salsa de tomate, cebolla y aceite.", [[63, 250], [105, 60], [34, 15], [81, 120], [1, 8], [17, 20]], "1 plato", "casa"],
+    ["Pastel de papa", "A1N1", "Puré con leche y manteca sobre carne picada a cuchillo con cebolla y huevo.", [[63, 250], [91, 120], [17, 50], [117, 50], [43, 10], [34, 25]], "1 porción", "casa"],
+    ["Tortilla de papa", "A1N1", "Un cuarto de tortilla: papa, huevo, cebolla y unos 15 g de aceite absorbido (estimado).", [[63, 150], [34, 50], [17, 30], [1, 15]], "1/4 de tortilla", "casa"],
+    ["Revuelto gramajo", "A1N1", "Papas fritas con huevo; 15 g de aceite absorbido (estimado). Faltan datos de jamón y arvejas: el valor real es algo mayor.", [[63, 150], [34, 100], [1, 15]], "1 plato", "casa"],
+    ["Bife a la criolla", "A1N1", "Carne, papa, cebolla, tomate y aceite, a la cacerola. Faltan datos de morrón: el valor real es algo mayor.", [[91, 200], [63, 150], [17, 80], [81, 80], [1, 10]], "1 plato", "casa"],
+    ["Arroz con pollo", "A1N1", "Arroz, pollo, cebolla, tomate y aceite. Faltan datos de morrón y arvejas: el valor real es algo mayor.", [[7, 80], [65, 150], [17, 50], [81, 40], [1, 10]], "1 plato", "casa"],
+    ["Polenta con salsa y queso", "A1N1", "Polenta con leche, salsa de tomate y muzzarella.", [[99, 70], [117, 100], [104, 30], [81, 100], [1, 5]], "1 plato", "casa"],
+    ["Puchero", "A1N1", "Asado, papa, choclo, cebolla y garbanzo. Faltan datos de zapallo, batata y chorizo: el valor real es algo mayor.", [[115, 200], [63, 150], [21, 100], [17, 50], [28, 20]], "1 plato", "casa"],
+    ["Guiso de arroz", "A1N1", "Arroz, carne, cebolla, tomate, papa y aceite.", [[7, 70], [91, 100], [17, 50], [81, 50], [63, 50], [1, 10]], "1 plato", "casa"],
+    ["Estofado de carne con papas", "A1N1", "Carne, papa, cebolla, tomate y aceite; el vino no se computó.", [[91, 180], [63, 200], [17, 60], [81, 80], [1, 10]], "1 plato", "casa"],
+    ["Bowl de pollo y arroz", "A1N1", "200 g de pollo, 60 g de arroz en crudo y 5 g de aceite.", [[65, 200], [7, 60], [1, 5]], "1 bowl", "prot"],
+    ["Revuelto de 3 huevos con muzzarella", "D1N1", "Tres huevos y 30 g de muzzarella. Menos de 15 minutos.", [[34, 150], [104, 30]], "1 revuelto", "prot"],
+    ["Bife de nalga con papa hervida", "A1N1", "200 g de nalga a la plancha y 200 g de papa hervida.", [[90, 200], [63, 200]], "1 plato", "prot"],
+    ["Cabrito a la plancha con ensalada", "A1N1", "200 g de cabrito, tomate, cebolla y 5 g de aceite de oliva.", [[110, 200], [81, 100], [17, 50], [2, 5]], "1 plato", "prot"],
+    ["Pollo con hummus", "A1N1", "150 g de pollo con media porción de hummus.", [[65, 150], [109, 30], [108, 7.5], [2, 3.5]], "1 plato", "prot"],
+    ["Pechuga rellena con muzzarella y tomate", "A1N1", "200 g de pollo, 30 g de muzzarella y tomate, al horno.", [[65, 200], [104, 30], [81, 30]], "1 pechuga", "prot"],
+    ["Pollo al horno con papas", "A1N1", "200 g de pollo, 200 g de papa y 10 g de aceite.", [[65, 200], [63, 200], [1, 10]], "1 plato", "prot"],
+    ["Salpicón de pollo", "A1N1", "Pollo, papa, huevo, tomate, cebolla y aceite, frío.", [[65, 150], [63, 100], [34, 50], [81, 50], [17, 20], [1, 10]], "1 plato", "prot"],
+    ["Huevos duros", "C2M1", "Dos huevos duros.", [[34, 100]], "2 huevos", "prot"],
+    ["Maní", "C2", "Un puñado de 30 g; el maní tostado da casi lo mismo.", [[112, 30]], "1 puñado de 30 g", "prot"],
+    ["Garbanzos tostados", "C2", "40 g de garbanzo pesado en seco, tostado al horno.", [[28, 40]], "40 g en seco", "prot"],
+    ["Arroz con leche", "M1C1", "Arroz, leche entera y azúcar.", [[7, 40], [117, 250], [116, 25]], "1 compotera", "dulce"],
+    ["Flan casero", "M1C1", "Un octavo de flan de 1 litro de leche, 6 huevos y 300 g de azúcar (con el caramelo).", [[117, 125], [34, 37.5], [116, 37.5]], "1 porción", "dulce"],
+    ["Torta frita", "M1", "Harina y grasa; unos 8 g de grasa absorbida (estimado).", [[105, 50], [113, 13]], "1 torta frita", "dulce"],
+    ["Bizcochito de grasa", "D1M1", "Uno chico: harina y grasa vacuna.", [[105, 7], [113, 1.8]], "1 bizcochito", "dulce"],
+    ["Churro simple", "M1", "Sin relleno; unos 4 g de aceite absorbido (estimado) y azúcar.", [[105, 15], [1, 4], [116, 3]], "1 churro", "dulce"],
+    ["Panqueque", "M1", "Solo, sin relleno: harina, leche, huevo y manteca.", [[105, 20], [117, 50], [34, 12], [43, 2]], "1 panqueque", "dulce"],
+    ["Rosquete", "M1", "Masa de harina, huevo y grasa con glasé de azúcar.", [[105, 18], [34, 6], [113, 3], [116, 12]], "1 rosquete", "dulce"],
+    ["Alfeñique", "C1", "Golosina de miel de caña; se calculó como azúcar.", [[116, 20]], "1 alfeñique", "dulce"],
+    ["Tableta", "M1", "Harina, miel de caña y grasa. La miel de caña se calculó con melaza; sin nueces.", [[105, 20], [118, 20], [113, 3]], "1 tableta", "dulce"],
+    ["Anchi", "C1", "Postre de maíz con azúcar. Se calculó con harina de maíz amarilla.", [[99, 25], [116, 20]], "1 compotera", "dulce"],
+    ["Frangollo con leche", "M1", "Maíz partido con leche entera y azúcar. Se calculó con maíz blanco pisado.", [[100, 40], [117, 200], [116, 15]], "1 bowl", "dulce"],
+    ["Api", "M1", "Bebida caliente de maíz con azúcar. Se calculó con harina de maíz amarilla; falta el dato del maíz morado.", [[99, 20], [116, 20]], "1 taza", "beb"],
+    ["Mate cocido con leche y azúcar", "D1M1", "Taza de 250 ml: 150 ml de leche entera y 10 g de azúcar; la yerba no suma.", [[117, 150], [116, 10]], "1 taza", "beb"],
+    ["Mate cocido con leche", "D1M1", "Taza de 250 ml con 150 ml de leche entera, sin azúcar.", [[117, 150]], "1 taza", "beb"],
+    ["Café con leche con azúcar", "D1M1", "Taza de 250 ml: 150 ml de leche entera y 5 g de azúcar.", [[117, 150], [116, 5]], "1 taza", "beb"],
+    ["Cortado", "D1M1", "Un pocillo con 50 ml de leche entera.", [[117, 50]], "1 pocillo", "beb"],
+    ["Leche con miel", "M1C1", "300 ml de leche entera con 15 g de miel.", [[117, 300], [52, 15]], "1 taza grande", "beb"]];
+  /* Valores publicados por terceros (no se arman con ingredientes): [nombre, grupo, porción, kcal, prot, carb, grasa, fuente] */
+  var PUBS=[["Fernet con cola","beb","1 vaso alto (50 ml de fernet y 200 ml de cola)",190,0,25,0,"Publicado: 180 a 200 kcal (recetasdecocteles.net); otras notas dan hasta 280 kcal según el vaso. Con cola light baja mucho."],
+    ["Cerveza rubia","beb","1 lata de 354 ml",152,0,0,0,"Publicado: 43 kcal cada 100 ml (Winepress). Solo calorías: proteína, carbohidratos y grasa sin dato."],
+    ["Cerveza negra","beb","1 lata",182,0,0,0,"Publicado: Cormillot, en La Nación. Solo calorías."],
+    ["Vino tinto","beb","1 copa de 120 ml",110,0,0,0,"Publicado: Eduvirama (Cormillot da 120). Solo calorías."],
+    ["Vino blanco","beb","1 copa de 120 ml",100,0,0,0,"Publicado: Eduvirama (Cormillot da 120). Solo calorías."],
+    ["Big Mac (McDonald's)","cad","1 unidad, 214 g",505,26,44,26,"No oficial: fatsecret y Fitia Argentina. Otra entrada da 570 kcal."],
+    ["Big Mac doble (McDonald's)","cad","1 unidad, 283 g",762,40,55,43,"No oficial: Fitia Argentina."],
+    ["Hamburguesa simple (McDonald's)","cad","1 unidad, 94 g",244,12,29,8.9,"No oficial: tabla antigua de McDonald's publicada por terceros."],
+    ["Hamburguesa con queso (McDonald's)","cad","1 unidad, 108 g",297,14,30,13,"No oficial: tabla antigua de McDonald's publicada por terceros."],
+    ["Doble carne doble queso (McDonald's)","cad","1 unidad, 152 g",438,24,30,25,"No oficial: tabla antigua de McDonald's publicada por terceros."],
+    ["Triple hamburguesa con queso (McDonald's)","cad","1 unidad, 177 g",512,31,30,32,"No oficial: fatsecret Argentina."],
+    ["Grand Tasty doble (McDonald's)","cad","1 unidad, 444 g",1146,58,52,78,"No oficial: fatsecret Argentina."],
+    ["Mega Cuarto (Mostaza)","cad","1 unidad",520,28,40,27,"No oficial: Nutrola."],
+    ["Mega Cuarto XL doble (Mostaza)","cad","1 unidad",860,48,42,55,"No oficial: Nutrola."],
+    ["Mega Tasty (Mostaza)","cad","1 unidad",640,30,46,36,"No oficial: Nutrola."],
+    ["Mega Bacon y Champignon (Mostaza)","cad","1 unidad",780,40,44,48,"No oficial: Nutrola."],
+    ["Doble Cheese Jr. (Mostaza)","cad","1 unidad",450,24,33,25,"No oficial: Nutrola."],
+    ["Whopper (Burger King)","cad","1 unidad, 270 g",660,28,49,40,"No oficial: Etiqueteando, fatsecret y Fitia Argentina coinciden en 660 kcal."]];
   function recBase(){return RECETAS.concat(RAPIDAS,TIPICAS).map(function(x){var mom={},times=0;String(x[1]).replace(/([DAMCPN])(\d+)/g,function(_,l,c){mom[MOML[l]]=+c;times+=+c;return "";});
     return {t:x[0],note:x[2]||"",items:x[3].filter(function(it){return FT[it[0]]&&it[1]>0;}).map(function(it){return [it[0],"",it[1]];}),mom:mom,times:times||1,plans:[],builtin:true,quick:typeof x[4]==="number"?x[4]:0,tipica:typeof x[4]==="string"?x[4]:"",grp:x[5]||(typeof x[4]==="string"?"tip":"")};});}
   function ingCls(i){var f=FT[i],k=f[1]||1,p=f[2]||0,fa=f[8]||0;if(f[3]==="V")return "V";if(p*4/k>=0.4)return "P";if(fa*9/k>=0.6)return "F";return "C";}
@@ -5515,7 +5649,7 @@ var FT=[["Aceite de coco",884,0,"F","Otros",null,null,0,100],["Aceite de girasol
     ["Observaciones de salud","obs-t","salud","nota sintoma observacion consulta medico"],["Privacidad: modo discreto y tapar la pantalla","pv-blur","mas","privacidad ocultar difuminar inactividad"],
     ["Papelera: recuperar lo que borré","tr-card","mas","borrado recuperar eliminar papelera"],["Registro de operaciones","log-card","mas","historial auditoria cambios log"],
     ["Copias automáticas del navegador","snap-card","mas","respaldo indexeddb recuperacion"],["Fórmulas que usa la app","fm-card","mas","formula calculo ecuacion fuente dots wilks e1rm"],
-    ["Acerca de: versión y espacio usado","ab-card","mas","version almacenamiento espacio info"],["Instalar la app en el teléfono o la computadora","pwa-card","mas","instalar aplicacion pantalla de inicio pwa sin conexion offline"],["Accesos rápidos de Mi día","qk-card","mas","atajos botones inicio personalizar accesos rapidos"],["Evolución del peso: promedio, esperado y semanas","peso-card","salud","peso balanza promedio tendencia grafico"],["Racha y últimos 14 días","s-racha","nutricion","racha cumplido constancia dias seguidos historial"],["Tendencias y análisis: entrenamiento, nutrición, cuerpo y salud","tendencias","salud","analisis tendencias graficos estadisticas evolucion progreso resumen"],["Exportar solo una parte de mis datos","dt-parts","mas","exportar parcial seleccionar copia"]];
+    ["Acerca de: versión y espacio usado","ab-card","mas","version almacenamiento espacio info"],["Instalar la app en el teléfono o la computadora","pwa-card","mas","instalar aplicacion pantalla de inicio pwa sin conexion offline"],["Salvar el día: cómo cerrar las calorías y la proteína que faltan","sv-open","hoy","salvar dia noche faltan calorias proteina me pase revertir cerrar el dia cena"],["Kepi, hummus y comidas árabes, del norte y caseras","zn-card","nutricion","kepi kepe hummus falafel niños envueltos tabule lajmayin fatay empanada salteña locro carbonada cabrito milanesa ñoquis puchero fernet cerveza mcdonalds mostaza"],["Accesos rápidos de Mi día","qk-card","mas","atajos botones inicio personalizar accesos rapidos"],["Evolución del peso: promedio, esperado y semanas","peso-card","salud","peso balanza promedio tendencia grafico"],["Racha y últimos 14 días","s-racha","nutricion","racha cumplido constancia dias seguidos historial"],["Tendencias y análisis: entrenamiento, nutrición, cuerpo y salud","tendencias","salud","analisis tendencias graficos estadisticas evolucion progreso resumen"],["Exportar solo una parte de mis datos","dt-parts","mas","exportar parcial seleccionar copia"]];
   var CMD={items:[],sel:0,ret:null};
   function nrm(t){return String(t).toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"");}
   function shown(node,stop){for(var p=node;p&&p!==stop;p=p.parentNode){if(p.nodeType===1&&(p.hidden||getComputedStyle(p).display==="none"))return false;}return true;}
@@ -5647,6 +5781,88 @@ var FT=[["Aceite de coco",884,0,"F","Otros",null,null,0,100],["Aceite de girasol
           toast("Hay una versión nueva de Rinde Diario.",{label:"Actualizar",ms:15000,undo:function(){location.reload();}});});});}).catch(function(){});});}})();
   $("pwa-go").addEventListener("click",function(){if(!PWA.ev)return;var e=PWA.ev;PWA.ev=null;e.prompt();(e.userChoice||Promise.resolve({})).then(function(r){if(r&&r.outcome==="accepted")$("pwa-card").hidden=true;});});
   $("pwa-no").addEventListener("click",function(){try{localStorage.setItem("rd-pwa-no","1");}catch(e){}$("pwa-card").hidden=true;toast("Listo. Si después la querés instalar, usá «Instalar app» en el menú del navegador.");});
+
+  /* ---------- Salvar el día: desde las 20 h compara lo comido con el objetivo y propone cómo cerrarlo ---------- */
+  var SV={force:false,hour:null};
+  /* Alimentos para sumar proteína sin cocinar mucho: [índice, tope en g] */
+  var SVP=[[66,60],[33,350],[11,240],[95,300],[71,200],[65,300],[90,300],[50,350]];
+  /* Combinaciones para sumar calorías o las dos cosas: [nombre, [[índice, g]...]] */
+  var SVK=[["Pan con mantequilla de maní y banana",[[61,50],[44,20],[13,100]]],["Avena con leche y banana",[[12,40],[38,250],[13,100]]],["Yogur con granola",[[92,200],[29,40]]],["Pan con palta y huevo",[[61,50],[58,50],[34,50]]]];
+  var SVA=[["Licuado de leche, proteína en polvo y banana",[[38,300],[66,30],[13,100],[12,20]]],["Sándwich de pollo",[[61,75],[65,150],[41,20],[81,40]]],["Yogur griego con granola",[[95,200],[29,30]]],["Tostadas con queso untable y atún",[[61,50],[71,30],[11,120]]]];
+  function svMac(its){return recMacro(its.map(function(x){return {i:x[0],g:x[1]};}));}
+  function svOne(i,gNeed,cap){var g=Math.min(cap,Math.max(5,gNeed)),q=rnd(i,g),its=[[i,q.g]],m=svMac(its);m.its=its;m.t=ingName(i);m.desc=(q.u?unitTxt(i,q.u)+" ("+fmt(q.g)+(isMl(FT[i][0])?" ml":" g")+")":fmt(q.g)+(isMl(FT[i][0])?" ml":" g"));return m;}
+  function svScale(name,base,f){var its=base.map(function(x){var q=rnd(x[0],x[1]*f);return [x[0],q.g,q.u];}),m=svMac(its);m.its=its;m.t=name;
+    m.desc=its.map(function(x){return (x[2]?unitTxt(x[0],x[2]):fmt(x[1])+(isMl(FT[x[0]][0])?" ml":" g"))+" de "+ingName(x[0]).toLowerCase();}).join(", ");return m;}
+  function svRec(r,kT,pT){var m=scaleRec(r,kT,pT,"auto");m.t=r.t;m.desc=m.items.map(function(it){return itemTxt(it,false).replace(/ \(.*\)$/,"");}).join(" · ");return m;}
+  function svWeek(k){var n=0,sk=0,sm=0;for(var i=0;i<7;i++){var kk=shift(k,-i),d=days[kk];if(!d||!Array.isArray(d.e)||!d.e.length)continue;n++;sk+=sum(d).k;sm+=tgt(kk).max;}return n>=3?{n:n,k:sk/n,max:sm/n}:null;}
+  function salvaPlan(k,hh){var t=tgt(k),d=days[k],s=sum(d),n=(d&&d.e||[]).length,mn=mantNow(),out={mode:"",title:"",sub:"",opts:[],tips:[],rows:[],head:""};
+    var kLeft=t.max-s.k,kMin=t.min-s.k,pF=Math.round(t.prot-s.p),late=hh>=22;
+    out.rows=[["Calorías",s.k,t.min,t.max,"kcal"],["Proteína",s.p,t.prot,null,"g"],["Grasa",s.f,t.f,null,"g"],["Carbohidratos",s.c,t.c,null,"g"]];
+    function protOpts(room){var L=SVP.map(function(x){var f=FT[x[0]];return svOne(x[0],pF/(f[2]/100),x[1]);}).filter(function(m){return m.p>=Math.min(pF,12);});
+      L.sort(function(a,b){return a.k/Math.max(a.p,1)-b.k/Math.max(b.p,1);});var full=L.filter(function(m){return m.p>=pF*0.9;}).sort(function(a,b){return a.k-b.k;});
+      if(room===null){var r0=(full.length?full:L).slice(0,3);r0.fits=true;return r0;}
+      var fit=L.filter(function(m){return m.k<=room+10;}).sort(function(a,b){return (b.p-a.p)||(a.k-b.k);}),res=fit.slice(0,full.length&&full[0].k>room+10?2:3);
+      if(full.length&&res.indexOf(full[0])<0)res.push(full[0]);if(!res.length)res=L.slice(0,3);res.fits=res.some(function(m){return m.k<=room+10&&m.p>=pF*0.9;});res.over=full.length?Math.max(0,full[0].k-room):0;return res;}
+    function recOpts(kT,pT){var L=[];rcBook().forEach(function(r){var m0=recMacro(r.items.map(function(x){return {i:x[0],g:x[2]};}));if(!m0.k||m0.p*4/m0.k<0.3)return;var m=svRec(r,kT,pT);
+        if(Math.abs(m.k-kT)<=kT*0.15&&m.p>=pT*0.85)L.push([Math.abs(m.k-kT)/kT+Math.max(0,pT-m.p)/Math.max(pT,1)+(r.grp==="prot"||r.quick?-0.05:0),m]);});
+      L.sort(function(a,b){return a[0]-b[0];});return L.slice(0,2).map(function(x){return x[1];});}
+    if(!n){out.mode="vacio";out.title="Hoy no anotaste nada";out.sub="Si comiste, anotalo ahora con «Anotar rápido»: escribilo como lo dirías («2 empanadas y una coca») y la app lo calcula.";
+      out.tips.push("Si de verdad no comiste en todo el día, no intentes meter todo en una cena: comé una cena normal con una buena porción de proteína y mañana volvé a tu plan.");return out;}
+    if(s.k>t.max){var ex=s.k-t.max;out.mode="pasado";out.title="Te pasaste por "+fmt(ex)+" kcal. Se arregla con la semana, no con la noche";
+      out.sub="Una noche no cambia la tendencia: lo que define el resultado es el promedio de varios días.";
+      var w=svWeek(k);if(w)out.tips.push("Tu promedio de los últimos "+w.n+" días anotados es de "+fmt(Math.round(w.k))+" kcal y tu tope promedio, "+fmt(Math.round(w.max))+". "+(w.k<=w.max?"Aun con hoy, la semana sigue dentro de lo planeado.":"La semana va "+fmt(Math.round(w.k-w.max))+" kcal por día arriba del tope: conviene volver al plan desde mañana."));
+      if(mn&&s.k>mn)out.tips.push("Comiste "+fmt(Math.round(s.k-mn))+" kcal más de lo que gastás. Aun si todo eso fuera grasa, serían unos "+fmt(Math.round((s.k-mn)/7.7))+" g (unas 7.700 kcal por kilo, aproximado).");
+      else if(mn)out.tips.push("Te pasaste del tope, pero seguís debajo de lo que gastás: hoy igual hay déficit, más chico.");
+      out.tips.push("No lo compenses mañana comiendo casi nada ni con horas de cardio: eso trae más hambre y otra noche así. Mañana, tu plan normal.");
+      out.tips.push("Mañana la balanza puede subir por el agua y la sal de la comida. No es grasa: mirá el promedio de la semana.");
+      out.tips.push("Si querés hacer algo hoy: tomá agua, caminá tranquilo 20 a 30 minutos después de comer y andá a dormir a horario.");
+      if(pF>=15){out.head="Si todavía te falta proteína, lo más liviano para cubrirla:";out.opts=protOpts(null).slice(0,2);}
+      return out;}
+    if(pF>=15&&kMin>0){out.mode="ambos";var aim=Math.max(150,Math.min(kLeft-50,kMin+150)),wk=wavg(k,7),kg=wk.n?wk.v:(cfg.prof.w0||80),pMeal=Math.round(kg*0.55/5)*5,pC=pF,kC=aim,extra=null;
+      out.title="Te faltan "+fmt(pF)+" g de proteína y "+fmt(kMin)+" kcal para el mínimo";out.sub="Todavía se salva. Lo primero es la proteína; las calorías, con algo que te guste.";
+      if(pF>pMeal+10){pC=pMeal;kC=Math.max(Math.round(aim*0.6),Math.round(aim*pC/pF));var pR=pF-pC,kR=Math.max(100,aim-kC);
+        var L=SVP.map(function(x){return svOne(x[0],pR/(FT[x[0]][2]/100),x[1]);}).filter(function(m){return m.p>=pR*0.85;}).sort(function(a,b){return a.k-b.k;});
+        if(L.length){extra=L[0];extra.t="Antes de dormir: "+extra.t.toLowerCase();}
+        out.head="En dos partes: una cena de unas "+fmt(kC)+" kcal y "+pC+" g de proteína, y algo chico antes de dormir.";
+        out.tips.push("Se reparte porque, para el músculo, la recomendación es de 0,4 a 0,55 g de proteína por kilo en cada comida (Schoenfeld y Aragon, 2018): en tu caso, hasta unos "+pMeal+" g por comida.");}
+      else out.head="Una de estas cubre las dos cosas (unas "+fmt(aim)+" kcal):";
+      out.opts=SVA.map(function(x){return svRec({t:x[0],items:x[1].map(function(y){return [y[0],"",y[1]];})},kC,pC);}).concat(recOpts(kC,pC));
+      out.opts=out.opts.filter(function(m){return m.k<=kC*1.15+40&&m.k<=kLeft+40;});
+      out.opts.sort(function(a,b){return (Math.max(0,pC-a.p)-Math.max(0,pC-b.p))||Math.abs(a.k-kC)-Math.abs(b.k-kC);});out.opts=out.opts.slice(0,3);if(extra)out.opts.push(extra);
+      if(late)out.tips.push("Si ya es tarde, lo importante es la proteína. Si no llegás justo al mínimo de calorías un día aislado, no pasa nada.");
+      return out;}
+    if(pF>=15){out.mode="prot";out.title="Te faltan "+fmt(pF)+" g de proteína";out.sub="Te quedan "+fmt(Math.max(0,kLeft))+" kcal. Estas opciones la cubren sin pasarte:";
+      out.head="Elegí una:";out.opts=protOpts(Math.max(0,kLeft));if(!out.opts.fits){out.sub="Te quedan "+fmt(Math.max(0,kLeft))+" kcal y con eso no se llega a toda la proteína. Las primeras dan lo máximo sin pasarte"+(out.opts.over?"; la última la cubre entera pasándote unas "+fmt(out.opts.over)+" kcal, y por la proteína vale la pena":"")+".";}
+      if(kLeft<150)out.tips.push("Te quedan pocas calorías: elegí la primera, que es la que más proteína da por caloría.");
+      return out;}
+    if(kMin>0){out.mode="kcal";var aim2=Math.max(150,Math.min(kLeft-50,kMin+100));out.title="Te faltan "+fmt(kMin)+" kcal para el mínimo";
+      out.sub="La proteína está cubierta. Comer muy por debajo del mínimo seguido hace perder músculo y fuerza; un día aislado no es grave.";out.head="Para sumar unas "+fmt(aim2)+" kcal:";
+      out.opts=SVK.map(function(x){var m0=svMac(x[1]);return svScale(x[0],x[1],Math.max(0.5,Math.min(2.5,aim2/Math.max(m0.k,1))));}).filter(function(m){return m.k<=kLeft+40;}).slice(0,3);
+      if(late)out.tips.push("Antes de dormir, mejor algo liviano de digerir: el yogur con granola o la avena con leche.");
+      return out;}
+    out.mode="ok";out.title=dayOk(d,k)?"Día cumplido":"Vas bien";out.sub="La proteína está cubierta y estás dentro de tus calorías"+(kLeft>0?": te quedan "+fmt(kLeft)+" kcal.":".");
+    if(t.f&&s.f<t.f*0.5&&kLeft>150){out.head="Comiste poca grasa hoy ("+fmt(s.f)+" g de "+t.f+"). Si querés sumar:";var room=Math.min(kLeft-50,250);
+      out.opts=[[34,50],[58,40],[112,25]].map(function(x){var m0=svMac([x]),f=Math.max(0.5,Math.min(2,room/Math.max(m0.k,1)));return svScale(ingName(x[0]),[x],f);}).filter(function(m){return m.k<=kLeft;});}
+    if(!t.steps||!(d&&d.steps))if(t.steps)out.tips.push("Te falta marcar los pasos del día. Una caminata corta ahora también cuenta.");
+    return out;}
+  function renderSalva(){var c=$("sv-card");if(!c)return;var hh=SV.hour!==null?SV.hour:new Date().getHours();
+    if(!(cfg.setup&&D())||(hh<20&&!SV.force)){c.hidden=true;return;}
+    var k=today(),r=salvaPlan(k,hh);c.hidden=false;c.dataset.mode=r.mode;
+    $("sv-title").firstChild.textContent=r.title+" ";$("sv-sub").textContent=r.sub;
+    var R=$("sv-rows");R.textContent="";if(r.mode!=="vacio")r.rows.forEach(function(x){if(!x[2])return;var v=Math.round(x[1]),lo=x[2],hi=x[3],row=el("div","","sv-row"),st;
+      if(hi!==null){st=v>hi?["bad","sobran "+fmt(v-hi)]:v<lo?["warn","faltan "+fmt(lo-v)]:["ok","en rango"];}
+      else{var gap=lo-v;st=gap>(x[0]==="Proteína"?15:lo*0.25)?["warn","faltan "+fmt(gap)]:v>lo*1.35&&x[0]!=="Proteína"?["warn","sobran "+fmt(v-lo)]:["ok","bien"];}
+      row.appendChild(el("span",x[0]));row.appendChild(el("b",fmt(v)+" / "+(hi!==null?fmt(lo)+"–"+fmt(hi):fmt(lo))+" "+x[4]));var e2=el("span",st[1],"sv-st "+st[0]);row.appendChild(e2);R.appendChild(row);});
+    var h=$("sv-h");h.hidden=!r.head;h.textContent=r.head;
+    var ul=$("sv-list");ul.textContent="";var slot=hh>=22?"Colación":"Cena";
+    r.opts.forEach(function(m){var li=el("li"),sp=el("span");sp.appendChild(el("b",m.t));sp.appendChild(el("small",m.desc+" · "+fmt(m.k)+" kcal · "+m.p+" g prot. · "+m.c+" g carb. · "+m.fa+" g grasa"));li.appendChild(sp);
+      var b=el("button","Anotar","chip");b.type="button";b.setAttribute("aria-label","Anotar "+m.t);
+      b.addEventListener("click",function(){var it={id:"sv"+Date.now().toString(36)+Math.random().toString(36).slice(2,5),n:(slot+" · "+m.t).slice(0,200),k:m.k,p:m.p,c:m.c,f:m.fa,m:0};
+        var rr=rec();rr.e.push(it);save();opLog("salvar","Anotado desde «Salvar el día»: "+m.t);toast("Anoté "+m.t+": "+fmt(it.k)+" kcal y "+it.p+" g de proteína.",{undo:function(){var r2=rec();r2.e=r2.e.filter(function(y){return y.id!==it.id;});save();}});});
+      li.appendChild(b);ul.appendChild(li);});
+    var T=$("sv-tips");T.textContent="";r.tips.forEach(function(x){T.appendChild(el("li",x));});}
+  $("sv-open").addEventListener("click",function(){SV.force=true;renderSalva();var c=$("sv-card");if(c&&!c.hidden){c.scrollIntoView({behavior:"smooth",block:"start"});var h=$("sv-title");h.setAttribute("tabindex","-1");h.focus({preventScroll:true});}});
+  setInterval(function(){if(!document.hidden)safe(renderSalva);},300000);
   /* Accesos rápidos configurables: [etiqueta, ícono, destino] */
   var QK={comidas:["Comida",'<path d="M7 3v8M5 3v5a2 2 0 0 0 4 0V3M7 11v10M16.5 21V3c-2 0-3.5 2.5-3.5 6v4h3.5"/>',"qa-txt"],
     peso:["Peso y sueño",'<rect x="3.5" y="4" width="17" height="16.5" rx="3"/><path d="M8.5 9a5 5 0 0 1 7 0L12 12.5"/>',"peso"],
@@ -5730,7 +5946,7 @@ var FT=[["Aceite de coco",884,0,"F","Otros",null,null,0,100],["Aceite de girasol
   }
   window.addEventListener("online",function(){SYNC.fail=0;flush(0);});
   document.addEventListener("visibilitychange",function(){if(!document.hidden&&Object.keys(SYNC.pend).length)flush(0);});
-  if(window.__RD_TEST__)window.RD={days:function(){return days;},cfg:function(){return cfg;},S:function(){return S;},SYNC:SYNC,remoteSet:remoteSet,vDay:vDay,vDays:vDays,sanit:sanit,save:save,rec:rec,today:today,exportData:exportData,importData:importData,encryptText:encryptText,decryptText:decryptText,e1rm:e1rm,dots:dots,wilks:wilks,gl:gl,tdeeReal:tdeeReal,tgt:tgt,labFlags:labFlags,sum:sum,D:D,age:age,frState:frState,FRASES:FRASES,CITAS:CITAS,renderFrase:renderFrase,qaParse:qaParse,qaMac:qaMac,qaFromAI:qaFromAI,greetText:greetText,rcBook:rcBook,fitRec:fitRec,ingCls:ingCls,RECETAS:RECETAS,daySlots:daySlots,scaleRec:scaleRec,slotTarget:slotTarget,RCX:RCX,FEAT:FEAT,lvStats:lvStats,lvLevel:lvLevel,applyLevels:applyLevels,HOWTO:HOWTO,cardOf:cardOf,cmdIndex:cmdIndex,render:render,restPlan:restPlan,linreg:linreg,pearson:pearson,wTrend:wTrend,cookFactor:cookFactor,exportObj:exportObj,signObj:signObj,verifyBk:verifyBk,trashAll:trashAll,trashPut:trashPut,trashRestore:trashRestore,opLog:opLog,insights:insights,dashData:dashData,FORMULAS:FORMULAS,snapTake:snapTake,S:function(){return S;},itemTxt:itemTxt,foodKey:foodKey,showImport:showImport,foFill:foFill,injPlan:injPlan,injHit:injHit,injAlt:injAlt,INJZ:INJZ,wuPlan:wuPlan,wuRamp:wuRamp,INJMAP:INJMAP,QK:QK,e1rm:e1rm,pxKind:pxKind,mealOf:mealOf,renderRec:renderRec,mergeSalud:mergeSalud,grpSync:grpSync,renderQuick:renderQuick,TIPICAS:TIPICAS,tipMatch:tipMatch,tipMac:tipMac,bSmooth:bSmooth,setSample:function(x){SAMPLE=x;SAMPLEIMG=false;}};
+  if(window.__RD_TEST__)window.RD={days:function(){return days;},cfg:function(){return cfg;},S:function(){return S;},SYNC:SYNC,remoteSet:remoteSet,vDay:vDay,vDays:vDays,sanit:sanit,save:save,rec:rec,today:today,exportData:exportData,importData:importData,encryptText:encryptText,decryptText:decryptText,e1rm:e1rm,dots:dots,wilks:wilks,gl:gl,tdeeReal:tdeeReal,tgt:tgt,labFlags:labFlags,sum:sum,D:D,age:age,frState:frState,FRASES:FRASES,CITAS:CITAS,renderFrase:renderFrase,qaParse:qaParse,qaMac:qaMac,qaFromAI:qaFromAI,greetText:greetText,rcBook:rcBook,fitRec:fitRec,ingCls:ingCls,RECETAS:RECETAS,daySlots:daySlots,scaleRec:scaleRec,slotTarget:slotTarget,RCX:RCX,FEAT:FEAT,lvStats:lvStats,lvLevel:lvLevel,applyLevels:applyLevels,HOWTO:HOWTO,cardOf:cardOf,cmdIndex:cmdIndex,render:render,restPlan:restPlan,linreg:linreg,pearson:pearson,wTrend:wTrend,cookFactor:cookFactor,exportObj:exportObj,signObj:signObj,verifyBk:verifyBk,trashAll:trashAll,trashPut:trashPut,trashRestore:trashRestore,opLog:opLog,insights:insights,dashData:dashData,FORMULAS:FORMULAS,snapTake:snapTake,S:function(){return S;},itemTxt:itemTxt,foodKey:foodKey,showImport:showImport,foFill:foFill,injPlan:injPlan,injHit:injHit,injAlt:injAlt,INJZ:INJZ,wuPlan:wuPlan,wuRamp:wuRamp,INJMAP:INJMAP,QK:QK,e1rm:e1rm,pxKind:pxKind,mealOf:mealOf,renderRec:renderRec,mergeSalud:mergeSalud,grpSync:grpSync,renderQuick:renderQuick,TIPICAS:TIPICAS,PUBS:PUBS,salvaPlan:salvaPlan,renderSalva:renderSalva,SV:SV,tipMatch:tipMatch,tipMac:tipMac,bSmooth:bSmooth,setSample:function(x){SAMPLE=x;SAMPLEIMG=false;}};
   connect();
 })();
 </script>
