@@ -1,7 +1,7 @@
 /* Rinde Diario: funciona sin conexión.
    La página se pide primero a la red (así llegan las versiones nuevas) y, si no hay conexión, sale de la copia guardada.
    Íconos y fuentes salen de la copia guardada. Los datos de la persona NO pasan por acá: viven en el almacenamiento del navegador. */
-const VERSION = 'rinde-diario-31.6';
+const VERSION = 'rinde-diario-31.7';
 const CORE = ['./', './index.html', './manifest.webmanifest', './icons/icon-192.png', './icons/icon-512.png', './icons/icon-maskable-512.png', './icons/apple-touch-icon.png', './icons/favicon-32.png'];
 
 self.addEventListener('install', e => {
