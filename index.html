@@ -838,6 +838,18 @@ svg.exp{width:72px;height:60px;display:block;background:var(--accent-soft);borde
 #registro li:has(> button) > button:not(.ed-b){grid-column:3;grid-row:1 / span 2}
 #registro li:has(> button) > .ed-f{grid-column:1 / -1}
 
+/* v31.10: análisis */
+.lp-box{margin:6px 0 14px}.lp-box summary{min-height:44px;display:flex;align-items:center;font-weight:600;cursor:pointer}
+.lp-prev{border:1px solid var(--line);border-radius:12px;padding:12px;margin-top:8px;display:grid;gap:10px}
+.lp-l{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.lp-l li{display:grid;grid-template-columns:auto minmax(0,1fr) 6.5em auto;gap:4px 8px;align-items:center}
+.lp-l li input[type=number]{min-height:40px}
+.lp-l .lp-u{font-size:13px;color:var(--muted)}
+.lp-l small{grid-column:2/-1;font-size:12.5px;color:var(--muted);overflow-wrap:anywhere}
+.lp-l .lp-m{color:var(--warn)}
+.btnlabel{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 14px;border-radius:12px;border:1px solid var(--line);cursor:pointer;font-weight:600}
+.vh{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
 /* v31.9: TRT */
 .trav-card .tr-next{margin:12px 0 8px}
 .trav-card .tr-next .big{margin:2px 0}
@@ -1746,6 +1758,15 @@ h2.sect[id]{scroll-margin-top:12px}
       <p class="sub">Marcá cada estudio cuando te lo hagas y anotá el resultado. La lista se edita en Más.</p>
       <div id="labs"></div>
       <h3 class="lab-h">Valores</h3>
+      <details class="lp-box" id="lp-box"><summary>Cargar varios de una vez: pegar el informe o leer una captura</summary>
+        <p class="sub">Copiá los resultados del sitio o del PDF del laboratorio y pegalos acá, una línea por estudio. La app reconoce los nombres como los escribe el laboratorio («Transaminasa Glutámico Pirúvica», «GLAE», «Ionograma»…) y pasa de g/L a mg/dL cuando hace falta. Antes de guardar, revisás cada valor.</p>
+        <div class="field"><label for="lp-txt">Texto del informe</label><textarea id="lp-txt" rows="5" placeholder="Glucosa en suero 0,95 g/L&#10;Colesterol HDL 42 mg/dL&#10;Testosterona total 6,2 ng/mL"></textarea></div>
+        <div class="lib-btns"><button class="primary" type="button" id="lp-read">Leer valores</button><label class="ghost btnlabel" for="lp-photo">Leer una captura</label><input type="file" id="lp-photo" accept="image/*" hidden></div>
+        <p class="note" id="lp-st" aria-live="polite"></p>
+        <div class="lp-prev" id="lp-prev" hidden></div>
+        <p class="note">La fecha que se usa es la de «Fecha del análisis», abajo.</p>
+      </details>
+      <div class="field"><label for="lv-q">Buscar por el nombre del laboratorio</label><input type="text" id="lv-q" placeholder="Ej.: Transaminasa Glutámico Pirúvica" autocomplete="off"><small class="note" id="lv-q-st" aria-live="polite"></small></div>
       <div class="grid2">
         <div class="field"><label for="lv-k">Marcador</label><select id="lv-k"></select></div>
         <div class="field"><label for="lv-v" id="lv-u">Valor</label><input type="number" id="lv-v" inputmode="decimal" step="any"></div>
@@ -1756,6 +1777,7 @@ h2.sect[id]{scroll-margin-top:12px}
       <p class="okmsg" id="lv-ok" hidden></p>
       <div class="tbl"><table><thead><tr><th>Marcador</th><th class="num">Último</th><th class="num">Referencia <span class="sr">(rango poblacional)</span></th><th class="num">Estado</th></tr></thead><tbody id="lv-tbl"></tbody></table></div>
       <div class="chbox" id="ch-lab"></div>
+      <p class="note">Rangos de referencia generales (MedlinePlus, Biblioteca Nacional de Medicina de EE. UU., y guías citadas). Cada laboratorio tiene el suyo: el de tu informe manda.</p>
       <p class="note"><span class="kd kd-int" style="margin-left:0">Interpretación</span> Las lecturas de abajo ordenan tus valores para que los converses con tu médico. No son un diagnóstico y nunca indican cambiar una dosis.</p>
       <ul class="rules" id="lv-flags"></ul>
       <details>
@@ -3199,7 +3221,12 @@ var FT=[["Aceite de coco",884,0,"F","Otros",null,null,0,100],["Aceite de girasol
     ["cisC","Cistatina C","mg/L",[0.6,1.0],[0.6,1.0]],["psa","PSA total","ng/mL",[0,4],null],
     ["tt","Testosterona total","ng/dL",[264,916],[15,70]],["e2","Estradiol","pg/mL",[10,40],null],
     ["vitd","Vitamina D (25-OH)","ng/mL",[30,100],[30,100]],["tsh","TSH","mUI/L",[0.4,4.0],[0.4,4.0]],
-    ["tl","Testosterona libre","pg/mL",[47,244],[1,8.5]],["shbg","SHBG","nmol/L",[10,57],[18,144]],["apob","ApoB","mg/dL",[0,99],[0,99]],["ferr","Ferritina","ng/mL",[30,400],[15,150]]];
+    ["tl","Testosterona libre","pg/mL",[47,244],[1,8.5]],["shbg","SHBG","nmol/L",[10,57],[18,144]],["apob","ApoB","mg/dL",[0,99],[0,99]],["ferr","Ferritina","ng/mL",[30,400],[15,150]],
+    ["alb","Albúmina","g/dL",[3.4,5.4],[3.4,5.4]],["bt","Bilirrubina total","mg/dL",[0.1,1.2],[0.1,1.2]],["fal","Fosfatasa alcalina","U/L",[40,129],[40,129]],
+    ["na","Sodio","mmol/L",[135,145],[135,145]],["k","Potasio","mmol/L",[3.7,5.2],[3.7,5.2]],["cl","Cloro","mmol/L",[98,107],[98,107]],
+    ["t4l","T4 libre","ng/dL",[0.8,1.9],[0.8,1.9]],["au","Ácido úrico","mg/dL",[4,8.6],[3,7.1]],["prl","Prolactina","ng/mL",[0,20],[0,25]],
+    ["clcr","Clearance de creatinina","mL/min",[97,137],[88,128]],["gb","Glóbulos blancos","/mm³",[4500,11000],[4500,11000]],
+    ["gr","Glóbulos rojos","millones/mm³",[4.6,6.2],[4.2,5.4]],["plq","Plaquetas","/mm³",[150000,400000],[150000,400000]]];
   var LABN={};LABDEF.forEach(function(L){LABN[L[0]]=L[1];});
   function fv(v){return v>=100?fmt(v):dec(v,v<10?2:1).replace(/,?0+$/,"");}
   function labFlags(){var sx=cfg.prof.sex==="f"?"f":"m",out=[],M={};
@@ -4399,7 +4426,7 @@ var FT=[["Aceite de coco",884,0,"F","Otros",null,null,0,100],["Aceite de girasol
   $("lv-add").addEventListener("click",function(){var k=$("lv-k").value,v=num("lv-v"),d=$("lv-d").value||today(),e=$("lv-err"),ok=$("lv-ok"),msg="";
     if(!(isFinite(v)&&v>=0)){e.textContent="Poné el valor tal como figura en el análisis.";e.hidden=false;return;}
     if(d>today()){e.textContent="La fecha no puede ser futura.";e.hidden=false;return;}
-    if(k==="tt"&&v<30){v=Math.round(v*1000)/10;msg=" ng/dL (lo pasé de ng/mL, ×100)";}
+    var nn=labNorm(k,v,"");if(nn.msg){v=nn.v;msg=" "+LABDEF.filter(function(L){return L[0]===k;})[0][2]+" ("+nn.msg+")";}
     e.hidden=true;S.labv=S.labv||[];S.labv.push({d:d,k:k,v:v});$("lv-v").value="";saveSalud();
     ok.hidden=false;ok.textContent="Guardado: "+LABN[k]+" "+fv(v)+msg+".";setTimeout(function(){ok.hidden=true;},5000);});
   $("lv-undo").addEventListener("click",function(){var b=$("lv-undo");if(b.dataset.c!=="1"){b.dataset.c="1";b.textContent="¿Seguro? Tocá de nuevo";setTimeout(function(){b.dataset.c="";b.textContent="Borrar el último valor cargado";},4000);return;}
@@ -4611,7 +4638,7 @@ var FT=[["Aceite de coco",884,0,"F","Otros",null,null,0,100],["Aceite de girasol
 
 
   /* ---------- v31: indicadores de Mi día, lecturas, papelera, registro, copias automáticas, privacidad, fórmulas ---------- */
-  var APPV="31.9";
+  var APPV="31.10";
   function viewOf(n){var sc=n&&n.closest?n.closest("section.view"):null;return sc?sc.id.slice(2):null;}
   var LST="rendicion-papelera",LSO="rendicion-oplog";
   function opLog(op,d){try{var a=JSON.parse(localStorage.getItem(LSO)||"[]");if(!Array.isArray(a))a=[];a.push({t:new Date().toISOString(),op:String(op).slice(0,30),d:String(d||"").slice(0,200)});if(a.length>300)a=a.slice(-300);localStorage.setItem(LSO,JSON.stringify(a));}catch(e){}safe(renderLog);}
@@ -5769,7 +5796,7 @@ var FT=[["Aceite de coco",884,0,"F","Otros",null,null,0,100],["Aceite de girasol
     ["Observaciones de salud","obs-t","salud","nota sintoma observacion consulta medico"],["Privacidad: modo discreto y tapar la pantalla","pv-blur","mas","privacidad ocultar difuminar inactividad"],
     ["Papelera: recuperar lo que borré","tr-card","mas","borrado recuperar eliminar papelera"],["Registro de operaciones","log-card","mas","historial auditoria cambios log"],
     ["Copias automáticas del navegador","snap-card","mas","respaldo indexeddb recuperacion"],["Fórmulas que usa la app","fm-card","mas","formula calculo ecuacion fuente dots wilks e1rm"],
-    ["Acerca de: versión y espacio usado","ab-card","mas","version almacenamiento espacio info"],["Instalar la app en el teléfono o la computadora","pwa-card","mas","instalar aplicacion pantalla de inicio pwa sin conexion offline"],["TRT: cada cuántos días, próxima aplicación y aviso","trav-card","salud","trt testosterona aplicacion inyeccion aviso recordatorio notificacion calendario cada cuantos dias"],["Salvar el día: cómo cerrar las calorías y la proteína que faltan","sv-open","hoy","salvar dia noche faltan calorias proteina me pase revertir cerrar el dia cena"],["Kepi, hummus y comidas árabes, del norte y caseras","zn-card","nutricion","alfajor maicena medialuna factura panaderia pan galletitas pepsi levite aquarius gatorade speed monster cindor gaseosa coca cola sprite fanta 7up manaos paso de los toros sin azucar light zero kepi kepe hummus falafel niños envueltos tabule lajmayin fatay empanada salteña locro carbonada cabrito milanesa ñoquis puchero fernet cerveza mcdonalds mostaza"],["Accesos rápidos de Mi día","qk-card","mas","atajos botones inicio personalizar accesos rapidos"],["Evolución del peso: promedio, esperado y semanas","peso-card","salud","peso balanza promedio tendencia grafico"],["Racha y últimos 14 días","s-racha","nutricion","racha cumplido constancia dias seguidos historial"],["Tendencias y análisis: entrenamiento, nutrición, cuerpo y salud","tendencias","salud","analisis tendencias graficos estadisticas evolucion progreso resumen"],["Exportar solo una parte de mis datos","dt-parts","mas","exportar parcial seleccionar copia"]];
+    ["Acerca de: versión y espacio usado","ab-card","mas","version almacenamiento espacio info"],["Instalar la app en el teléfono o la computadora","pwa-card","mas","instalar aplicacion pantalla de inicio pwa sin conexion offline"],["Cargar análisis: pegar el informe o leer una captura","lp-box","salud","analisis laboratorio resultados pegar informe captura foto valores sangre hemograma ionograma hepatograma"],["TRT: cada cuántos días, próxima aplicación y aviso","trav-card","salud","trt testosterona aplicacion inyeccion aviso recordatorio notificacion calendario cada cuantos dias"],["Salvar el día: cómo cerrar las calorías y la proteína que faltan","sv-open","hoy","salvar dia noche faltan calorias proteina me pase revertir cerrar el dia cena"],["Kepi, hummus y comidas árabes, del norte y caseras","zn-card","nutricion","alfajor maicena medialuna factura panaderia pan galletitas pepsi levite aquarius gatorade speed monster cindor gaseosa coca cola sprite fanta 7up manaos paso de los toros sin azucar light zero kepi kepe hummus falafel niños envueltos tabule lajmayin fatay empanada salteña locro carbonada cabrito milanesa ñoquis puchero fernet cerveza mcdonalds mostaza"],["Accesos rápidos de Mi día","qk-card","mas","atajos botones inicio personalizar accesos rapidos"],["Evolución del peso: promedio, esperado y semanas","peso-card","salud","peso balanza promedio tendencia grafico"],["Racha y últimos 14 días","s-racha","nutricion","racha cumplido constancia dias seguidos historial"],["Tendencias y análisis: entrenamiento, nutrición, cuerpo y salud","tendencias","salud","analisis tendencias graficos estadisticas evolucion progreso resumen"],["Exportar solo una parte de mis datos","dt-parts","mas","exportar parcial seleccionar copia"]];
   var CMD={items:[],sel:0,ret:null};
   function nrm(t){return String(t).toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"");}
   function shown(node,stop){for(var p=node;p&&p!==stop;p=p.parentNode){if(p.nodeType===1&&(p.hidden||getComputedStyle(p).display==="none"))return false;}return true;}
@@ -6052,6 +6079,83 @@ var FT=[["Aceite de coco",884,0,"F","Otros",null,null,0,100],["Aceite de girasol
   document.addEventListener("visibilitychange",function(){if(!document.hidden){safe(renderTrHoy);trNotifyCheck();}});
   setInterval(function(){if(!document.hidden)trNotifyCheck();},300000);
   setTimeout(function(){trSync();trNotifyCheck();},2500);
+
+  /* ---------- Análisis: nombres como los escribe el laboratorio ---------- */
+  /* Alias normalizados (sin tildes). Se prueban de los más largos a los más cortos para que «hemoglobina glicosilada» no caiga en «hemoglobina». */
+  var LABAL={hto:["hematocrito","hto"],hb:["hemoglobina"],glu:["glucosa en suero","glucosa","glucemia"],a1c:["hemoglobina glicosilada","hemoglobina glicada","hba1c","a1c"],
+    ct:["colesterol total"],ldl:["colesterol ldl","ldl colesterol","ldl"],hdl:["colesterol hdl","hdl colesterol","hdl"],tg:["trigliceridos","trigliceridemia"],
+    got:["transaminasa glutamico oxalacetica","transaminasa oxalacetica","got","ast","aspartato aminotransferasa"],gpt:["transaminasa glutamico piruvica","transaminasa piruvica","gpt","alt","alanina aminotransferasa"],
+    ggt:["gamma glutamil transpeptidasa","gamma glutamil transferasa","gamma gt","ggt"],ck:["creatinfosfoquinasa","creatina quinasa","creatinquinasa","cpk","ck total","ck"],
+    clcr:["clearance de creatinina","clearence de creatinina","depuracion de creatinina","aclaramiento de creatinina"],crea:["creatinina en suero","creatininemia","creatinina"],
+    urea:["urea en suero","uremia","urea"],cisC:["cistatina c","cistatina"],psa:["antigeno prostatico especifico","psa total","psa t","psa"],
+    tl:["testosterona libre"],tt:["testosterona total","testosterona"],e2:["estradiol plasmatico","estradiol"],vitd:["vitamina d","25 oh","25-oh","hidroxivitamina d"],
+    tsh:["tsh","tirotrofina","hormona tiroestimulante"],t4l:["t4 l tiroxina libre","t4 libre","t4l","tiroxina libre"],shbg:["globulina ligadora de androgenos","glae","shbg"],
+    apob:["apolipoproteina b","apo b","apob"],ferr:["ferritina"],alb:["albumina"],bt:["bilirrubinemia total","bilirrubina total"],fal:["fosfatasa alcalina","fal"],
+    na:["sodio","natremia"],k:["potasio","kalemia","potasemia"],cl:["cloro","cloruro","cloremia"],au:["acido urico","uricemia"],prl:["prolactina plasmatica","prolactina"],
+    gb:["globulos blancos","leucocitos"],gr:["globulos rojos","hematies","eritrocitos"],plq:["plaquetas","recuento de plaquetas"]};
+  /* Estudios que agrupan varios marcadores */
+  var LABGRP={"hemograma":["hto","hb","gb","gr","plq"],"ionograma":["na","k","cl"],"hepatograma":["got","gpt","ggt","fal","bt","alb"],"perfil lipidico":["ct","ldl","hdl","tg"],"perfil tiroideo":["tsh","t4l"],"funcion renal":["crea","urea"]};
+  var LABALL=(function(){var a=[];Object.keys(LABAL).forEach(function(k){LABAL[k].forEach(function(n){a.push([n,k]);});});return a.sort(function(x,y){return y[0].length-x[0].length;});})();
+  function labNrm(t){return nrm(t).replace(/[()\[\]_.,:;\/]/g," ").replace(/\s*-\s*/g," ").replace(/\s+/g," ").trim();}
+  function labKey(t){var n=" "+labNrm(t)+" ";for(var i=0;i<LABALL.length;i++){var a=LABALL[i][0];if(n.indexOf(" "+a+" ")>=0)return {k:LABALL[i][1],at:n.indexOf(" "+a+" "),len:a.length+1};}return null;}
+  /* Unidades: muchos laboratorios argentinos informan glucemia, colesterol, triglicéridos y urea en g/L */
+  function labNorm(k,v,u){u=nrm(u||"");var msg="";
+    if(["glu","ct","ldl","hdl","tg","urea"].indexOf(k)>=0&&(/g\/l/.test(u)&&!/mg|dl/.test(u)||(!u&&v<10&&!(k==="hdl"&&v>=10)))){v=Math.round(v*1000)/10;msg="pasé de g/L a mg/dL (×100)";}
+    else if(k==="tt"&&(/ng\/ml/.test(u)||(!u&&v<30))){v=Math.round(v*1000)/10;msg="pasé de ng/mL a ng/dL (×100)";}
+    else if(k==="tl"&&/ng\/dl/.test(u)){v=Math.round(v*100)/10;msg="pasé de ng/dL a pg/mL (×10)";}
+    else if(k==="gb"&&v<100){v=Math.round(v*1000);msg="pasé de miles a unidades por mm³";}
+    else if(k==="plq"&&v<2000){v=Math.round(v*1000);msg="pasé de miles a unidades por mm³";}
+    else if(k==="gr"&&v>100){v=Math.round(v/10000)/100;msg="pasé a millones por mm³";}
+    else if(k==="crea"&&v>20&&/umol|µmol/.test(u)){v=Math.round(v/88.4*100)/100;msg="pasé de µmol/L a mg/dL";}
+    return {v:v,msg:msg};}
+  /* Lee texto pegado del informe: una línea por estudio, con el nombre y el resultado */
+  function labParse(txt){var vals=[],exams=[],seen={};String(txt||"").split(/\r?\n/).forEach(function(line){var raw=line.trim();if(!raw)return;
+      var lk=labKey(raw),n=labNrm(raw),g=null;Object.keys(LABGRP).forEach(function(x){if(n.indexOf(x)>=0)g=x;});
+      var nm=raw.replace(/^\s*\d{4,}\s*-\s*/,"").split(/\t|\s{2,}|\s\d{1,2}\/\d{1,2}\/\d{2,4}/)[0].replace(/\s+\d+(?:[.,]\d+)?\s*[a-zA-Zµ%\/³0-9]*(\s.*)?$/,"").trim();
+      if((lk||g)&&nm&&exams.indexOf(nm)<0&&nm.length<=60)exams.push(nm);
+      if(!lk)return;var low=nrm(raw),best=null;
+      LABALL.forEach(function(x){if(x[1]!==lk.k||best&&best[0].length>=x[0].length)return;var re=new RegExp("(^|[^a-z0-9])"+x[0].split(" ").map(function(w){return w.replace(/[.*+?^${}()|[\]\\-]/g,"\\$&");}).join("[^a-z0-9]+")+"(?![a-z0-9])");var mt=re.exec(low);if(mt)best=[x[0],mt.index+mt[0].length];});
+      if(!best)return;var rest=low.slice(best[1]).replace(/\d{1,2}\/\d{1,2}\/\d{2,4}/g," ").replace(/\d{1,2}:\d{2}(:\d{2})?/g," ");
+      rest=rest.replace(/^[\s\-:]*(\([^)]*\)|en suero|en sangre|plasmatic[oa]|serica?|total|libre)?[\s\-:]*/,"");
+      var mm=rest.match(/(?:^|[^a-z0-9.,])(\d+(?:[.,]\d+)?)\s*([a-zµ%][a-zµ%\/³0-9]*(?:\/[a-z³0-9]+)?)?/);if(!mm)return;var v=parseFloat(mm[1].replace(",","."));if(!isFinite(v))return;
+      if(seen[lk.k])return;seen[lk.k]=1;var nv=labNorm(lk.k,v,mm[2]||"");vals.push({k:lk.k,v:nv.v,raw:raw.slice(0,80),msg:nv.msg});});
+    return {vals:vals,exams:exams};}
+  var LP={vals:[],exams:[]};
+  function labPrev(res,src){LP=res;var box=$("lp-prev"),st=$("lp-st");box.textContent="";box.hidden=false;
+    if(!res.vals.length&&!res.exams.length){box.hidden=true;st.textContent=src==="foto"?"No encontré valores en la imagen. Probá con una captura más cerca de la tabla de resultados.":"No reconocí ningún estudio. Pegá las líneas con el nombre y el resultado, una por línea.";return;}
+    st.textContent="";
+    if(res.vals.length){box.appendChild(el("b","Revisá los valores antes de guardar"));var ul=el("ul",null,"lp-l");
+      res.vals.forEach(function(x,i){var L=LABDEF.filter(function(d){return d[0]===x.k;})[0],li=el("li"),cb=el("input");cb.type="checkbox";cb.checked=true;cb.id="lp-c-"+i;
+        var lb=el("label",L[1]);lb.htmlFor=cb.id;var iv=el("input");iv.type="number";iv.step="any";iv.inputMode="decimal";iv.id="lp-v-"+i;iv.value=String(x.v);iv.setAttribute("aria-label","Valor de "+L[1]);
+        li.appendChild(cb);li.appendChild(lb);li.appendChild(iv);li.appendChild(el("span",L[2],"lp-u"));if(x.msg)li.appendChild(el("small",x.msg,"lp-m"));if(x.raw)li.appendChild(el("small","«"+x.raw+"»","lp-r"));ul.appendChild(li);});
+      box.appendChild(ul);}
+    var miss=res.exams.filter(function(n){return cfg.labsList.indexOf(n)<0;});
+    if(res.exams.length){box.appendChild(el("p",res.exams.length+(res.exams.length===1?" estudio reconocido":" estudios reconocidos")+(miss.length?"; "+miss.length+" no están en tu lista de pedidos.":", todos en tu lista."),"note"));}
+    var row=el("div",null,"lib-btns");if(res.vals.length){var go=el("button","Guardar estos valores","primary");go.type="button";go.id="lp-go";go.addEventListener("click",labSavePrev);row.appendChild(go);}
+    if(miss.length){var ad=el("button","Agregar los estudios a mi lista","ghost");ad.type="button";ad.id="lp-list";ad.addEventListener("click",function(){var before=cfg.labsList.slice();cfg.labsList=cfg.labsList.concat(miss).slice(0,60);saveCfg();
+      opLog("analisis",miss.length+" estudios agregados a la lista");toast("Agregué "+miss.length+(miss.length===1?" estudio":" estudios")+" a tu lista.",{undo:function(){cfg.labsList=before;saveCfg();}});ad.remove();});row.appendChild(ad);}
+    box.appendChild(row);}
+  function labSavePrev(){var d=$("lv-d").value||today(),add=[],st=$("lp-st");if(d>today()){st.textContent="La fecha del análisis no puede ser futura.";return;}
+    LP.vals.forEach(function(x,i){if(!$("lp-c-"+i).checked)return;var v=parseFloat(String($("lp-v-"+i).value).replace(",","."));if(!isFinite(v)||v<0||v>1e6)return;
+      if((S.labv||[]).some(function(y){return y.k===x.k&&y.d===d&&y.v===v;}))return;add.push({d:d,k:x.k,v:v});});
+    if(!add.length){st.textContent="No hay valores nuevos para guardar (o ya estaban cargados con esa fecha).";return;}
+    S.labv=(S.labv||[]).concat(add);saveSalud();opLog("analisis",add.length+" valores del "+fd(d));$("lp-prev").hidden=true;$("lp-txt").value="";
+    st.textContent="Guardé "+add.length+(add.length===1?" valor":" valores")+" del "+fd(d)+".";
+    toast("Guardé "+add.length+(add.length===1?" valor":" valores")+" del análisis.",{undo:function(){S.labv=(S.labv||[]).filter(function(y){return add.indexOf(y)<0;});saveSalud();}});}
+  $("lp-read").addEventListener("click",function(){labPrev(labParse($("lp-txt").value),"texto");});
+  $("lv-q").addEventListener("input",function(){var r=labKey($("lv-q").value),h=$("lv-q-st");if(r){$("lv-k").value=r.k;$("lv-k").dispatchEvent(new Event("change"));h.textContent="Es «"+LABN[r.k]+"» en la app.";}else h.textContent=$("lv-q").value.trim()?"No lo reconozco. Elegilo en la lista o escribí otra parte del nombre.":"";});
+  /* Leer una captura del informe con Claude: propone valores, la persona revisa y guarda */
+  $("lp-photo").addEventListener("change",function(){var f=$("lp-photo").files&&$("lp-photo").files[0],st=function(t){$("lp-st").textContent=t;};$("lp-photo").value="";if(!f)return;
+    if(!SAMPLE){st("Leer capturas usa Claude, y solo funciona con Rinde Diario abierta desde claude.ai o la app de Claude. Acá podés pegar el texto del informe.");return;}
+    photoPrep(f,st).then(function(b){if(!b)return;return photoCan().then(function(ok){if(!ok){st("Claude no está recibiendo imágenes desde esta app en este momento. Pegá el texto del informe.");return;}
+      st("Leyendo el informe…");
+      var pr="Esta es la imagen de un informe de análisis clínicos de un laboratorio argentino. Copiá cada resultado tal cual figura, sin interpretar ni completar lo que no se lea. "+
+        "Respondé solo JSON: {\"fecha\":\"AAAA-MM-DD o null\",\"resultados\":[{\"nombre\":\"nombre del estudio como está escrito\",\"valor\":número,\"unidad\":\"unidad como está escrita\"}]}. "+
+        "Usá punto decimal. Si un estudio no tiene resultado (dice pendiente o no pronto), no lo incluyas.";
+      return SAMPLE.json(pr,{images:[b],modelTier:"default"}).then(function(o){var rs=isObj(o)&&Array.isArray(o.resultados)?o.resultados:[],txt=rs.filter(function(x){return isObj(x)&&typeof x.nombre==="string"&&nr(x.valor,0,1e7)!==null;}).map(function(x){return x.nombre+" "+x.valor+" "+(x.unidad||"");}).join("\n");
+        if(isObj(o)&&typeof o.fecha==="string"&&DKEY.test(o.fecha)&&o.fecha<=today())$("lv-d").value=o.fecha;var res=labParse(txt);labPrev(res,"foto");
+        if(res.vals.length)st("Leí "+res.vals.length+(res.vals.length===1?" valor":" valores")+". Revisalos con el informe antes de guardar.");},
+        function(e){var c=e&&e.code;st(c==="rate_limited"?"Demasiados pedidos seguidos; probá en un minuto.":"No se pudo leer la imagen"+(c?" (motivo: "+c+")":"")+". Pegá el texto del informe.");if(c==="not_granted")SAMPLE=null;});});});});
   /* Accesos rápidos configurables: [etiqueta, ícono, destino] */
   var QK={comidas:["Comida",'<path d="M7 3v8M5 3v5a2 2 0 0 0 4 0V3M7 11v10M16.5 21V3c-2 0-3.5 2.5-3.5 6v4h3.5"/>',"qa-txt"],
     peso:["Peso y sueño",'<rect x="3.5" y="4" width="17" height="16.5" rx="3"/><path d="M8.5 9a5 5 0 0 1 7 0L12 12.5"/>',"peso"],
@@ -6135,7 +6239,7 @@ var FT=[["Aceite de coco",884,0,"F","Otros",null,null,0,100],["Aceite de girasol
   }
   window.addEventListener("online",function(){SYNC.fail=0;flush(0);});
   document.addEventListener("visibilitychange",function(){if(!document.hidden&&Object.keys(SYNC.pend).length)flush(0);});
-  if(window.__RD_TEST__)window.RD={days:function(){return days;},cfg:function(){return cfg;},S:function(){return S;},SYNC:SYNC,remoteSet:remoteSet,vDay:vDay,vDays:vDays,sanit:sanit,save:save,rec:rec,today:today,exportData:exportData,importData:importData,encryptText:encryptText,decryptText:decryptText,e1rm:e1rm,dots:dots,wilks:wilks,gl:gl,tdeeReal:tdeeReal,tgt:tgt,labFlags:labFlags,sum:sum,D:D,age:age,frState:frState,FRASES:FRASES,CITAS:CITAS,renderFrase:renderFrase,qaParse:qaParse,qaMac:qaMac,qaFromAI:qaFromAI,greetText:greetText,rcBook:rcBook,fitRec:fitRec,ingCls:ingCls,RECETAS:RECETAS,daySlots:daySlots,scaleRec:scaleRec,slotTarget:slotTarget,RCX:RCX,FEAT:FEAT,lvStats:lvStats,lvLevel:lvLevel,applyLevels:applyLevels,HOWTO:HOWTO,cardOf:cardOf,cmdIndex:cmdIndex,render:render,restPlan:restPlan,linreg:linreg,pearson:pearson,wTrend:wTrend,cookFactor:cookFactor,exportObj:exportObj,signObj:signObj,verifyBk:verifyBk,trashAll:trashAll,trashPut:trashPut,trashRestore:trashRestore,opLog:opLog,insights:insights,dashData:dashData,FORMULAS:FORMULAS,snapTake:snapTake,S:function(){return S;},itemTxt:itemTxt,foodKey:foodKey,showImport:showImport,foFill:foFill,injPlan:injPlan,injHit:injHit,injAlt:injAlt,INJZ:INJZ,wuPlan:wuPlan,wuRamp:wuRamp,INJMAP:INJMAP,QK:QK,e1rm:e1rm,pxKind:pxKind,mealOf:mealOf,renderRec:renderRec,mergeSalud:mergeSalud,grpSync:grpSync,renderQuick:renderQuick,TIPICAS:TIPICAS,PUBS:PUBS,salvaPlan:salvaPlan,trInfo:trInfo,trIcs:trIcs,trGcal:trGcal,trNotifyCheck:trNotifyCheck,trDue:trDue,renderSalva:renderSalva,SV:SV,tipMatch:tipMatch,tipMac:tipMac,bSmooth:bSmooth,setSample:function(x){SAMPLE=x;SAMPLEIMG=false;}};
+  if(window.__RD_TEST__)window.RD={days:function(){return days;},cfg:function(){return cfg;},S:function(){return S;},SYNC:SYNC,remoteSet:remoteSet,vDay:vDay,vDays:vDays,sanit:sanit,save:save,rec:rec,today:today,exportData:exportData,importData:importData,encryptText:encryptText,decryptText:decryptText,e1rm:e1rm,dots:dots,wilks:wilks,gl:gl,tdeeReal:tdeeReal,tgt:tgt,labFlags:labFlags,sum:sum,D:D,age:age,frState:frState,FRASES:FRASES,CITAS:CITAS,renderFrase:renderFrase,qaParse:qaParse,qaMac:qaMac,qaFromAI:qaFromAI,greetText:greetText,rcBook:rcBook,fitRec:fitRec,ingCls:ingCls,RECETAS:RECETAS,daySlots:daySlots,scaleRec:scaleRec,slotTarget:slotTarget,RCX:RCX,FEAT:FEAT,lvStats:lvStats,lvLevel:lvLevel,applyLevels:applyLevels,HOWTO:HOWTO,cardOf:cardOf,cmdIndex:cmdIndex,render:render,restPlan:restPlan,linreg:linreg,pearson:pearson,wTrend:wTrend,cookFactor:cookFactor,exportObj:exportObj,signObj:signObj,verifyBk:verifyBk,trashAll:trashAll,trashPut:trashPut,trashRestore:trashRestore,opLog:opLog,insights:insights,dashData:dashData,FORMULAS:FORMULAS,snapTake:snapTake,S:function(){return S;},itemTxt:itemTxt,foodKey:foodKey,showImport:showImport,foFill:foFill,injPlan:injPlan,injHit:injHit,injAlt:injAlt,INJZ:INJZ,wuPlan:wuPlan,wuRamp:wuRamp,INJMAP:INJMAP,QK:QK,e1rm:e1rm,pxKind:pxKind,mealOf:mealOf,renderRec:renderRec,mergeSalud:mergeSalud,grpSync:grpSync,renderQuick:renderQuick,TIPICAS:TIPICAS,PUBS:PUBS,salvaPlan:salvaPlan,trInfo:trInfo,labParse:labParse,labKey:labKey,labNorm:labNorm,LABDEF:LABDEF,trIcs:trIcs,trGcal:trGcal,trNotifyCheck:trNotifyCheck,trDue:trDue,renderSalva:renderSalva,SV:SV,tipMatch:tipMatch,tipMac:tipMac,bSmooth:bSmooth,setSample:function(x){SAMPLE=x;SAMPLEIMG=false;}};
   connect();
 })();
 </script>
