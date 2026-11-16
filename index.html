@@ -838,6 +838,15 @@ svg.exp{width:72px;height:60px;display:block;background:var(--accent-soft);borde
 #registro li:has(> button) > button:not(.ed-b){grid-column:3;grid-row:1 / span 2}
 #registro li:has(> button) > .ed-f{grid-column:1 / -1}
 
+/* v31.9: TRT */
+.trav-card .tr-next{margin:12px 0 8px}
+.trav-card .tr-next .big{margin:2px 0}
+.tr-tip{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px}
+.tr-tip span{flex:1 1 14em;min-width:0}
+.btnlink{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 14px;border-radius:12px;border:1px solid var(--line);background:var(--surface-2);color:var(--fg);text-decoration:none;font-weight:600;font-size:14px}
+.btnlink[aria-disabled="true"]{opacity:.5;pointer-events:none}
+.trav-how{margin-top:10px}.trav-how summary{min-height:44px;display:flex;align-items:center;font-weight:600;cursor:pointer}
+
 /* v31.6: salvar el día */
 .sv-card{border-color:var(--c-nut);background:linear-gradient(140deg,var(--surface) 0%,var(--c-nut-s) 100%)}
 .sv-card[data-mode="pasado"]{border-color:var(--bad)}
@@ -968,6 +977,7 @@ h2.sect[id]{scroll-margin-top:12px}
       <ul class="sv-tips" id="sv-tips"></ul>
       <p class="note">Porciones calculadas con la tabla de alimentos de la app y tus objetivos de hoy. Son estimaciones para ordenar la comida, no indicaciones médicas.</p>
     </div>
+<div class="tip warn tr-tip" id="tr-tip" hidden><span id="tr-tip-t"></span><button class="chip" type="button" id="tr-tip-ok">Ya me la apliqué</button></div>
 <p class="tip warn" id="sueno-tip" hidden></p>
 <p class="tip bad" id="lab-alert" hidden></p>
 <p class="tip fatix adv" id="fat-idx" hidden></p>
@@ -1775,7 +1785,7 @@ h2.sect[id]{scroll-margin-top:12px}
       </div>
     </details>
 <details class="grp" id="grp-sal-sup">
-      <summary><span class="gi" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><rect x="3.5" y="8.5" width="17" height="7" rx="3.5" transform="rotate(-35 12 12)"/><path d="m9.7 8.7 4.6 6.6"/></svg></span><span class="gt"><b>Suplementación</b><small>Qué tomás, para tildarlo cada día</small></span><span class="gc" aria-hidden="true"></span></summary>
+      <summary><span class="gi" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><rect x="3.5" y="8.5" width="17" height="7" rx="3.5" transform="rotate(-35 12 12)"/><path d="m9.7 8.7 4.6 6.6"/></svg></span><span class="gt"><b>Suplementación y TRT</b><small>Qué tomás cada día y el aviso de cada aplicación</small></span><span class="gc" aria-hidden="true"></span></summary>
       <div class="grp-b">
 <details class="card" id="sp-card">
       <summary>Tus suplementos</summary>
@@ -1783,6 +1793,36 @@ h2.sect[id]{scroll-margin-top:12px}
       <div id="sp-list"></div>
       <p class="note">Dosis generales para adultos según la evidencia citada. Si tomás medicación o tenés una enfermedad, confirmalas con tu médico.</p>
     </details>
+<div class="card trav-card" id="trav-card">
+      <h2>TRT: aplicaciones y aviso</h2>
+      <p class="sub">Te recuerda cuándo te toca según el esquema que te indicó tu médico. La app no sugiere dosis ni cambios.</p>
+      <label class="toggle" for="tr-on">Llevo TRT<input type="checkbox" id="tr-on"></label>
+      <div id="tr-f" hidden>
+        <div class="edrow">
+          <div class="field"><label for="tr-name">Qué te aplicás</label><input type="text" id="tr-name" maxlength="40" placeholder="Testosterona"></div>
+          <div class="field"><label for="tr-every">Cada cuántos días</label><input type="number" id="tr-every" inputmode="numeric" min="1" max="60"></div>
+        </div>
+        <div class="edrow">
+          <div class="field"><label for="tr-hora">Hora del aviso</label><input type="time" id="tr-hora"></div>
+          <div class="field"><label for="tr-last">Última aplicación</label><input type="date" id="tr-last"></div>
+        </div>
+        <p class="err" id="tr-err" hidden></p>
+        <div class="tr-next"><span class="label">Próxima</span><div class="big" id="tr-next">–</div><p class="sub" id="tr-next-sub"></p></div>
+        <div class="grid2"><button class="good" type="button" id="tr-hoy">Me la apliqué hoy</button><button class="ghost" type="button" id="tr-ver">Ver historial y controles</button></div>
+        <span class="label">Avisos</span>
+        <label class="toggle" for="tr-notif">Notificación en el teléfono<input type="checkbox" id="tr-notif"></label>
+        <p class="note" id="tr-notif-st"></p>
+        <div class="lib-btns"><a class="btnlink ghost" id="tr-gcal" href="#" target="_blank" rel="noopener">Agregar a Google Calendar</a><button class="ghost" type="button" id="tr-ics">Descargar para otro calendario (.ics)</button></div>
+        <p class="note" id="tr-cal-st"></p>
+        <details class="trav-how"><summary>Cómo llega cada aviso</summary>
+          <ul class="sv-tips">
+            <li><b>En la app:</b> el día que te toca, Mi día te lo muestra arriba hasta que la anotes.</li>
+            <li><b>Notificación:</b> funciona con la app instalada desde la página publicada. Con la app abierta llega a la hora elegida. Con la app cerrada, Chrome en Android revisa en segundo plano unas pocas veces por día, así que puede llegar más tarde o no llegar. Dentro de Claude no se pueden mostrar notificaciones.</li>
+            <li><b>Calendario:</b> es el aviso más seguro. Crea un evento que se repite cada tantos días, a la hora elegida, con alarma. Si cambiás el intervalo o se corre una aplicación, volvé a agregarlo y borrá el anterior.</li>
+          </ul>
+        </details>
+      </div>
+    </div>
       </div>
     </details>
     </div>
@@ -4246,7 +4286,7 @@ var FT=[["Aceite de coco",884,0,"F","Otros",null,null,0,100],["Aceite de girasol
     var c=t.closest(".card,.chbox,details"),h=c&&c.querySelector("h2,summary,.label");t.setAttribute("aria-label","Tabla"+(h?": "+txt0(h).slice(0,60):""));});}
   function render(){applyAX();if(!cfg.cycleFrom){cfg.cycleFrom=today();lsSet(LSC,cfg);}
     var w7=wavg(today(),7);WREF=w7.n?w7.v:null;document.body.classList.toggle("basic",cfg.athlete===false);computePH();var n=new Date();$("fecha").textContent=DIA[n.getDay()]+" "+n.getDate()+" de "+MES[n.getMonth()];
-    safe(renderHoy);safe(renderMedidas);safe(renderEntreno);safe(renderSemana);safe(renderPlan);safe(renderSalud);safe(renderPerfil);safe(renderMods);safe(renderTeoria);safe(renderCoach);safe(renderSuplHoy);safe(renderSuplMas);safe(renderPG);safe(renderTRT);safe(renderBC);safe(renderCharts);safe(renderFatIdx);safe(renderPDist);safe(renderRc);safe(renderQA);safe(renderGreet);safe(renderFrase);safe(renderDash);safe(renderZona);safe(renderSalva);safe(renderWU);safe(renderInj);safe(renderNA);safe(renderIns);safe(renderObs);safe(renderMR);safe(renderPriv);safe(renderAbout);safe(tblA11y);safe(applyLevels);safe(renderQuick);safe(renderHoyCons);safe(renderDia);safe(renderEntHero);safe(renderNutHero);safe(renderSalHero);safe(grpSync);if(FX.on)fxLoad();if(!$("lib-card").contains(document.activeElement))renderLib();}
+    safe(renderHoy);safe(renderMedidas);safe(renderEntreno);safe(renderSemana);safe(renderPlan);safe(renderSalud);safe(renderPerfil);safe(renderMods);safe(renderTeoria);safe(renderCoach);safe(renderSuplHoy);safe(renderSuplMas);safe(renderPG);safe(renderTRT);safe(renderBC);safe(renderCharts);safe(renderFatIdx);safe(renderPDist);safe(renderRc);safe(renderQA);safe(renderGreet);safe(renderFrase);safe(renderDash);safe(renderZona);safe(renderSalva);safe(renderTR);safe(renderTrHoy);safe(renderWU);safe(renderInj);safe(renderNA);safe(renderIns);safe(renderObs);safe(renderMR);safe(renderPriv);safe(renderAbout);safe(tblA11y);safe(applyLevels);safe(renderQuick);safe(renderHoyCons);safe(renderDia);safe(renderEntHero);safe(renderNutHero);safe(renderSalHero);safe(grpSync);if(FX.on)fxLoad();if(!$("lib-card").contains(document.activeElement))renderLib();}
 
   /* ---------- Temporizador de descanso ---------- */
   var RT={dur:120,end:0,left:120,run:false,done:false,paused:false},ac=null,wl=null,rtTick=null,rtDoneT=null;
@@ -4571,7 +4611,7 @@ var FT=[["Aceite de coco",884,0,"F","Otros",null,null,0,100],["Aceite de girasol
 
 
   /* ---------- v31: indicadores de Mi día, lecturas, papelera, registro, copias automáticas, privacidad, fórmulas ---------- */
-  var APPV="31.8";
+  var APPV="31.9";
   function viewOf(n){var sc=n&&n.closest?n.closest("section.view"):null;return sc?sc.id.slice(2):null;}
   var LST="rendicion-papelera",LSO="rendicion-oplog";
   function opLog(op,d){try{var a=JSON.parse(localStorage.getItem(LSO)||"[]");if(!Array.isArray(a))a=[];a.push({t:new Date().toISOString(),op:String(op).slice(0,30),d:String(d||"").slice(0,200)});if(a.length>300)a=a.slice(-300);localStorage.setItem(LSO,JSON.stringify(a));}catch(e){}safe(renderLog);}
@@ -5729,7 +5769,7 @@ var FT=[["Aceite de coco",884,0,"F","Otros",null,null,0,100],["Aceite de girasol
     ["Observaciones de salud","obs-t","salud","nota sintoma observacion consulta medico"],["Privacidad: modo discreto y tapar la pantalla","pv-blur","mas","privacidad ocultar difuminar inactividad"],
     ["Papelera: recuperar lo que borré","tr-card","mas","borrado recuperar eliminar papelera"],["Registro de operaciones","log-card","mas","historial auditoria cambios log"],
     ["Copias automáticas del navegador","snap-card","mas","respaldo indexeddb recuperacion"],["Fórmulas que usa la app","fm-card","mas","formula calculo ecuacion fuente dots wilks e1rm"],
-    ["Acerca de: versión y espacio usado","ab-card","mas","version almacenamiento espacio info"],["Instalar la app en el teléfono o la computadora","pwa-card","mas","instalar aplicacion pantalla de inicio pwa sin conexion offline"],["Salvar el día: cómo cerrar las calorías y la proteína que faltan","sv-open","hoy","salvar dia noche faltan calorias proteina me pase revertir cerrar el dia cena"],["Kepi, hummus y comidas árabes, del norte y caseras","zn-card","nutricion","alfajor maicena medialuna factura panaderia pan galletitas pepsi levite aquarius gatorade speed monster cindor gaseosa coca cola sprite fanta 7up manaos paso de los toros sin azucar light zero kepi kepe hummus falafel niños envueltos tabule lajmayin fatay empanada salteña locro carbonada cabrito milanesa ñoquis puchero fernet cerveza mcdonalds mostaza"],["Accesos rápidos de Mi día","qk-card","mas","atajos botones inicio personalizar accesos rapidos"],["Evolución del peso: promedio, esperado y semanas","peso-card","salud","peso balanza promedio tendencia grafico"],["Racha y últimos 14 días","s-racha","nutricion","racha cumplido constancia dias seguidos historial"],["Tendencias y análisis: entrenamiento, nutrición, cuerpo y salud","tendencias","salud","analisis tendencias graficos estadisticas evolucion progreso resumen"],["Exportar solo una parte de mis datos","dt-parts","mas","exportar parcial seleccionar copia"]];
+    ["Acerca de: versión y espacio usado","ab-card","mas","version almacenamiento espacio info"],["Instalar la app en el teléfono o la computadora","pwa-card","mas","instalar aplicacion pantalla de inicio pwa sin conexion offline"],["TRT: cada cuántos días, próxima aplicación y aviso","trav-card","salud","trt testosterona aplicacion inyeccion aviso recordatorio notificacion calendario cada cuantos dias"],["Salvar el día: cómo cerrar las calorías y la proteína que faltan","sv-open","hoy","salvar dia noche faltan calorias proteina me pase revertir cerrar el dia cena"],["Kepi, hummus y comidas árabes, del norte y caseras","zn-card","nutricion","alfajor maicena medialuna factura panaderia pan galletitas pepsi levite aquarius gatorade speed monster cindor gaseosa coca cola sprite fanta 7up manaos paso de los toros sin azucar light zero kepi kepe hummus falafel niños envueltos tabule lajmayin fatay empanada salteña locro carbonada cabrito milanesa ñoquis puchero fernet cerveza mcdonalds mostaza"],["Accesos rápidos de Mi día","qk-card","mas","atajos botones inicio personalizar accesos rapidos"],["Evolución del peso: promedio, esperado y semanas","peso-card","salud","peso balanza promedio tendencia grafico"],["Racha y últimos 14 días","s-racha","nutricion","racha cumplido constancia dias seguidos historial"],["Tendencias y análisis: entrenamiento, nutrición, cuerpo y salud","tendencias","salud","analisis tendencias graficos estadisticas evolucion progreso resumen"],["Exportar solo una parte de mis datos","dt-parts","mas","exportar parcial seleccionar copia"]];
   var CMD={items:[],sel:0,ret:null};
   function nrm(t){return String(t).toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"");}
   function shown(node,stop){for(var p=node;p&&p!==stop;p=p.parentNode){if(p.nodeType===1&&(p.hidden||getComputedStyle(p).display==="none"))return false;}return true;}
@@ -5943,6 +5983,75 @@ var FT=[["Aceite de coco",884,0,"F","Otros",null,null,0,100],["Aceite de girasol
     var T=$("sv-tips");T.textContent="";r.tips.forEach(function(x){T.appendChild(el("li",x));});}
   $("sv-open").addEventListener("click",function(){SV.force=true;renderSalva();var c=$("sv-card");if(c&&!c.hidden){c.scrollIntoView({behavior:"smooth",block:"start"});var h=$("sv-title");h.setAttribute("tabindex","-1");h.focus({preventScroll:true});}});
   setInterval(function(){if(!document.hidden)safe(renderSalva);},300000);
+
+  /* ---------- TRT: próxima aplicación y avisos ---------- */
+  /* Usa cfg.med (every, name, trt) y S.trt como siempre. cfg.med.hora y cfg.med.aviso son opcionales. */
+  var TRH=/^([01]\d|2[0-3]):[0-5]\d$/;
+  function trHora(){return TRH.test(cfg.med&&cfg.med.hora||"")?cfg.med.hora:"09:00";}
+  function trEvery(){return Math.max(1,Math.min(60,parseInt(cfg.med&&cfg.med.every,10)||7));}
+  function trName(){var n=String(cfg.med&&cfg.med.name||"").trim();return n&&n!=="Medicación"?n:"Testosterona";}
+  function trLast(){var t=(S.trt||[]).filter(function(x){return DKEY.test(x)&&x<=today();}).sort();return t.length?t[t.length-1]:null;}
+  function trInfo(k){k=k||today();var last=trLast(),ev=trEvery();if(!last)return {last:null,next:null,dd:null,ev:ev,hoy:false};var nx=shift(last,ev);return {last:last,next:nx,dd:diff(k,nx),ev:ev,hoy:last===k};}
+  function trSet(k){if(!DKEY.test(k)||k>today())return false;if(S.trt.indexOf(k)<0){S.trt.push(k);S.trt.sort();}saveSalud();opLog("trt","Aplicación anotada: "+fd(k));trSync();return true;}
+  function trDue(){if(!trtOn())return false;var i=trInfo();return !!i.next&&i.dd<=0&&!i.hoy;}
+  function trNextTxt(i){if(!i.next)return "Cargá la última aplicación";if(i.hoy)return "Anotada hoy";if(i.dd===0)return "Hoy";if(i.dd<0)return "Atrasada "+(-i.dd)+(i.dd===-1?" día":" días");return DIA[parse(i.next).getDay()].replace(/^./,function(c){return c.toUpperCase();})+" "+fd(i.next);}
+  function renderTR(){var c=$("trav-card");if(!c)return;var on=trtOn();$("tr-on").checked=on;$("tr-f").hidden=!on;
+    if(document.activeElement!==$("tr-name"))$("tr-name").value=cfg.med.name&&cfg.med.name!=="Medicación"?cfg.med.name:"";
+    if(document.activeElement!==$("tr-every"))$("tr-every").value=String(trEvery());if(document.activeElement!==$("tr-hora"))$("tr-hora").value=trHora();
+    var i=trInfo();if(document.activeElement!==$("tr-last"))$("tr-last").value=i.last||"";$("tr-last").max=today();
+    $("tr-next").textContent=trNextTxt(i);
+    $("tr-next-sub").textContent=!i.next?"Con la fecha de la última, la app calcula las siguientes.":i.hoy?"La próxima: "+DIA[parse(shift(i.last,i.ev)).getDay()]+" "+fd(shift(i.last,i.ev))+", a las "+trHora()+".":
+      (i.dd>0?"Faltan "+i.dd+(i.dd===1?" día":" días")+". ":"")+"Última: "+fd(i.last)+". Cada "+i.ev+(i.ev===1?" día":" días")+", aviso a las "+trHora()+".";
+    $("tr-hoy").disabled=!!i.hoy;$("tr-hoy").textContent=i.hoy?"Anotada hoy":"Me la apliqué hoy";
+    var st=trNotifState();$("tr-notif").checked=!!cfg.med.aviso&&st==="granted";$("tr-notif").disabled=st==="none";$("tr-notif-st").textContent=trNotifTxt(st);
+    var g=$("tr-gcal");if(i.next){g.href=trGcal(i);g.removeAttribute("aria-disabled");}else{g.href="#";g.setAttribute("aria-disabled","true");}$("tr-ics").disabled=!i.next;}
+  function renderTrHoy(){var t=$("tr-tip");if(!t)return;var due=trDue();t.hidden=!due;if(!due)return;var i=trInfo();
+    $("tr-tip-t").textContent=(i.dd===0?"Hoy te toca la aplicación":"La aplicación está atrasada "+(-i.dd)+(i.dd===-1?" día":" días"))+" ("+trName()+", cada "+i.ev+(i.ev===1?" día":" días")+").";}
+  /* Notificaciones: solo si el navegador las permite (no dentro de Claude). */
+  function trNotifState(){if(typeof Notification==="undefined")return "none";return Notification.permission==="granted"?"granted":Notification.permission==="denied"?"denied":"default";}
+  function trNotifTxt(st){if(st==="none")return "Este navegador no muestra notificaciones. Usá el calendario.";if(st==="denied")return "Las notificaciones están bloqueadas para esta página. Activalas en los ajustes del navegador o usá el calendario.";
+    if(cfg.med.aviso&&st==="granted")return "Activadas. Con la app cerrada pueden llegar más tarde; para la hora exacta, sumá el calendario.";return "Pide permiso al navegador. Dentro de Claude no funciona: usá la app instalada o el calendario.";}
+  function trNotify(i){var title="Te toca la aplicación",body=trName()+(i.dd<0?": atrasada "+(-i.dd)+(i.dd===-1?" día":" días"):": hoy")+". Tocá para anotarla.";
+    var opt={body:body,tag:"rd-trt",icon:"icons/icon-192.png",badge:"icons/favicon-32.png",data:{url:"./#hoy"}};
+    try{if(navigator.serviceWorker&&navigator.serviceWorker.controller)return navigator.serviceWorker.ready.then(function(r){return r.showNotification(title,opt);});new Notification(title,opt);}catch(e){}return Promise.resolve();}
+  function trMark(){try{return localStorage.getItem("rd-trt-avisado")||"";}catch(e){return "";}}
+  function trNotifyCheck(now){now=now||new Date();if(!cfg.med||!cfg.med.aviso||trNotifState()!=="granted"||!trDue())return false;var i=trInfo(),hm=String(now.getHours()).padStart(2,"0")+":"+String(now.getMinutes()).padStart(2,"0");
+    if(hm<trHora())return false;var key=i.next+"|"+today();if(trMark()===key)return false;try{localStorage.setItem("rd-trt-avisado",key);}catch(e){}trNotify(i);trCacheMark(key);return true;}
+  /* La app instalada deja el plan en la caché para que el service worker pueda avisar con la app cerrada. */
+  function trSync(){try{if(!("caches" in window)||!document.querySelector('link[rel="manifest"]'))return;var i=trInfo(),on=trtOn()&&!!cfg.med.aviso&&!!i.next;
+      caches.open("rd-aviso").then(function(c){return on?c.put("./aviso.json",new Response(JSON.stringify({next:i.next,every:i.ev,hora:trHora(),name:trName(),last:i.last}),{headers:{"Content-Type":"application/json"}})):c.delete("./aviso.json");}).catch(function(){});
+      if(on&&navigator.serviceWorker)navigator.serviceWorker.ready.then(function(r){if(!r.periodicSync||!navigator.permissions)return;return navigator.permissions.query({name:"periodic-background-sync"}).then(function(p){if(p.state==="granted")return r.periodicSync.register("rd-trt",{minInterval:6*3600*1000});});}).catch(function(){});}catch(e){}}
+  function trCacheMark(key){try{if("caches" in window)caches.open("rd-aviso").then(function(c){return c.put("./avisado.json",new Response(JSON.stringify({key:key})));}).catch(function(){});}catch(e){}}
+  /* Calendario: Google Calendar con repetición, o un .ics para cualquier otro */
+  function trStamp(k,hm){return k.replace(/-/g,"")+"T"+hm.replace(":","")+"00";}
+  function trCalStart(i){return i.hoy?shift(i.last,i.ev):i.dd<0?today():i.next;}
+  function trGcal(i){var st=trCalStart(i),hh=trHora().split(":"),d=parse(st);d.setHours(+hh[0],+hh[1]+30,0,0);var pad=function(n){return String(n).padStart(2,"0");},
+      a=trStamp(st,trHora()),end=d.getFullYear()+pad(d.getMonth()+1)+pad(d.getDate())+"T"+pad(d.getHours())+pad(d.getMinutes())+"00";
+    return "https://calendar.google.com/calendar/render?action=TEMPLATE&text="+encodeURIComponent("Aplicación: "+trName())+"&dates="+a+"/"+end+"&recur="+encodeURIComponent("RRULE:FREQ=DAILY;INTERVAL="+i.ev)+"&details="+encodeURIComponent("Cada "+i.ev+(i.ev===1?" día":" días")+". Recordatorio de Rinde Diario: anotala en la app cuando te la apliques.");}
+  function trIcs(i){var st=trCalStart(i),a=trStamp(st,trHora()),uid="rd-trt-"+st+"-"+i.ev+"@rinde-diario",now=new Date().toISOString().replace(/[-:]/g,"").replace(/\.\d+Z$/,"Z");
+    return ["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//Rinde Diario//TRT//ES","CALSCALE:GREGORIAN","BEGIN:VEVENT","UID:"+uid,"DTSTAMP:"+now,"DTSTART:"+a,"DURATION:PT30M","RRULE:FREQ=DAILY;INTERVAL="+i.ev,
+      "SUMMARY:Aplicación: "+trName().replace(/[,;\\]/g," "),"DESCRIPTION:Cada "+i.ev+" días. Recordatorio de Rinde Diario.","BEGIN:VALARM","ACTION:DISPLAY","DESCRIPTION:Te toca la aplicación","TRIGGER:PT0M","END:VALARM","END:VEVENT","END:VCALENDAR"].join("\r\n")+"\r\n";}
+  function trDownload(name,txt){var msg=$("tr-cal-st"),blob=function(){try{var u=URL.createObjectURL(new Blob([txt],{type:"text/calendar"})),a=document.createElement("a");a.href=u;a.download=name;document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(u);a.remove();},1500);msg.textContent="Archivo descargado. Abrilo para agregarlo a tu calendario.";}catch(e){msg.textContent="No se pudo descargar acá. Usá «Agregar a Google Calendar».";}};
+    var go=window.claude&&window.claude.use?window.claude.use("downloads"):Promise.resolve(null);
+    go.then(function(dl){if(!dl){blob();return;}return dl.save({filename:name,data:txt}).then(function(){msg.textContent="Archivo descargado. Abrilo para agregarlo a tu calendario.";},function(e){msg.textContent=e&&e.code==="declined"?"Descarga cancelada.":"No se pudo descargar acá. Usá «Agregar a Google Calendar».";});}).catch(blob);}
+  $("tr-on").addEventListener("change",function(){var on=$("tr-on").checked;cfg.mods.med=on?true:cfg.mods.med;cfg.med=Object.assign({},cfg.med,{trt:on});if(on&&(!cfg.med.name||cfg.med.name==="Medicación"))cfg.med.name="Testosterona";if(!on)cfg.med.aviso=false;saveCfg();trSync();});
+  $("tr-name").addEventListener("change",function(){cfg.med=Object.assign({},cfg.med,{name:$("tr-name").value.trim()||"Testosterona"});saveCfg();trSync();});
+  $("tr-every").addEventListener("change",function(){var v=parseInt($("tr-every").value,10),er=$("tr-err");if(!(v>=1&&v<=60)){er.hidden=false;er.textContent="Poné un número de días entre 1 y 60.";return;}er.hidden=true;cfg.med=Object.assign({},cfg.med,{every:v});saveCfg();trSync();});
+  $("tr-hora").addEventListener("change",function(){var v=$("tr-hora").value;if(!TRH.test(v))return;cfg.med=Object.assign({},cfg.med,{hora:v});saveCfg();trSync();});
+  $("tr-last").addEventListener("change",function(){var v=$("tr-last").value,er=$("tr-err");if(!DKEY.test(v)||v>today()){er.hidden=false;er.textContent="La fecha no puede ser posterior a hoy.";return;}er.hidden=true;
+    if(S.trt.indexOf(v)>=0){render();return;}trSet(v);toast("Anoté la aplicación del "+fd(v)+".",{undo:function(){S.trt=S.trt.filter(function(x){return x!==v;});saveSalud();trSync();}});});
+  function trHoyNow(){var k=today();if(trSet(k))toast("Anoté la aplicación de hoy.",{undo:function(){S.trt=S.trt.filter(function(x){return x!==k;});saveSalud();trSync();}});}
+  $("tr-hoy").addEventListener("click",trHoyNow);$("tr-tip-ok").addEventListener("click",trHoyNow);
+  $("tr-ver").addEventListener("click",function(){reveal($("med-card"),"salud");});
+  $("tr-notif").addEventListener("change",function(){var cb=$("tr-notif");if(!cb.checked){cfg.med=Object.assign({},cfg.med,{aviso:false});saveCfg();trSync();return;}
+    var st=trNotifState();if(st==="none"||st==="denied"){cb.checked=false;$("tr-notif-st").textContent=trNotifTxt(st);return;}
+    var ask=st==="granted"?Promise.resolve("granted"):Promise.resolve(Notification.requestPermission()).catch(function(){return "denied";});
+    ask.then(function(r){if(r!=="granted"){cb.checked=false;$("tr-notif-st").textContent=trNotifTxt(r==="denied"?"denied":"default");return;}cfg.med=Object.assign({},cfg.med,{aviso:true});saveCfg();trSync();trNotifyCheck();toast("Avisos activados.");});});
+  $("tr-ics").addEventListener("click",function(){var i=trInfo();if(!i.next)return;trDownload("aplicacion-"+trName().toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[^a-z0-9]+/g,"-")+".ics",trIcs(i));});
+  $("tr-gcal").addEventListener("click",function(e){if($("tr-gcal").getAttribute("aria-disabled")==="true")e.preventDefault();else $("tr-cal-st").textContent="Se abre Google Calendar con el evento listo para guardar.";});
+  document.addEventListener("visibilitychange",function(){if(!document.hidden){safe(renderTrHoy);trNotifyCheck();}});
+  setInterval(function(){if(!document.hidden)trNotifyCheck();},300000);
+  setTimeout(function(){trSync();trNotifyCheck();},2500);
   /* Accesos rápidos configurables: [etiqueta, ícono, destino] */
   var QK={comidas:["Comida",'<path d="M7 3v8M5 3v5a2 2 0 0 0 4 0V3M7 11v10M16.5 21V3c-2 0-3.5 2.5-3.5 6v4h3.5"/>',"qa-txt"],
     peso:["Peso y sueño",'<rect x="3.5" y="4" width="17" height="16.5" rx="3"/><path d="M8.5 9a5 5 0 0 1 7 0L12 12.5"/>',"peso"],
@@ -6026,7 +6135,7 @@ var FT=[["Aceite de coco",884,0,"F","Otros",null,null,0,100],["Aceite de girasol
   }
   window.addEventListener("online",function(){SYNC.fail=0;flush(0);});
   document.addEventListener("visibilitychange",function(){if(!document.hidden&&Object.keys(SYNC.pend).length)flush(0);});
-  if(window.__RD_TEST__)window.RD={days:function(){return days;},cfg:function(){return cfg;},S:function(){return S;},SYNC:SYNC,remoteSet:remoteSet,vDay:vDay,vDays:vDays,sanit:sanit,save:save,rec:rec,today:today,exportData:exportData,importData:importData,encryptText:encryptText,decryptText:decryptText,e1rm:e1rm,dots:dots,wilks:wilks,gl:gl,tdeeReal:tdeeReal,tgt:tgt,labFlags:labFlags,sum:sum,D:D,age:age,frState:frState,FRASES:FRASES,CITAS:CITAS,renderFrase:renderFrase,qaParse:qaParse,qaMac:qaMac,qaFromAI:qaFromAI,greetText:greetText,rcBook:rcBook,fitRec:fitRec,ingCls:ingCls,RECETAS:RECETAS,daySlots:daySlots,scaleRec:scaleRec,slotTarget:slotTarget,RCX:RCX,FEAT:FEAT,lvStats:lvStats,lvLevel:lvLevel,applyLevels:applyLevels,HOWTO:HOWTO,cardOf:cardOf,cmdIndex:cmdIndex,render:render,restPlan:restPlan,linreg:linreg,pearson:pearson,wTrend:wTrend,cookFactor:cookFactor,exportObj:exportObj,signObj:signObj,verifyBk:verifyBk,trashAll:trashAll,trashPut:trashPut,trashRestore:trashRestore,opLog:opLog,insights:insights,dashData:dashData,FORMULAS:FORMULAS,snapTake:snapTake,S:function(){return S;},itemTxt:itemTxt,foodKey:foodKey,showImport:showImport,foFill:foFill,injPlan:injPlan,injHit:injHit,injAlt:injAlt,INJZ:INJZ,wuPlan:wuPlan,wuRamp:wuRamp,INJMAP:INJMAP,QK:QK,e1rm:e1rm,pxKind:pxKind,mealOf:mealOf,renderRec:renderRec,mergeSalud:mergeSalud,grpSync:grpSync,renderQuick:renderQuick,TIPICAS:TIPICAS,PUBS:PUBS,salvaPlan:salvaPlan,renderSalva:renderSalva,SV:SV,tipMatch:tipMatch,tipMac:tipMac,bSmooth:bSmooth,setSample:function(x){SAMPLE=x;SAMPLEIMG=false;}};
+  if(window.__RD_TEST__)window.RD={days:function(){return days;},cfg:function(){return cfg;},S:function(){return S;},SYNC:SYNC,remoteSet:remoteSet,vDay:vDay,vDays:vDays,sanit:sanit,save:save,rec:rec,today:today,exportData:exportData,importData:importData,encryptText:encryptText,decryptText:decryptText,e1rm:e1rm,dots:dots,wilks:wilks,gl:gl,tdeeReal:tdeeReal,tgt:tgt,labFlags:labFlags,sum:sum,D:D,age:age,frState:frState,FRASES:FRASES,CITAS:CITAS,renderFrase:renderFrase,qaParse:qaParse,qaMac:qaMac,qaFromAI:qaFromAI,greetText:greetText,rcBook:rcBook,fitRec:fitRec,ingCls:ingCls,RECETAS:RECETAS,daySlots:daySlots,scaleRec:scaleRec,slotTarget:slotTarget,RCX:RCX,FEAT:FEAT,lvStats:lvStats,lvLevel:lvLevel,applyLevels:applyLevels,HOWTO:HOWTO,cardOf:cardOf,cmdIndex:cmdIndex,render:render,restPlan:restPlan,linreg:linreg,pearson:pearson,wTrend:wTrend,cookFactor:cookFactor,exportObj:exportObj,signObj:signObj,verifyBk:verifyBk,trashAll:trashAll,trashPut:trashPut,trashRestore:trashRestore,opLog:opLog,insights:insights,dashData:dashData,FORMULAS:FORMULAS,snapTake:snapTake,S:function(){return S;},itemTxt:itemTxt,foodKey:foodKey,showImport:showImport,foFill:foFill,injPlan:injPlan,injHit:injHit,injAlt:injAlt,INJZ:INJZ,wuPlan:wuPlan,wuRamp:wuRamp,INJMAP:INJMAP,QK:QK,e1rm:e1rm,pxKind:pxKind,mealOf:mealOf,renderRec:renderRec,mergeSalud:mergeSalud,grpSync:grpSync,renderQuick:renderQuick,TIPICAS:TIPICAS,PUBS:PUBS,salvaPlan:salvaPlan,trInfo:trInfo,trIcs:trIcs,trGcal:trGcal,trNotifyCheck:trNotifyCheck,trDue:trDue,renderSalva:renderSalva,SV:SV,tipMatch:tipMatch,tipMac:tipMac,bSmooth:bSmooth,setSample:function(x){SAMPLE=x;SAMPLEIMG=false;}};
   connect();
 })();
 </script>
