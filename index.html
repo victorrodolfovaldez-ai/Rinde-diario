@@ -1401,6 +1401,11 @@ h2.sect[id]{scroll-margin-top:12px}
         <p class="tip" id="plan-tot" style="margin-top:12px"></p>
         <div class="meals" id="comidas" style="margin-top:12px"></div>
         <button class="ghost" type="button" id="plan-rc" style="margin-top:12px">Ver las recetas de todos mis planes</button>
+        <button class="ghost" type="button" id="plan-hide" style="margin-top:8px">No sigo el plan: ocultarlo</button>
+      </div>
+      <div id="plan-hid" hidden>
+        <p class="sub">Ocultaste el plan del nutricionista. La app te sugiere cómo completar el día con lo que solés comer, en Mi día. Tus planes siguen guardados.</p>
+        <button class="ghost" type="button" id="plan-show">Mostrar el plan</button>
       </div>
       <p class="empty" id="plan-off">Todavía no tenés un plan de comidas cargado. Armalo o importalo en <a href="#mas" data-go="pb-card">Más → Tus planes de comida</a>. Mientras tanto, anotá lo que comés con «¿Vale la pena?», las medidas a mano o los alimentos de marca.</p>
     </div>
@@ -2517,13 +2522,14 @@ var FT=[["Aceite de coco",884,0,"F","Otros",null,null,0,100],["Aceite de girasol
   function cfgDefaults(){return {chW:42,chN:14,inj:null,rcFast:false,dash:["peso","adh","semana","salud"],qk:["comidas","peso","entreno","recetas"],fav:[],myrec:[],priv:{blur:false,idle:0},frases:"mixto",ifthen:[],greet:"hora",sched:{wake:"07:00",train:"18:00"},levels:"auto",unlocked:[],lvSeen:false,lvFrom:"",restAuto:true,foods:[],custom:false,max:2200,min:1900,prot:150,sq:0,bp:0,dl:0,palma:145,puno:120,prices:{},plan:null,adapt:true,setup:false,
     prof:{name:"",sex:"m",birth:"",height:null,w0:null,bf0:null,bfMid:15,bfGoal:12,goal:"perder",mant:null,rate:0.6,protFFM:2.4,start:today(),steps1:8000,steps2:10000,kcalFloor:null},
     phases:null,special:[],routine:clone(DEF_ROUTINE),mods:{med:false,bp:true,waist:true,isak:true,labs:true,bike:false},
-    med:{name:"Medicación",every:7,trt:false,start:""},labsList:["Hemograma completo","Glucemia","Perfil lipídico","Hígado: GPT, GOT y GGT","Riñón: creatinina y urea"],bikeGoal:0,restB:180,restA:120,athlete:true,cycle:true,cycleFrom:"",supl:{},deload:"",glCat:"cl",anim:"on",ax:{}};}
+    med:{name:"Medicación",every:7,trt:false,start:""},labsList:["Hemograma completo","Glucemia","Perfil lipídico","Hígado: GPT, GOT y GGT","Riñón: creatinina y urea"],bikeGoal:0,restB:180,restA:120,athlete:true,cycle:true,cycleFrom:"",supl:{},deload:"",glCat:"cl",anim:"on",ax:{},usePlan:true};}
   var days={}, cfg=cfgDefaults(), S={trt:[],bp:[],waist:[],lab:{},isak:[],labv:[],coach:[],coachLast:null,obs:[]}, B={w:"",c:{}}, PL=[], PHC=[];
   var WREF=null, SAMPLE=null, coachBusy=false;
   var col=null, storeNote="", tempt=null, tip=null, queue=Promise.resolve(), pushed={};
 
   function loadCfg(c){c=stripMeta(sanit(c,0));if(!isObj(c))return;var d=cfgDefaults();if(isObj(c.prof))c.prof=vProf(c.prof);if("sched" in c){var sc0=isObj(c.sched)?c.sched:{},tm=/^([01]\d|2[0-3]):[0-5]\d$/;c.sched={wake:tm.test(sc0.wake)?sc0.wake:"07:00",train:sc0.train===""?"":tm.test(sc0.train)?sc0.train:"18:00"};}
     if("greet" in c&&["hora","hola","no"].indexOf(c.greet)<0)c.greet="hora";
+    if("usePlan" in c)c.usePlan=c.usePlan!==false;
     if("frases" in c&&["mixto","m","d","no"].indexOf(c.frases)<0)c.frases="mixto";
     if("ifthen" in c)c.ifthen=Array.isArray(c.ifthen)?c.ifthen.filter(function(x){return isObj(x)&&typeof x.si==="string"&&typeof x.ent==="string";}).slice(-20).map(function(x){return {si:x.si.slice(0,90),ent:x.ent.slice(0,90),mom:String(x.mom||"").slice(0,12),d:DKEY.test(x.d||"")?x.d:""};}):[];
     if("inj" in c){var ij=c.inj;c.inj=isObj(ij)&&INJZ[ij.z]&&[1,2,3].indexOf(ij.lvl)>=0&&DKEY.test(ij.d||"")?{z:ij.z,lado:["der","izq"].indexOf(ij.lado)>=0&&INJPAR.indexOf(ij.z)>=0?ij.lado:"",lvl:ij.lvl,d:ij.d}:null;}
@@ -2875,10 +2881,13 @@ var FT=[["Aceite de coco",884,0,"F","Otros",null,null,0,100],["Aceite de girasol
   }
   function hunger(){
     var k=today(),t=tgt(k),d=days[k],s=sum(d),left=t.max-s.k,pl=Math.max(0,t.prot-s.p),out=[],title,state="ok",next=null;
-    var ad=todayPlan();if(ad)for(var i=0;i<ad.meals.length;i++)if(!eaten(d,ad.meals[i].key)){next=ad.meals[i];break;}
+    var ad=cfg.usePlan===false?null:todayPlan(),hb=null;if(ad)for(var i=0;i<ad.meals.length;i++)if(!eaten(d,ad.meals[i].key)){next=ad.meals[i];break;}
+    if(!ad&&left>150){var sn0=hbSlotNow(d,new Date().getHours()),ho=hbOptions(sn0.slot,Math.max(150,Math.min(left,Math.round(left/Math.max(1,sn0.rest)))),pl>0?Math.min(pl,Math.round(pl/Math.max(1,sn0.rest)*1.3)):0,left,1);if(ho.length)hb={slot:sn0.slot,o:ho[0]};}
     if(left<=150){state="bad";title="Te quedan "+fmt(Math.max(0,left))+" kcal. Lo que sigue es libre o casi:";
       out.push("Agua, mate, café o té sin azúcar.");out.push("Lechuga, tomate, pepino o zapallito: casi no suman.");
       out.push("Si en 20 minutos seguís con hambre, un yogur griego: 100 kcal y 7 g de proteína.");}
+    else if(hb){title="Para tu "+hb.slot.toLowerCase()+", de lo que solés comer: "+hb.o.g.map(function(x){return x.name;}).join(" + ")+".";
+      out.push(fmt(hb.o.k)+" kcal y "+hb.o.p+" g de proteína. Lo anotás desde «Completar el día» en Mi día.");}
     else if(next){title="Comé ahora tu "+next.slot.toLowerCase()+": "+next.name.toLowerCase()+".";
       out.push(next.items.slice(0,4).map(function(it){return itemTxt(it,false).replace(/ \(.*\)$/,"");}).join(" · ")+".");
       out.push("Adelantar una comida del plan está bien: lo que cuenta es el total del día.");}
@@ -2920,7 +2929,7 @@ var FT=[["Aceite de coco",884,0,"F","Otros",null,null,0,100],["Aceite de girasol
     $("hoy-split").textContent=info.n;
     $("hoy-split-sub").textContent=info.ex.length?hechos+" de "+info.ex.length+" ejercicios hechos":"Sin pesas hoy";
 
-    var cp=curPlan();$("plan-on").hidden=!cp;$("plan-off").hidden=!!cp;
+    var hidP=cfg.usePlan===false&&!!curPlan(),cp=cfg.usePlan===false?null:curPlan();$("plan-hid").hidden=!hidP;$("plan-on").hidden=!cp;$("plan-off").hidden=!!cp||hidP;
     if(cp){var on=cfg.adapt!==false,pd=planIdx(d,cp),sel=$("plan-n");
       var sig=PL.map(function(x){return x.n+":"+x.name;}).join("|");
       if(sel.dataset.sig!==sig){sel.textContent="";sel.dataset.sig=sig;PL.slice().reverse().forEach(function(x){opt(sel,String(x.n),(x.name||"Plan "+x.n)+(x.f?" · "+x.f:""));});}
@@ -3144,9 +3153,9 @@ var FT=[["Aceite de coco",884,0,"F","Otros",null,null,0,100],["Aceite de girasol
       else{sd.className="tip ok";sd.textContent="Por ahora dormir poco no te está rompiendo la dieta. Igual, 7 horas cuidan la masa muscular en déficit.";}}
     else{sd.className="tip";sd.textContent="Anotá las horas de sueño cada mañana en Hoy. Con unas semanas de datos, acá vas a ver si dormir poco te hace fallar la dieta.";}
 
-    var cp=curPlan(),pr=$("prep"),sh=$("shop");pr.textContent="";sh.textContent="";
+    var cp=cfg.usePlan===false?null:curPlan(),pr=$("prep"),sh=$("shop");pr.textContent="";sh.textContent="";
     var wk=monday(k);if(B.w!==wk){B={w:wk,c:{}};}
-    if(!cp){pr.appendChild(el("p","Cargá un plan de comidas en Más para ver qué cocinar.","empty"));$("shop-sub").textContent="La lista se arma sola con tu plan de comidas.";$("shop-reset").hidden=true;return;}
+    if(!cp){pr.appendChild(el("p",cfg.usePlan===false?"El plan está oculto: cociná lo que solés comer. Para armar la lista y las tandas con el plan, mostralo de nuevo en «Plan alimentario».":"Cargá un plan de comidas en Más para ver qué cocinar.","empty"));$("shop-sub").textContent=cfg.usePlan===false?"Con el plan oculto, la lista no se arma sola.":"La lista se arma sola con tu plan de comidas.";$("shop-reset").hidden=true;return;}
     $("shop-reset").hidden=false;
     var on=cfg.adapt!==false,wkd=[];for(var di=0;di<7;di++)wkd.push(adaptDay(cp,Math.min(di,cp.d.length-1),tgt(shift(wk,di)),on));
     [["Domingo: para lunes, martes y miércoles",[0,1,2]],["Miércoles a la noche: para jueves, viernes y sábado",[3,4,5]],["Domingo: se cocina en el momento",[6]]].forEach(function(blk){
@@ -4748,7 +4757,7 @@ var FT=[["Aceite de coco",884,0,"F","Otros",null,null,0,100],["Aceite de girasol
 
 
   /* ---------- v31: indicadores de Mi día, lecturas, papelera, registro, copias automáticas, privacidad, fórmulas ---------- */
-  var APPV="31.13";
+  var APPV="31.14";
   function viewOf(n){var sc=n&&n.closest?n.closest("section.view"):null;return sc?sc.id.slice(2):null;}
   var LST="rendicion-papelera",LSO="rendicion-oplog";
   function opLog(op,d){try{var a=JSON.parse(localStorage.getItem(LSO)||"[]");if(!Array.isArray(a))a=[];a.push({t:new Date().toISOString(),op:String(op).slice(0,30),d:String(d||"").slice(0,200)});if(a.length>300)a=a.slice(-300);localStorage.setItem(LSO,JSON.stringify(a));}catch(e){}safe(renderLog);}
@@ -5906,7 +5915,7 @@ var FT=[["Aceite de coco",884,0,"F","Otros",null,null,0,100],["Aceite de girasol
     ["Observaciones de salud","obs-t","salud","nota sintoma observacion consulta medico"],["Privacidad: modo discreto y tapar la pantalla","pv-blur","mas","privacidad ocultar difuminar inactividad"],
     ["Papelera: recuperar lo que borré","tr-card","mas","borrado recuperar eliminar papelera"],["Registro de operaciones","log-card","mas","historial auditoria cambios log"],
     ["Copias automáticas del navegador","snap-card","mas","respaldo indexeddb recuperacion"],["Fórmulas que usa la app","fm-card","mas","formula calculo ecuacion fuente dots wilks e1rm"],
-    ["Acerca de: versión y espacio usado","ab-card","mas","version almacenamiento espacio info"],["Instalar la app en el teléfono o la computadora","pwa-card","mas","instalar aplicacion pantalla de inicio pwa sin conexion offline"],["Cargar análisis: pegar el informe o leer una captura","lp-box","salud","analisis laboratorio resultados pegar informe captura foto valores sangre hemograma ionograma hepatograma"],["Completar el día con lo que solés comer","hb-card","hoy","habitos comidas habituales lo que como aprender sugerir completar dia repetir frecuentes no sigo el plan"],["Combinar rutinas para entrenar 6 días","cb-card","entreno","combinar mezclar juntar rutinas programas 6 dias semana armar"],["Rutinas para boxeo: fuerza, potencia y rounds","lib-card","entreno","boxeo box golpe pegar mas fuerte rounds bolsa sparring combate potencia"],["TRT: cada cuántos días, próxima aplicación y aviso","trav-card","salud","trt testosterona aplicacion inyeccion aviso recordatorio notificacion calendario cada cuantos dias"],["Salvar el día: cómo cerrar las calorías y la proteína que faltan","sv-open","hoy","salvar dia noche faltan calorias proteina me pase revertir cerrar el dia cena"],["Kepi, hummus y comidas árabes, del norte y caseras","zn-card","nutricion","alfajor maicena medialuna factura panaderia pan galletitas pepsi levite aquarius gatorade speed monster cindor gaseosa coca cola sprite fanta 7up manaos paso de los toros sin azucar light zero kepi kepe hummus falafel niños envueltos tabule lajmayin fatay empanada salteña locro carbonada cabrito milanesa ñoquis puchero fernet cerveza mcdonalds mostaza"],["Accesos rápidos de Mi día","qk-card","mas","atajos botones inicio personalizar accesos rapidos"],["Evolución del peso: promedio, esperado y semanas","peso-card","salud","peso balanza promedio tendencia grafico"],["Racha y últimos 14 días","s-racha","nutricion","racha cumplido constancia dias seguidos historial"],["Tendencias y análisis: entrenamiento, nutrición, cuerpo y salud","tendencias","salud","analisis tendencias graficos estadisticas evolucion progreso resumen"],["Exportar solo una parte de mis datos","dt-parts","mas","exportar parcial seleccionar copia"]];
+    ["Acerca de: versión y espacio usado","ab-card","mas","version almacenamiento espacio info"],["Instalar la app en el teléfono o la computadora","pwa-card","mas","instalar aplicacion pantalla de inicio pwa sin conexion offline"],["Cargar análisis: pegar el informe o leer una captura","lp-box","salud","analisis laboratorio resultados pegar informe captura foto valores sangre hemograma ionograma hepatograma"],["Ocultar el plan del nutricionista","plan-hide","nutricion","plan nutricionista ocultar no sigo el plan dieta"],["Mostrar el plan del nutricionista","plan-show","nutricion","plan nutricionista mostrar volver al plan dieta"],["Completar el día con lo que solés comer","hb-card","hoy","habitos comidas habituales lo que como aprender sugerir completar dia repetir frecuentes no sigo el plan"],["Combinar rutinas para entrenar 6 días","cb-card","entreno","combinar mezclar juntar rutinas programas 6 dias semana armar"],["Rutinas para boxeo: fuerza, potencia y rounds","lib-card","entreno","boxeo box golpe pegar mas fuerte rounds bolsa sparring combate potencia"],["TRT: cada cuántos días, próxima aplicación y aviso","trav-card","salud","trt testosterona aplicacion inyeccion aviso recordatorio notificacion calendario cada cuantos dias"],["Salvar el día: cómo cerrar las calorías y la proteína que faltan","sv-open","hoy","salvar dia noche faltan calorias proteina me pase revertir cerrar el dia cena"],["Kepi, hummus y comidas árabes, del norte y caseras","zn-card","nutricion","alfajor maicena medialuna factura panaderia pan galletitas pepsi levite aquarius gatorade speed monster cindor gaseosa coca cola sprite fanta 7up manaos paso de los toros sin azucar light zero kepi kepe hummus falafel niños envueltos tabule lajmayin fatay empanada salteña locro carbonada cabrito milanesa ñoquis puchero fernet cerveza mcdonalds mostaza"],["Accesos rápidos de Mi día","qk-card","mas","atajos botones inicio personalizar accesos rapidos"],["Evolución del peso: promedio, esperado y semanas","peso-card","salud","peso balanza promedio tendencia grafico"],["Racha y últimos 14 días","s-racha","nutricion","racha cumplido constancia dias seguidos historial"],["Tendencias y análisis: entrenamiento, nutrición, cuerpo y salud","tendencias","salud","analisis tendencias graficos estadisticas evolucion progreso resumen"],["Exportar solo una parte de mis datos","dt-parts","mas","exportar parcial seleccionar copia"]];
   var CMD={items:[],sel:0,ret:null};
   function nrm(t){return String(t).toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"");}
   function shown(node,stop){for(var p=node;p&&p!==stop;p=p.parentNode){if(p.nodeType===1&&(p.hidden||getComputedStyle(p).display==="none"))return false;}return true;}
@@ -6370,6 +6379,9 @@ var FT=[["Aceite de coco",884,0,"F","Otros",null,null,0,100],["Aceite de girasol
       hs=hbOptions(hh>=22?"Colación":"Cena",kT,o.mode==="kcal"?0:pF,left,2);
     var ho=hs.filter(function(x){return o.mode==="kcal"||x.p>=Math.min(pF,25);}).map(function(x){return {t:"De lo que solés comer: "+x.g.map(function(y){return y.name;}).join(" + "),desc:"aprendido de tus registros",k:x.k,p:x.p,c:x.c,fa:x.f,hb:x.g};});
     if(ho.length){o.opts=ho.concat(o.opts).slice(0,4);}return o;}
+
+  $("plan-hide").addEventListener("click",function(){cfg.usePlan=false;saveCfg();opLog("plan","Plan del nutricionista oculto");toast("Oculté el plan. Tus planes siguen guardados.",{undo:function(){cfg.usePlan=true;saveCfg();}});});
+  $("plan-show").addEventListener("click",function(){cfg.usePlan=true;saveCfg();opLog("plan","Plan del nutricionista visible");toast("El plan vuelve a estar visible.");});
   /* Accesos rápidos configurables: [etiqueta, ícono, destino] */
   var QK={comidas:["Comida",'<path d="M7 3v8M5 3v5a2 2 0 0 0 4 0V3M7 11v10M16.5 21V3c-2 0-3.5 2.5-3.5 6v4h3.5"/>',"qa-txt"],
     peso:["Peso y sueño",'<rect x="3.5" y="4" width="17" height="16.5" rx="3"/><path d="M8.5 9a5 5 0 0 1 7 0L12 12.5"/>',"peso"],
