@@ -838,6 +838,12 @@ svg.exp{width:72px;height:60px;display:block;background:var(--accent-soft);borde
 #registro li:has(> button) > button:not(.ed-b){grid-column:3;grid-row:1 / span 2}
 #registro li:has(> button) > .ed-f{grid-column:1 / -1}
 
+/* v31.13: lo que solés comer */
+.hb-card{border-color:var(--c-hoy)}
+.hb-l li > span{display:flex;flex-direction:column;gap:2px;min-width:0}
+.hb-l li small{color:var(--muted);font-size:13px}
+.hb-top{margin-top:10px}.hb-top summary{min-height:44px;display:flex;align-items:center;font-weight:600;cursor:pointer}
+
 /* v31.12: combinar rutinas */
 .cb-box{margin:12px 0}.cb-box summary{min-height:44px;display:flex;align-items:center;font-weight:600;cursor:pointer}
 .cb-week{display:grid;gap:6px;margin:10px 0}
@@ -995,6 +1001,13 @@ h2.sect[id]{scroll-margin-top:12px}
       <ul class="log sv-l" id="sv-list"></ul>
       <ul class="sv-tips" id="sv-tips"></ul>
       <p class="note">Porciones calculadas con la tabla de alimentos de la app y tus objetivos de hoy. Son estimaciones para ordenar la comida, no indicaciones médicas.</p>
+    </div>
+<div class="card hb-card" id="hb-card" hidden>
+      <h2 id="hb-title">Completar el día con lo que solés comer</h2>
+      <p class="sub" id="hb-sub"></p>
+      <ul class="log hb-l" id="hb-list"></ul>
+      <details class="hb-top" id="hb-top"><summary>Lo que más comés</summary><p class="sub">Aprendido de lo que anotaste en los últimos 60 días. Tocá «Repetir» para anotarlo en la comida que sigue.</p><ul class="log hb-l" id="hb-freq"></ul></details>
+      <p class="note">Las sugerencias salen de tus propios registros, no del plan. Cuanto más anotes, mejor aprende.</p>
     </div>
 <div class="tip warn tr-tip" id="tr-tip" hidden><span id="tr-tip-t"></span><button class="chip" type="button" id="tr-tip-ok">Ya me la apliqué</button></div>
 <p class="tip warn" id="sueno-tip" hidden></p>
@@ -4410,7 +4423,7 @@ var FT=[["Aceite de coco",884,0,"F","Otros",null,null,0,100],["Aceite de girasol
     var c=t.closest(".card,.chbox,details"),h=c&&c.querySelector("h2,summary,.label");t.setAttribute("aria-label","Tabla"+(h?": "+txt0(h).slice(0,60):""));});}
   function render(){applyAX();if(!cfg.cycleFrom){cfg.cycleFrom=today();lsSet(LSC,cfg);}
     var w7=wavg(today(),7);WREF=w7.n?w7.v:null;document.body.classList.toggle("basic",cfg.athlete===false);computePH();var n=new Date();$("fecha").textContent=DIA[n.getDay()]+" "+n.getDate()+" de "+MES[n.getMonth()];
-    safe(renderHoy);safe(renderMedidas);safe(renderEntreno);safe(renderSemana);safe(renderPlan);safe(renderSalud);safe(renderPerfil);safe(renderMods);safe(renderTeoria);safe(renderCoach);safe(renderSuplHoy);safe(renderSuplMas);safe(renderPG);safe(renderTRT);safe(renderBC);safe(renderCharts);safe(renderFatIdx);safe(renderPDist);safe(renderRc);safe(renderQA);safe(renderGreet);safe(renderFrase);safe(renderDash);safe(renderZona);safe(renderSalva);safe(function(){if(!$("cb-card").contains(document.activeElement))renderCB();});safe(renderTR);safe(renderTrHoy);safe(renderWU);safe(renderInj);safe(renderNA);safe(renderIns);safe(renderObs);safe(renderMR);safe(renderPriv);safe(renderAbout);safe(tblA11y);safe(applyLevels);safe(renderQuick);safe(renderHoyCons);safe(renderDia);safe(renderEntHero);safe(renderNutHero);safe(renderSalHero);safe(grpSync);if(FX.on)fxLoad();if(!$("lib-card").contains(document.activeElement))renderLib();}
+    safe(renderHoy);safe(renderMedidas);safe(renderEntreno);safe(renderSemana);safe(renderPlan);safe(renderSalud);safe(renderPerfil);safe(renderMods);safe(renderTeoria);safe(renderCoach);safe(renderSuplHoy);safe(renderSuplMas);safe(renderPG);safe(renderTRT);safe(renderBC);safe(renderCharts);safe(renderFatIdx);safe(renderPDist);safe(renderRc);safe(renderQA);safe(renderGreet);safe(renderFrase);safe(renderDash);safe(renderZona);safe(renderHB);safe(renderSalva);safe(function(){if(!$("cb-card").contains(document.activeElement))renderCB();});safe(renderTR);safe(renderTrHoy);safe(renderWU);safe(renderInj);safe(renderNA);safe(renderIns);safe(renderObs);safe(renderMR);safe(renderPriv);safe(renderAbout);safe(tblA11y);safe(applyLevels);safe(renderQuick);safe(renderHoyCons);safe(renderDia);safe(renderEntHero);safe(renderNutHero);safe(renderSalHero);safe(grpSync);if(FX.on)fxLoad();if(!$("lib-card").contains(document.activeElement))renderLib();}
 
   /* ---------- Temporizador de descanso ---------- */
   var RT={dur:120,end:0,left:120,run:false,done:false,paused:false},ac=null,wl=null,rtTick=null,rtDoneT=null;
@@ -4735,7 +4748,7 @@ var FT=[["Aceite de coco",884,0,"F","Otros",null,null,0,100],["Aceite de girasol
 
 
   /* ---------- v31: indicadores de Mi día, lecturas, papelera, registro, copias automáticas, privacidad, fórmulas ---------- */
-  var APPV="31.12";
+  var APPV="31.13";
   function viewOf(n){var sc=n&&n.closest?n.closest("section.view"):null;return sc?sc.id.slice(2):null;}
   var LST="rendicion-papelera",LSO="rendicion-oplog";
   function opLog(op,d){try{var a=JSON.parse(localStorage.getItem(LSO)||"[]");if(!Array.isArray(a))a=[];a.push({t:new Date().toISOString(),op:String(op).slice(0,30),d:String(d||"").slice(0,200)});if(a.length>300)a=a.slice(-300);localStorage.setItem(LSO,JSON.stringify(a));}catch(e){}safe(renderLog);}
@@ -5893,7 +5906,7 @@ var FT=[["Aceite de coco",884,0,"F","Otros",null,null,0,100],["Aceite de girasol
     ["Observaciones de salud","obs-t","salud","nota sintoma observacion consulta medico"],["Privacidad: modo discreto y tapar la pantalla","pv-blur","mas","privacidad ocultar difuminar inactividad"],
     ["Papelera: recuperar lo que borré","tr-card","mas","borrado recuperar eliminar papelera"],["Registro de operaciones","log-card","mas","historial auditoria cambios log"],
     ["Copias automáticas del navegador","snap-card","mas","respaldo indexeddb recuperacion"],["Fórmulas que usa la app","fm-card","mas","formula calculo ecuacion fuente dots wilks e1rm"],
-    ["Acerca de: versión y espacio usado","ab-card","mas","version almacenamiento espacio info"],["Instalar la app en el teléfono o la computadora","pwa-card","mas","instalar aplicacion pantalla de inicio pwa sin conexion offline"],["Cargar análisis: pegar el informe o leer una captura","lp-box","salud","analisis laboratorio resultados pegar informe captura foto valores sangre hemograma ionograma hepatograma"],["Combinar rutinas para entrenar 6 días","cb-card","entreno","combinar mezclar juntar rutinas programas 6 dias semana armar"],["Rutinas para boxeo: fuerza, potencia y rounds","lib-card","entreno","boxeo box golpe pegar mas fuerte rounds bolsa sparring combate potencia"],["TRT: cada cuántos días, próxima aplicación y aviso","trav-card","salud","trt testosterona aplicacion inyeccion aviso recordatorio notificacion calendario cada cuantos dias"],["Salvar el día: cómo cerrar las calorías y la proteína que faltan","sv-open","hoy","salvar dia noche faltan calorias proteina me pase revertir cerrar el dia cena"],["Kepi, hummus y comidas árabes, del norte y caseras","zn-card","nutricion","alfajor maicena medialuna factura panaderia pan galletitas pepsi levite aquarius gatorade speed monster cindor gaseosa coca cola sprite fanta 7up manaos paso de los toros sin azucar light zero kepi kepe hummus falafel niños envueltos tabule lajmayin fatay empanada salteña locro carbonada cabrito milanesa ñoquis puchero fernet cerveza mcdonalds mostaza"],["Accesos rápidos de Mi día","qk-card","mas","atajos botones inicio personalizar accesos rapidos"],["Evolución del peso: promedio, esperado y semanas","peso-card","salud","peso balanza promedio tendencia grafico"],["Racha y últimos 14 días","s-racha","nutricion","racha cumplido constancia dias seguidos historial"],["Tendencias y análisis: entrenamiento, nutrición, cuerpo y salud","tendencias","salud","analisis tendencias graficos estadisticas evolucion progreso resumen"],["Exportar solo una parte de mis datos","dt-parts","mas","exportar parcial seleccionar copia"]];
+    ["Acerca de: versión y espacio usado","ab-card","mas","version almacenamiento espacio info"],["Instalar la app en el teléfono o la computadora","pwa-card","mas","instalar aplicacion pantalla de inicio pwa sin conexion offline"],["Cargar análisis: pegar el informe o leer una captura","lp-box","salud","analisis laboratorio resultados pegar informe captura foto valores sangre hemograma ionograma hepatograma"],["Completar el día con lo que solés comer","hb-card","hoy","habitos comidas habituales lo que como aprender sugerir completar dia repetir frecuentes no sigo el plan"],["Combinar rutinas para entrenar 6 días","cb-card","entreno","combinar mezclar juntar rutinas programas 6 dias semana armar"],["Rutinas para boxeo: fuerza, potencia y rounds","lib-card","entreno","boxeo box golpe pegar mas fuerte rounds bolsa sparring combate potencia"],["TRT: cada cuántos días, próxima aplicación y aviso","trav-card","salud","trt testosterona aplicacion inyeccion aviso recordatorio notificacion calendario cada cuantos dias"],["Salvar el día: cómo cerrar las calorías y la proteína que faltan","sv-open","hoy","salvar dia noche faltan calorias proteina me pase revertir cerrar el dia cena"],["Kepi, hummus y comidas árabes, del norte y caseras","zn-card","nutricion","alfajor maicena medialuna factura panaderia pan galletitas pepsi levite aquarius gatorade speed monster cindor gaseosa coca cola sprite fanta 7up manaos paso de los toros sin azucar light zero kepi kepe hummus falafel niños envueltos tabule lajmayin fatay empanada salteña locro carbonada cabrito milanesa ñoquis puchero fernet cerveza mcdonalds mostaza"],["Accesos rápidos de Mi día","qk-card","mas","atajos botones inicio personalizar accesos rapidos"],["Evolución del peso: promedio, esperado y semanas","peso-card","salud","peso balanza promedio tendencia grafico"],["Racha y últimos 14 días","s-racha","nutricion","racha cumplido constancia dias seguidos historial"],["Tendencias y análisis: entrenamiento, nutrición, cuerpo y salud","tendencias","salud","analisis tendencias graficos estadisticas evolucion progreso resumen"],["Exportar solo una parte de mis datos","dt-parts","mas","exportar parcial seleccionar copia"]];
   var CMD={items:[],sel:0,ret:null};
   function nrm(t){return String(t).toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"");}
   function shown(node,stop){for(var p=node;p&&p!==stop;p=p.parentNode){if(p.nodeType===1&&(p.hidden||getComputedStyle(p).display==="none"))return false;}return true;}
@@ -6039,7 +6052,7 @@ var FT=[["Aceite de coco",884,0,"F","Otros",null,null,0,100],["Aceite de girasol
     m.desc=its.map(function(x){return (x[2]?unitTxt(x[0],x[2]):fmt(x[1])+(isMl(FT[x[0]][0])?" ml":" g"))+" de "+ingName(x[0]).toLowerCase();}).join(", ");return m;}
   function svRec(r,kT,pT){var m=scaleRec(r,kT,pT,"auto");m.t=r.t;m.desc=m.items.map(function(it){return itemTxt(it,false).replace(/ \(.*\)$/,"");}).join(" · ");return m;}
   function svWeek(k){var n=0,sk=0,sm=0;for(var i=0;i<7;i++){var kk=shift(k,-i),d=days[kk];if(!d||!Array.isArray(d.e)||!d.e.length)continue;n++;sk+=sum(d).k;sm+=tgt(kk).max;}return n>=3?{n:n,k:sk/n,max:sm/n}:null;}
-  function salvaPlan(k,hh){var t=tgt(k),d=days[k],s=sum(d),n=(d&&d.e||[]).length,mn=mantNow(),out={mode:"",title:"",sub:"",opts:[],tips:[],rows:[],head:""};
+  function salvaPlan0(k,hh){var t=tgt(k),d=days[k],s=sum(d),n=(d&&d.e||[]).length,mn=mantNow(),out={mode:"",title:"",sub:"",opts:[],tips:[],rows:[],head:""};
     var kLeft=t.max-s.k,kMin=t.min-s.k,pF=Math.round(t.prot-s.p),late=hh>=22;
     out.rows=[["Calorías",s.k,t.min,t.max,"kcal"],["Proteína",s.p,t.prot,null,"g"],["Grasa",s.f,t.f,null,"g"],["Carbohidratos",s.c,t.c,null,"g"]];
     function protOpts(room){var L=SVP.map(function(x){var f=FT[x[0]];return svOne(x[0],pF/(f[2]/100),x[1]);}).filter(function(m){return m.p>=Math.min(pF,12);});
@@ -6101,7 +6114,7 @@ var FT=[["Aceite de coco",884,0,"F","Otros",null,null,0,100],["Aceite de girasol
     var ul=$("sv-list");ul.textContent="";var slot=hh>=22?"Colación":"Cena";
     r.opts.forEach(function(m){var li=el("li"),sp=el("span");sp.appendChild(el("b",m.t));sp.appendChild(el("small",m.desc+" · "+fmt(m.k)+" kcal · "+m.p+" g prot. · "+m.c+" g carb. · "+m.fa+" g grasa"));li.appendChild(sp);
       var b=el("button","Anotar","chip");b.type="button";b.setAttribute("aria-label","Anotar "+m.t);
-      b.addEventListener("click",function(){var it={id:"sv"+Date.now().toString(36)+Math.random().toString(36).slice(2,5),n:(slot+" · "+m.t).slice(0,200),k:m.k,p:m.p,c:m.c,f:m.fa,m:0};
+      b.addEventListener("click",function(){if(m.hb){hbAdd(slot,m.hb,"Salvar el día");return;}var it={id:"sv"+Date.now().toString(36)+Math.random().toString(36).slice(2,5),n:(slot+" · "+m.t).slice(0,200),k:m.k,p:m.p,c:m.c,f:m.fa,m:0};
         var rr=rec();rr.e.push(it);save();opLog("salvar","Anotado desde «Salvar el día»: "+m.t);toast("Anoté "+m.t+": "+fmt(it.k)+" kcal y "+it.p+" g de proteína.",{undo:function(){var r2=rec();r2.e=r2.e.filter(function(y){return y.id!==it.id;});save();}});});
       li.appendChild(b);ul.appendChild(li);});
     var T=$("sv-tips");T.textContent="";r.tips.forEach(function(x){T.appendChild(el("li",x));});}
@@ -6306,6 +6319,57 @@ var FT=[["Aceite de coco",884,0,"F","Otros",null,null,0,100],["Aceite de girasol
     b.dataset.c="";b.textContent="Usar esta semana";var before=clone(cfg.routine);cfg.routine=cbRoutine(pl);saveCfg();renderRutina();opLog("rutina","Semana combinada: "+cfg.routine.prog.n);
     var m=$("cb-ok");m.hidden=false;m.textContent="Listo: tu rutina ahora es «"+cfg.routine.prog.n+"». Lo anotado antes queda guardado.";setTimeout(function(){m.hidden=true;},7000);
     toast("Tu rutina ahora es la semana combinada.",{undo:function(){cfg.routine=before;saveCfg();renderRutina();}});});
+
+  /* ---------- Aprender lo que comés y sugerir cómo completar el día ---------- */
+  var HB={cache:null,sig:""},HBSL=["Desayuno","Almuerzo","Merienda","Cena"];
+  function hbName(x){var n=String(x.n||""),parts=n.split(" · "),slot=MEALX[parts[0]]?parts[0]:"",nm=slot?parts.slice(1).join(" · "):n,q=1,m=/\s×\s?(\d+(?:[.,]\d+)?)\s*$/.exec(nm);
+    if(m){q=parseFloat(m[1].replace(",","."))||1;nm=nm.slice(0,m.index);}nm=nm.replace(/\s*\(\d[\d.]*\s*kcal\)\s*$/,"").trim();return {nm:nm,q:q,slot:slot==="Post entreno"?"Después de entrenar":slot};}
+  function hbKey(nm){return nrm(nm).replace(/[^a-z0-9ñ ]+/g," ").replace(/\s+/g," ").trim();}
+  /* Junta lo anotado en los últimos 60 días (sin hoy): cuántas veces, en qué comida, macros por porción y con qué se combina */
+  function hbStats(){var k0=today(),sig=k0+"|"+Object.keys(days).length+"|"+Object.keys(days).filter(function(x){return x>=shift(k0,-60);}).map(function(x){return (days[x].e||[]).length;}).join(",");
+    if(HB.sig===sig&&HB.cache)return HB.cache;var H={},co={},ndays=0,ST={};
+    for(var i=1;i<=60;i++){var kk=shift(k0,-i),d=days[kk];if(!d||!Array.isArray(d.e)||!d.e.length)continue;ndays++;var bySlot={};
+      d.e.forEach(function(x){if(!(x.k>0))return;var h=hbName(x),key=hbKey(h.nm);if(!key||key.length<2)return;var sl=h.slot||"";
+        var o=H[key]||(H[key]={key:key,name:h.nm,n:0,k:0,p:0,c:0,f:0,slots:{},last:""});o.n++;o.k+=x.k/h.q;o.p+=(x.p||0)/h.q;o.c+=(x.c||0)/h.q;o.f+=(x.f||0)/h.q;if(sl)o.slots[sl]=(o.slots[sl]||0)+1;if(kk>o.last){o.last=kk;o.name=h.nm;}
+        (bySlot[sl]=bySlot[sl]||[]).push(key);});
+      d.e.forEach(function(x){var h=hbName(x);if(!h.slot||!(x.k>0))return;var o=ST[h.slot]||(ST[h.slot]={k:0,p:0,days:{}});o.k+=x.k;o.p+=x.p||0;o.days[kk]=1;});
+      Object.keys(bySlot).forEach(function(sl){var L=bySlot[sl].filter(function(v,j,a){return a.indexOf(v)===j;});for(var a=0;a<L.length;a++)for(var b=a+1;b<L.length;b++){var ck=[L[a],L[b]].sort().join("|");co[ck]=(co[ck]||0)+1;}});}
+    var list=Object.keys(H).map(function(k){var o=H[k];return {key:k,name:o.name,n:o.n,k:Math.round(o.k/o.n),p:Math.round(o.p/o.n),c:Math.round(o.c/o.n),f:Math.round(o.f/o.n),slots:o.slots,last:o.last};}).sort(function(a,b){return (b.n-a.n)||(a.last<b.last?1:-1);});
+    var slotAvg={};Object.keys(ST).forEach(function(sl){var n=Object.keys(ST[sl].days).length;if(n>=3)slotAvg[sl]={k:Math.round(ST[sl].k/n),p:Math.round(ST[sl].p/n),n:n};});HB.cache={list:list,co:co,ndays:ndays,slotAvg:slotAvg};HB.sig=sig;return HB.cache;}
+  function hbSlotNow(d,hh){var eaten={};(d&&d.e||[]).forEach(function(x){var h=hbName(x);if(h.slot)eaten[h.slot]=1;});
+    var byHour=hh<11?0:hh<15?1:hh<19?2:3;for(var i=byHour;i<4;i++)if(!eaten[HBSL[i]])return {slot:HBSL[i],rest:HBSL.slice(i).filter(function(x){return !eaten[x];}).length};
+    return {slot:"Colación",rest:1};}
+  /* Opciones de 1 o 2 comidas tuyas que entren en lo que queda, priorizando la proteína que falta */
+  function hbOptions(slot,kT,pT,left,max){var st=hbStats(),L=st.list.filter(function(o){return o.n>=2&&o.k>0;});if(L.length<3)return [];var sa=st.slotAvg[slot];if(sa){kT=Math.min(kT,Math.round(sa.k*1.25));pT=Math.min(pT,Math.max(Math.round(sa.p*1.3),20));}
+    var pool=L.filter(function(o){return o.slots[slot];}).slice(0,10);if(pool.length<4)pool=pool.concat(L.filter(function(o){return pool.indexOf(o)<0;}).slice(0,10-pool.length));
+    var opts=[];pool.forEach(function(a,i){opts.push([a]);pool.slice(i+1).forEach(function(b){opts.push([a,b]);});});
+    var sc=opts.map(function(g){var k=0,p=0,c=0,f=0,fr=0;var fit=0;g.forEach(function(o){k+=o.k;p+=o.p;c+=o.c;f+=o.f;fr+=Math.log(1+o.n);var sh=(o.slots[slot]||0)/o.n;fit+=sh>0?sh:-0.8;});fit/=g.length;
+      if(k>left+50)return null;var s0=1-Math.min(2,Math.abs(k-kT)/Math.max(kT,150))+(pT>0?1.6*Math.min(p,pT)/pT:0)+0.12*fr/g.length+1.2*fit;
+      if(g.length===2){var ck=[g[0].key,g[1].key].sort().join("|");s0+=(st.co[ck]||0)>=2?0.5:(st.co[ck]?0.2:-0.15);}
+      return {g:g,k:k,p:p,c:c,f:f,s:s0};}).filter(Boolean).sort(function(a,b){return b.s-a.s;});
+    var out=[],used={};sc.forEach(function(o){if(out.length>=(max||3))return;var k0=o.g[0].key;if(used[k0])return;used[k0]=1;out.push(o);});return out;}
+  function hbAdd(slot,g,tag){var ids=[],r=rec();g.forEach(function(o){var it={id:"hb"+Date.now().toString(36)+Math.random().toString(36).slice(2,6),n:(slot+" · "+o.name).slice(0,200),k:o.k,p:o.p,c:o.c,f:o.f,m:0};r.e.push(it);ids.push(it.id);});save();
+    opLog("habitos",(tag||"Sugerencia")+": "+g.map(function(o){return o.name;}).join(" + "));
+    toast("Anoté "+g.map(function(o){return o.name;}).join(" + ")+".",{undo:function(){var r2=rec();r2.e=r2.e.filter(function(y){return ids.indexOf(y.id)<0;});save();}});}
+  function renderHB(){var c=$("hb-card");if(!c)return;if(!(cfg.setup&&D())){c.hidden=true;return;}var k=today(),d=days[k],t=tgt(k),s=sum(d),st=hbStats(),hh=new Date().getHours();
+    var regular=st.list.filter(function(o){return o.n>=2;});c.hidden=false;var ul=$("hb-list"),fq=$("hb-freq");ul.textContent="";fq.textContent="";
+    if(regular.length<3){$("hb-title").textContent="Estoy aprendiendo lo que comés";$("hb-sub").textContent="Cuando tengas unos días anotados (con «Anotar rápido», por gramos o con foto), te voy a sugerir cómo completar el día con tus comidas de siempre. Por ahora reconozco "+regular.length+(regular.length===1?" comida que repetís.":" comidas que repetís.");$("hb-top").hidden=true;return;}
+    $("hb-top").hidden=false;var sn=hbSlotNow(d,hh),left=t.max-s.k,pF=Math.max(0,t.prot-s.p);
+    regular.slice(0,10).forEach(function(o){var li=el("li"),sp=el("span");sp.appendChild(el("b",o.name));sp.appendChild(el("small",o.n+" veces · "+fmt(o.k)+" kcal · "+o.p+" g prot."+(Object.keys(o.slots).length?" · "+Object.keys(o.slots).sort(function(a,b){return o.slots[b]-o.slots[a];})[0].toLowerCase():"")));li.appendChild(sp);
+      var b=el("button","Repetir","chip");b.type="button";b.setAttribute("aria-label","Repetir "+o.name);b.addEventListener("click",function(){hbAdd(sn.slot,[o],"Repetido");});li.appendChild(b);fq.appendChild(li);});
+    if(left<=100){$("hb-title").textContent="Ya llegaste a tus calorías de hoy";$("hb-sub").textContent=left<0?"Te pasaste por "+fmt(-left)+" kcal. Si tenés hambre: infusiones, agua o verduras de hoja.":"Te quedan "+fmt(left)+" kcal: alcanza para una infusión o verduras.";return;}
+    var kT=Math.max(150,Math.min(left,Math.round(left/Math.max(1,sn.rest)))),pT=pF>0?Math.min(pF,Math.round(pF/Math.max(1,sn.rest)*1.3)):0,opts=hbOptions(sn.slot,kT,pT,left,3);
+    $("hb-title").textContent="Para tu "+sn.slot.toLowerCase()+", con lo que solés comer";
+    $("hb-sub").textContent="Te quedan "+fmt(left)+" kcal y "+fmt(pF)+" g de proteína"+(sn.rest>1?" para "+sn.rest+" comidas: apunto a unas "+fmt(kT)+" kcal"+(pT?" y "+pT+" g ahora.":" ahora."):".");
+    if(!opts.length){ul.appendChild(el("li","Ninguna de tus comidas habituales entra en lo que te queda. Probá con «Tengo hambre ahora» o «Cómo cerrar el día».","empty"));return;}
+    opts.forEach(function(o){var li=el("li"),sp=el("span");sp.appendChild(el("b",o.g.map(function(x){return x.name;}).join(" + ")));sp.appendChild(el("small",fmt(o.k)+" kcal · "+o.p+" g prot. · "+o.c+" g carb. · "+o.f+" g grasa"));li.appendChild(sp);
+      var b=el("button","Anotar","chip");b.type="button";b.setAttribute("aria-label","Anotar "+o.g.map(function(x){return x.name;}).join(" y "));b.addEventListener("click",function(){hbAdd(sn.slot,o.g,"Sugerencia");});li.appendChild(b);ul.appendChild(li);});}
+  /* «Salvar el día» suma primero opciones con tus comidas habituales */
+  function salvaPlan(k,hh){var o=salvaPlan0(k,hh);if(["prot","ambos","kcal"].indexOf(o.mode)<0)return o;
+    var t=tgt(k),s=sum(days[k]),left=t.max-s.k,pF=Math.max(0,t.prot-s.p),kMin=t.min-s.k,kT=o.mode==="prot"?Math.min(left,Math.max(150,pF*6)):o.mode==="kcal"?Math.max(150,Math.min(left-50,kMin+100)):Math.max(150,Math.min(left-50,kMin+150)),
+      hs=hbOptions(hh>=22?"Colación":"Cena",kT,o.mode==="kcal"?0:pF,left,2);
+    var ho=hs.filter(function(x){return o.mode==="kcal"||x.p>=Math.min(pF,25);}).map(function(x){return {t:"De lo que solés comer: "+x.g.map(function(y){return y.name;}).join(" + "),desc:"aprendido de tus registros",k:x.k,p:x.p,c:x.c,fa:x.f,hb:x.g};});
+    if(ho.length){o.opts=ho.concat(o.opts).slice(0,4);}return o;}
   /* Accesos rápidos configurables: [etiqueta, ícono, destino] */
   var QK={comidas:["Comida",'<path d="M7 3v8M5 3v5a2 2 0 0 0 4 0V3M7 11v10M16.5 21V3c-2 0-3.5 2.5-3.5 6v4h3.5"/>',"qa-txt"],
     peso:["Peso y sueño",'<rect x="3.5" y="4" width="17" height="16.5" rx="3"/><path d="M8.5 9a5 5 0 0 1 7 0L12 12.5"/>',"peso"],
@@ -6389,7 +6453,7 @@ var FT=[["Aceite de coco",884,0,"F","Otros",null,null,0,100],["Aceite de girasol
   }
   window.addEventListener("online",function(){SYNC.fail=0;flush(0);});
   document.addEventListener("visibilitychange",function(){if(!document.hidden&&Object.keys(SYNC.pend).length)flush(0);});
-  if(window.__RD_TEST__)window.RD={days:function(){return days;},cfg:function(){return cfg;},S:function(){return S;},SYNC:SYNC,remoteSet:remoteSet,vDay:vDay,vDays:vDays,sanit:sanit,save:save,rec:rec,today:today,exportData:exportData,importData:importData,encryptText:encryptText,decryptText:decryptText,e1rm:e1rm,dots:dots,wilks:wilks,gl:gl,tdeeReal:tdeeReal,tgt:tgt,labFlags:labFlags,sum:sum,D:D,age:age,frState:frState,FRASES:FRASES,CITAS:CITAS,renderFrase:renderFrase,qaParse:qaParse,qaMac:qaMac,qaFromAI:qaFromAI,greetText:greetText,rcBook:rcBook,fitRec:fitRec,ingCls:ingCls,RECETAS:RECETAS,daySlots:daySlots,scaleRec:scaleRec,slotTarget:slotTarget,RCX:RCX,FEAT:FEAT,lvStats:lvStats,lvLevel:lvLevel,applyLevels:applyLevels,HOWTO:HOWTO,cardOf:cardOf,cmdIndex:cmdIndex,render:render,restPlan:restPlan,linreg:linreg,pearson:pearson,wTrend:wTrend,cookFactor:cookFactor,exportObj:exportObj,signObj:signObj,verifyBk:verifyBk,trashAll:trashAll,trashPut:trashPut,trashRestore:trashRestore,opLog:opLog,insights:insights,dashData:dashData,FORMULAS:FORMULAS,snapTake:snapTake,S:function(){return S;},itemTxt:itemTxt,foodKey:foodKey,showImport:showImport,foFill:foFill,injPlan:injPlan,injHit:injHit,injAlt:injAlt,INJZ:INJZ,wuPlan:wuPlan,wuRamp:wuRamp,INJMAP:INJMAP,QK:QK,e1rm:e1rm,pxKind:pxKind,mealOf:mealOf,renderRec:renderRec,mergeSalud:mergeSalud,grpSync:grpSync,renderQuick:renderQuick,TIPICAS:TIPICAS,PUBS:PUBS,salvaPlan:salvaPlan,trInfo:trInfo,cbBuild:cbBuild,cbWarn:cbWarn,cbRoutine:cbRoutine,CB:CB,PROGS:PROGS,labParse:labParse,labKey:labKey,labNorm:labNorm,LABDEF:LABDEF,trIcs:trIcs,trGcal:trGcal,trNotifyCheck:trNotifyCheck,trDue:trDue,renderSalva:renderSalva,SV:SV,tipMatch:tipMatch,tipMac:tipMac,bSmooth:bSmooth,setSample:function(x){SAMPLE=x;SAMPLEIMG=false;}};
+  if(window.__RD_TEST__)window.RD={days:function(){return days;},cfg:function(){return cfg;},S:function(){return S;},SYNC:SYNC,remoteSet:remoteSet,vDay:vDay,vDays:vDays,sanit:sanit,save:save,rec:rec,today:today,exportData:exportData,importData:importData,encryptText:encryptText,decryptText:decryptText,e1rm:e1rm,dots:dots,wilks:wilks,gl:gl,tdeeReal:tdeeReal,tgt:tgt,labFlags:labFlags,sum:sum,D:D,age:age,frState:frState,FRASES:FRASES,CITAS:CITAS,renderFrase:renderFrase,qaParse:qaParse,qaMac:qaMac,qaFromAI:qaFromAI,greetText:greetText,rcBook:rcBook,fitRec:fitRec,ingCls:ingCls,RECETAS:RECETAS,daySlots:daySlots,scaleRec:scaleRec,slotTarget:slotTarget,RCX:RCX,FEAT:FEAT,lvStats:lvStats,lvLevel:lvLevel,applyLevels:applyLevels,HOWTO:HOWTO,cardOf:cardOf,cmdIndex:cmdIndex,render:render,restPlan:restPlan,linreg:linreg,pearson:pearson,wTrend:wTrend,cookFactor:cookFactor,exportObj:exportObj,signObj:signObj,verifyBk:verifyBk,trashAll:trashAll,trashPut:trashPut,trashRestore:trashRestore,opLog:opLog,insights:insights,dashData:dashData,FORMULAS:FORMULAS,snapTake:snapTake,S:function(){return S;},itemTxt:itemTxt,foodKey:foodKey,showImport:showImport,foFill:foFill,injPlan:injPlan,injHit:injHit,injAlt:injAlt,INJZ:INJZ,wuPlan:wuPlan,wuRamp:wuRamp,INJMAP:INJMAP,QK:QK,e1rm:e1rm,pxKind:pxKind,mealOf:mealOf,renderRec:renderRec,mergeSalud:mergeSalud,grpSync:grpSync,renderQuick:renderQuick,TIPICAS:TIPICAS,PUBS:PUBS,salvaPlan:salvaPlan,trInfo:trInfo,hbStats:hbStats,hbOptions:hbOptions,hbSlotNow:hbSlotNow,renderHB:renderHB,cbBuild:cbBuild,cbWarn:cbWarn,cbRoutine:cbRoutine,CB:CB,PROGS:PROGS,labParse:labParse,labKey:labKey,labNorm:labNorm,LABDEF:LABDEF,trIcs:trIcs,trGcal:trGcal,trNotifyCheck:trNotifyCheck,trDue:trDue,renderSalva:renderSalva,SV:SV,tipMatch:tipMatch,tipMac:tipMac,bSmooth:bSmooth,setSample:function(x){SAMPLE=x;SAMPLEIMG=false;}};
   connect();
 })();
 </script>
