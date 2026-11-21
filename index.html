@@ -216,6 +216,26 @@ tr.past td{color:var(--muted)}
 .ch-leg i.mu{border-top:2px dashed var(--muted)}
 .ch-leg i.dot{width:8px;height:8px;border:0;border-radius:50%;background:var(--muted)}
 .ch-leg i.bd{height:10px;border:0;background:var(--ok);opacity:.3}
+/* v31.15: colores de macronutrientes (paleta categórica validada: CVD ΔE ≥ 9 en claro y oscuro) */
+:root{--m-p:#2a78d6;--m-c:#eb6834;--m-f:#1baf7a}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--m-p:#3987e5;--m-c:#d95926;--m-f:#199e70}}
+:root[data-theme="dark"]{--m-p:#3987e5;--m-c:#d95926;--m-f:#199e70}
+.chart .br.mp{fill:var(--m-p)}.chart .br.mc{fill:var(--m-c)}.chart .br.mf{fill:var(--m-f)}
+.chart g.hi .br{filter:brightness(1.15)}
+.ch-leg i.mp,.ch-leg i.mc,.ch-leg i.mf,.ch-leg i.hm-ok,.ch-leg i.hm-bad,.ch-leg i.hm-miss{width:10px;height:10px;border:0;border-radius:3px}
+.ch-leg i.mp{background:var(--m-p)}.ch-leg i.mc{background:var(--m-c)}.ch-leg i.mf{background:var(--m-f)}
+.ch-leg i.hm-ok{background:var(--ok)}.ch-leg i.hm-bad{background:var(--warn)}.ch-leg i.hm-miss{background:var(--line)}
+.chtip i.mp{background:var(--m-p);opacity:1}.chtip i.mc{background:var(--m-c);opacity:1}.chtip i.mf{background:var(--m-f);opacity:1}.chtip i.ov{background:var(--warn);opacity:1}
+.chart .hm{cursor:pointer}
+.chart .hm rect{fill:transparent;stroke:var(--line);stroke-width:1}
+.chart .hm.ok rect{fill:var(--ok);stroke:none}
+.chart .hm.bad rect{fill:var(--warn);stroke:none}
+.chart .hm.miss rect{fill:var(--line);stroke:none}
+.chart .hm .hx{fill:none;stroke:var(--surface);stroke-width:1.6;stroke-linecap:round}
+.chart .hm.miss .hx{stroke:var(--muted)}
+.chart .hm.today rect{stroke:var(--fg);stroke-width:1.5;stroke-dasharray:2 2}
+.chart .hm.sel rect{stroke:var(--fg);stroke-width:2.5;stroke-dasharray:none}
+.hm-sel{min-height:1.4em}
 svg.mrange{width:84px;height:14px;display:block;margin:0 0 2px auto}
 .adh{border-collapse:collapse;font-size:13px}
 .adh td,.adh th{padding:3px 4px;text-align:center}
@@ -1154,6 +1174,7 @@ h2.sect[id]{scroll-margin-top:12px}
       <h2>Progreso de fuerza<span class="kd kd-est">Estimación</span></h2>
       <p class="sub">Máximo estimado por semana con la serie más pesada: suma las repeticiones en reserva a las hechas y usa la tabla RPE de Tuchscherer hasta 12 repeticiones totales (Epley más arriba). Solo cuenta series de 10 repeticiones o menos. Últimas 8 semanas.</p>
       <div id="f-lifts"></div>
+      <div class="chbox" id="ch-fza"></div>
       <p class="tip" id="f-tip"></p>
     </div>
 <div class="card adv">
@@ -1579,6 +1600,11 @@ h2.sect[id]{scroll-margin-top:12px}
       <div class="strip" id="tira"></div>
       <p class="legend"><span>✓ cumplido</span><span>✕ no cumplido</span><span>– sin anotar</span></p>
     </div>
+<div class="section">
+      <span class="label">Constancia, últimas 16 semanas</span>
+      <div class="chbox" id="ch-cal"></div>
+      <p class="note hm-sel" id="ch-cal-sel" aria-live="polite"></p>
+    </div>
 <p class="note" id="nota"></p>
       </div>
     </details>
@@ -1698,6 +1724,7 @@ h2.sect[id]{scroll-margin-top:12px}
       <div class="trackl"><span id="tl-0"></span><span id="tl-1"></span><span id="tl-2"></span></div>
       <p class="tip" id="p-ajuste"></p>
       <div class="chbox" id="ch-peso"></div>
+      <div class="chbox" id="ch-ritmo"></div>
       <details class="more"><summary>Ver semana por semana</summary><div class="tbl"><table><thead><tr><th>Semana</th><th class="num">Promedio</th><th class="num">Esperado</th><th class="num">Pesajes</th></tr></thead><tbody id="p-semanas"></tbody></table></div></details>
     </div>
 <div class="grp-list">
@@ -1907,7 +1934,7 @@ h2.sect[id]{scroll-margin-top:12px}
 <div class="card">
       <h2>Resumen de la semana</h2>
       <p class="sub">Copialo y compartilo con quien te ayude a ajustar el plan.</p>
-      <div class="chbox" id="ch-sem-k"></div><details class="more"><summary>Ver proteína y suplementos</summary><div class="chbox" id="ch-sem-p"></div><div class="chbox" id="ch-supl"></div></details>
+      <div class="chbox" id="ch-sem-k"></div><div class="chbox" id="ch-sem-m"></div><div class="chbox" id="ch-slot"></div><details class="more"><summary>Ver proteína y suplementos</summary><div class="chbox" id="ch-sem-p"></div><div class="chbox" id="ch-supl"></div></details>
       <textarea id="res-txt" readonly aria-label="Resumen de los últimos 7 días"></textarea>
       <button class="primary" type="button" id="res-copy">Copiar resumen</button>
       <p class="okmsg" id="res-msg" hidden></p>
@@ -2519,7 +2546,7 @@ var FT=[["Aceite de coco",884,0,"F","Otros",null,null,0,100],["Aceite de girasol
   function opt(sel,val,txt){var o=el("option",txt);o.value=val;sel.appendChild(o);return o;}
 
   /* ---------- Estado ---------- */
-  function cfgDefaults(){return {chW:42,chN:14,inj:null,rcFast:false,dash:["peso","adh","semana","salud"],qk:["comidas","peso","entreno","recetas"],fav:[],myrec:[],priv:{blur:false,idle:0},frases:"mixto",ifthen:[],greet:"hora",sched:{wake:"07:00",train:"18:00"},levels:"auto",unlocked:[],lvSeen:false,lvFrom:"",restAuto:true,foods:[],custom:false,max:2200,min:1900,prot:150,sq:0,bp:0,dl:0,palma:145,puno:120,prices:{},plan:null,adapt:true,setup:false,
+  function cfgDefaults(){return {chW:42,chN:14,chF:26,inj:null,rcFast:false,dash:["peso","adh","semana","salud"],qk:["comidas","peso","entreno","recetas"],fav:[],myrec:[],priv:{blur:false,idle:0},frases:"mixto",ifthen:[],greet:"hora",sched:{wake:"07:00",train:"18:00"},levels:"auto",unlocked:[],lvSeen:false,lvFrom:"",restAuto:true,foods:[],custom:false,max:2200,min:1900,prot:150,sq:0,bp:0,dl:0,palma:145,puno:120,prices:{},plan:null,adapt:true,setup:false,
     prof:{name:"",sex:"m",birth:"",height:null,w0:null,bf0:null,bfMid:15,bfGoal:12,goal:"perder",mant:null,rate:0.6,protFFM:2.4,start:today(),steps1:8000,steps2:10000,kcalFloor:null},
     phases:null,special:[],routine:clone(DEF_ROUTINE),mods:{med:false,bp:true,waist:true,isak:true,labs:true,bike:false},
     med:{name:"Medicación",every:7,trt:false,start:""},labsList:["Hemograma completo","Glucemia","Perfil lipídico","Hígado: GPT, GOT y GGT","Riñón: creatinina y urea"],bikeGoal:0,restB:180,restA:120,athlete:true,cycle:true,cycleFrom:"",supl:{},deload:"",glCat:"cl",anim:"on",ax:{},usePlan:true};}
@@ -2533,7 +2560,7 @@ var FT=[["Aceite de coco",884,0,"F","Otros",null,null,0,100],["Aceite de girasol
     if("frases" in c&&["mixto","m","d","no"].indexOf(c.frases)<0)c.frases="mixto";
     if("ifthen" in c)c.ifthen=Array.isArray(c.ifthen)?c.ifthen.filter(function(x){return isObj(x)&&typeof x.si==="string"&&typeof x.ent==="string";}).slice(-20).map(function(x){return {si:x.si.slice(0,90),ent:x.ent.slice(0,90),mom:String(x.mom||"").slice(0,12),d:DKEY.test(x.d||"")?x.d:""};}):[];
     if("inj" in c){var ij=c.inj;c.inj=isObj(ij)&&INJZ[ij.z]&&[1,2,3].indexOf(ij.lvl)>=0&&DKEY.test(ij.d||"")?{z:ij.z,lado:["der","izq"].indexOf(ij.lado)>=0&&INJPAR.indexOf(ij.z)>=0?ij.lado:"",lvl:ij.lvl,d:ij.d}:null;}
-    if("chW" in c&&[42,90,180,365].indexOf(c.chW)<0)c.chW=42;if("chN" in c&&[14,30].indexOf(c.chN)<0)c.chN=14;
+    if("chW" in c&&[42,90,180,365].indexOf(c.chW)<0)c.chW=42;if("chN" in c&&[14,30].indexOf(c.chN)<0)c.chN=14;if("chF" in c&&[8,26,52].indexOf(c.chF)<0)c.chF=26;
     if("dash" in c)c.dash=Array.isArray(c.dash)?c.dash.filter(function(x,i,a){return DASHOK.indexOf(x)>=0&&a.indexOf(x)===i;}):d.dash;
     if("qk" in c){c.qk=Array.isArray(c.qk)?c.qk.filter(function(x,i,a){return QKOK.indexOf(x)>=0&&a.indexOf(x)===i;}).slice(0,4):d.qk;if(!c.qk.length)c.qk=d.qk;}
     if("fav" in c)c.fav=Array.isArray(c.fav)?c.fav.filter(function(x){return typeof x==="string"&&x.trim()&&x.length<=60;}).slice(0,60):[];
@@ -4027,6 +4054,81 @@ var FT=[["Aceite de coco",884,0,"F","Otros",null,null,0,100],["Aceite de girasol
   function safe(f){try{f();}catch(e){var nm=(f&&f.name)||"bloque";if(window.console)console.error("[Rinde Diario] No se pudo mostrar «"+nm+"»: "+(e&&e.name||"Error")+(e&&e.message?" — "+String(e.message).slice(0,120):""));
       if(!SAFEERR[nm]&&!SAFEIN){SAFEERR[nm]=1;SAFEIN=true;try{opLog("error","Una parte de la pantalla no se pudo mostrar ("+nm+"). Tus datos no se tocaron.");}finally{SAFEIN=false;}}}}
 
+
+  /* ---------- v31.15: gráficos nuevos ---------- */
+  var FZL="",HMSEL="",HMN={ok:"cumplido",bad:"no cumplido",miss:"sin anotar",none:"sin datos"};
+  /* Mejor máximo estimado de cada semana, N semanas (misma cuenta que liftWeeks) */
+  function liftSeries(name,N){var k=today(),out=[];for(var w=N-1;w>=0;w--){var end=shift(k,-7*w),best=null;
+    for(var i=0;i<7;i++){var d=days[shift(end,-i)],e=d&&d.g&&d.g.ex&&d.g.ex[name];
+      if(e&&e.kg>0&&e.r>0){var v=e1rm(e.kg,e.r,e.rir);if(v&&(best===null||v>best))best=v;}}out.push({k:end,v:best});}return out;}
+  /* Barras apiladas: o.s=[{name,cls,v:[],lab:fn(i)}] */
+  function stackChart(o){var W=320,H=o.h||150,L=34,R=o.r||34,T=16,B=20,n=o.x.length,u=o.unit||"";
+    var tot=o.x.map(function(_,i){return o.s.reduce(function(a,s0){return a+(s0.v[i]>0?s0.v[i]:0);},0);});
+    if(!tot.some(function(v){return v>0;}))return chEmpty(o.empty||"Todavía no hay datos para graficar.");
+    var vals=tot.slice();(o.ref||[]).forEach(function(r){vals.push(r.y);});var hi=dom(vals,true)[1],Y=function(v){return T+(hi-v)/hi*(H-T-B);},slot=(W-L-R)/n,bw=Math.min(24,slot-2),cols=[];
+    var svg=sv("svg",{viewBox:"0 0 "+W+" "+H,"class":"chart",role:"img","aria-label":o.aria||""});
+    ticks(0,hi,3).forEach(function(t,j){sv("line",{x1:L,x2:W-R,y1:Y(t),y2:Y(t),"class":"gr"+(j===0?" b0":"")},svg);stx(svg,L-4,Y(t)+3,ffmt(t),null,"end");});
+    var every=n<=8?1:n<=16?2:Math.ceil(n/8);
+    o.x.forEach(function(lab,i){var x=L+slot*i+(slot-bw)/2,acc=0,g=sv("g",{},svg),segs=o.s.filter(function(s0){return s0.v[i]>0;});cols[i]=g;
+      segs.forEach(function(s0,j){var v=s0.v[i],top=j===segs.length-1,yb=Y(acc)-(j>0?1:0),yt=Y(acc+v)+(top?0:1);acc+=v;if(yb-yt<0.6)return;
+        var p=top?sv("path",{d:barPath(x,yt,bw,yb),"class":"br "+s0.cls},g):sv("rect",{x:x,y:yt,width:bw,height:yb-yt,"class":"br "+s0.cls},g);
+        ttl(p,lab+", "+s0.name+": "+(s0.lab?s0.lab(i):ffmt(v)+u));});
+      if((i%every===0&&n-1-i>=every)||i===n-1)stx(svg,x+bw/2,H-5,lab,null,i===n-1&&n>8?"end":"middle");});
+    (o.ref||[]).forEach(function(r){if(r.y>hi)return;sv("line",{x1:L,x2:W-R,y1:Y(r.y),y2:Y(r.y),"class":"rf "+(r.cls||"")},svg);if(r.label)stx(svg,W-R+3,Y(r.y)+3,r.label);});
+    var T0=tot.reduce(function(a,b){return a+b;},0),dsc="En el período: "+o.s.map(function(s0){var a=s0.v.reduce(function(x,v){return x+(v>0?v:0);},0);return s0.name.toLowerCase()+" "+Math.round(a/T0*100)+"%";}).join(", ")+".";
+    sv("desc",{},svg).textContent=dsc;svg.setAttribute("aria-label",(o.aria?o.aria+". ":"")+dsc);
+    svg.__tbl={h:[o.xName||"Día"].concat(o.s.map(function(s0){return s0.name;}),["Total"+(u?" ("+u.trim()+")":"")]),r:o.x.map(function(x,i){return tot[i]>0?[x].concat(o.s.map(function(s0){return s0.lab?s0.lab(i):ffmt(s0.v[i]||0);}),[fmt(tot[i])]):null;}).filter(Boolean)};
+    svg.__son={v:tot,ref:(o.ref||[])[0]?o.ref[0].y:null};
+    svg.__ix={n:n,W:W,T:T,Bt:H-B,bar:1,x:function(i){return L+slot*i+slot/2;},lab:function(i){return o.x[i];},
+      rows:function(i){return tot[i]>0?o.s.map(function(s0){return [s0.name,s0.lab?s0.lab(i):ffmt(s0.v[i]||0)+u,s0.cls];}).reverse():[["Total","sin dato",""]];},
+      pts:function(){return [];},hl:function(i){cols.forEach(function(g,j){if(g)g.classList.toggle("hi",j===i);});},
+      extra:function(i){return (tot[i]>0?[["Total",fmt(tot[i])+u]]:[]).concat((o.ref||[]).filter(function(r){return r.label;}).map(function(r){return [r.label.charAt(0).toUpperCase()+r.label.slice(1),fmt(r.y)+u];}));}};
+    return svg;}
+  function barDown(x,y0,w,y){var h=y-y0,r=Math.max(0,Math.min(4,h,w/2));return "M"+x+","+y0+"V"+(y-r)+"Q"+x+","+y+" "+(x+r)+","+y+"H"+(x+w-r)+"Q"+(x+w)+","+y+" "+(x+w)+","+(y-r)+"V"+y0+"Z";}
+  /* Barras con signo, desde el cero */
+  function divChart(o){var W=320,H=o.h||140,L=40,R=o.r||34,T=14,B=20,n=o.v.length,f=o.fmt||ffmt,bars=[];
+    if(!o.v.some(okv))return chEmpty(o.empty||"Todavía no hay datos para graficar.");
+    var vals=o.v.filter(okv).concat([0]);(o.ref||[]).forEach(function(r){vals.push(r.y);});var lo=Math.min.apply(null,vals),hi=Math.max.apply(null,vals),pad=(hi-lo)*0.15||0.25;lo=Math.min(0,lo-pad);hi=Math.max(0,hi+pad);
+    var Y=function(v){return T+(hi-v)/(hi-lo)*(H-T-B);},slot=(W-L-R)/n,bw=Math.min(24,slot-4);
+    var svg=sv("svg",{viewBox:"0 0 "+W+" "+H,"class":"chart",role:"img","aria-label":o.aria||""});
+    ticks(lo,hi,4).forEach(function(t){var z=Math.abs(t)<1e-9;sv("line",{x1:L,x2:W-R,y1:Y(t),y2:Y(t),"class":"gr"+(z?" b0":"")},svg);stx(svg,L-4,Y(t)+3,z?"0":(t>0?"+":"−")+ffmt(Math.abs(t)),null,"end");});
+    var every=n<=8?1:n<=16?2:Math.ceil(n/8);
+    o.v.forEach(function(v,i){var x=L+slot*i+(slot-bw)/2;
+      if(okv(v)&&Math.abs(v)>1e-9){var y0=Y(0),y1=Y(v),p=sv("path",{d:v>0?barPath(x,y1,bw,y0):barDown(x,y0,bw,y1),"class":"br "+(o.cls?o.cls(i,v):"")},svg);bars[i]=p;ttl(p,o.x[i]+": "+f(v));
+        var lb=o.lab&&o.lab(i,v);if(lb)stx(svg,x+bw/2,v>0?y1-4:y1+11,lb,"lb","middle");}
+      if((i%every===0&&n-1-i>=every)||i===n-1)stx(svg,x+bw/2,H-5,o.x[i],null,"middle");});
+    (o.ref||[]).forEach(function(r){if(r.y<lo||r.y>hi)return;sv("line",{x1:L,x2:W-R,y1:Y(r.y),y2:Y(r.y),"class":"rf "+(r.cls||"")},svg);if(r.label)stx(svg,W-R+3,Y(r.y)+3,r.label);});
+    var ok0=o.v.filter(okv),dsc=ok0.length?"Última: "+f(ok0[ok0.length-1])+"; promedio "+f(ok0.reduce(function(a,b){return a+b;},0)/ok0.length)+" en "+ok0.length+" semanas.":"";
+    sv("desc",{},svg).textContent=dsc;svg.setAttribute("aria-label",(o.aria?o.aria+". ":"")+dsc);
+    svg.__tbl={h:[o.xName||"Semana",o.name||"Valor"],r:o.x.map(function(x,i){return [x,okv(o.v[i])?f(o.v[i]):"–"];})};svg.__son={v:o.v.map(function(v){return okv(v)?v:null;}),ref:(o.ref||[])[0]?o.ref[0].y:null};
+    svg.__ix={n:n,W:W,T:T,Bt:H-B,bar:1,x:function(i){return L+slot*i+slot/2;},lab:function(i){return o.x[i];},
+      rows:function(i){return [[o.name||"Valor",okv(o.v[i])?f(o.v[i]):"sin dato",o.cls&&okv(o.v[i])?o.cls(i,o.v[i]):""]];},
+      pts:function(){return [];},hl:function(i){bars.forEach(function(b,j){if(b)b.classList.toggle("hi",j===i);});},
+      extra:function(){return (o.ref||[]).filter(function(r){return r.label;}).map(function(r){return [r.label.charAt(0).toUpperCase()+r.label.slice(1),f(r.y)];});}};
+    return svg;}
+  /* Calendario de constancia: columnas = semanas (lunes a domingo) */
+  function heatChart(o){var k0=today(),dw=(parse(k0).getDay()+6)%7,mon=shift(k0,-dw-7*(o.weeks-1)),W=320,L=18,T=14,cs=Math.floor((W-L)/o.weeks),c=cs-3,H=T+7*cs;
+    var svg=sv("svg",{viewBox:"0 0 "+W+" "+H,"class":"chart",role:"img",tabindex:"0","aria-label":o.aria||""}),cells={},cnt={ok:0,bad:0,miss:0},rows=[],lastM=-1,lastX=-99;
+    ["L","","M","","V","","D"].forEach(function(t,r){if(t)stx(svg,L-5,T+r*cs+c/2+3.5,t,null,"end");});
+    for(var w=0;w<o.weeks;w++){var ws=shift(mon,7*w),x=L+w*cs,wc={ok:0,an:0};
+      for(var r=0;r<7;r++){var kk=shift(ws,r);if(kk>k0)continue;var dd0=parse(kk);
+        if(dd0.getMonth()!==lastM){if(x-lastX>=cs*2){stx(svg,x,T-4,MES[dd0.getMonth()]);lastX=x;}lastM=dd0.getMonth();}
+        var st=o.st(kk),y=T+r*cs,g=sv("g",{"class":"hm "+st+(kk===k0?" today":"")},svg);sv("rect",{x:x,y:y,width:c,height:c,rx:3},g);
+        if(st==="bad")sv("path",{d:"M"+(x+4)+","+(y+c-4)+"L"+(x+c-4)+","+(y+4),"class":"hx"},g);
+        if(st==="miss")sv("path",{d:"M"+(x+5)+","+(y+c/2)+"H"+(x+c-5),"class":"hx"},g);
+        ttl(g,DIA[dd0.getDay()]+" "+fd(kk)+": "+(kk===k0&&st!=="ok"?"hoy, en curso":HMN[st]));g.setAttribute("data-k",kk);cells[kk]=g;
+        if(st==="ok"){cnt.ok++;wc.ok++;wc.an++;}else if(st==="bad"){cnt.bad++;wc.an++;}else if(st==="miss")cnt.miss++;}
+      rows.push([dShort(ws),wc.an?wc.ok+" de "+wc.an:"–"]);}
+    var an=cnt.ok+cnt.bad,dsc=an?cnt.ok+" de "+an+" días anotados cumplidos; "+cnt.miss+" sin anotar.":"Sin días anotados en el período.";
+    sv("desc",{},svg).textContent=dsc;svg.setAttribute("aria-label",(o.aria?o.aria+". ":"")+dsc+" Tocá un día o usá las flechas para ver el detalle.");
+    var sel=function(kk){if(!cells[kk])return;Object.keys(cells).forEach(function(q){cells[q].classList.toggle("sel",q===kk);});o.pick(kk);};
+    svg.addEventListener("click",function(e){var g=e.target.closest&&e.target.closest("g.hm");if(g)sel(g.getAttribute("data-k"));});
+    svg.addEventListener("keydown",function(e){var m={ArrowLeft:-7,ArrowRight:7,ArrowUp:-1,ArrowDown:1}[e.key];if(!m)return;e.preventDefault();var cur=HMSEL&&cells[HMSEL]?HMSEL:k0,nx=shift(cur,m);if(cells[nx])sel(nx);});
+    svg.__tbl={h:["Semana del","Cumplidos"],r:rows.slice().reverse()};svg.__sel=sel;svg.__cnt=cnt;
+    return svg;}
+  function hmPick(kk){HMSEL=kk;var box=$("ch-cal-sel");if(!box)return;var d=days[kk],s1=d&&Array.isArray(d.e)&&d.e.length?sum(d):null,st=status(kk),t=tgt(kk);
+    box.textContent=DIA[parse(kk).getDay()].charAt(0).toUpperCase()+DIA[parse(kk).getDay()].slice(1)+" "+fd(kk)+": "+(kk===today()&&st!=="ok"?"hoy, en curso":HMN[st])+
+      (s1?". "+fmt(s1.k)+" kcal (objetivo "+fmt(t.min)+" a "+fmt(t.max)+") y "+fmt(s1.p)+" g de proteína (meta "+t.prot+" g)":"")+(d&&typeof d.peso==="number"?". Peso "+dec(d.peso)+" kg":"")+".";}
   function renderCharts(){var k=today(),t=tgt(k),d=days[k];
     safe(function(){var s0=sum(d);put("ch-kcal",[bulletChart({v:s0.k,lo:t.min,hi:t.max,max:Math.max(t.max*1.15,s0.k),left:"Comiste "+fmt(s0.k)+" kcal",right:"tope "+fmt(t.max),title:fmt(s0.k)+" kcal",aria:"Calorías de hoy contra la franja que cuenta como cumplido"}),cap("La franja verde es lo que cuenta como día cumplido.")]);});
     safe(function(){var ms=muscleSets(k),xs=[],v=[];for(var i=0;i<=36;i++){xs.push(String(i));v.push(Math.log(1+i)/Math.log(32)*100);}
@@ -4078,6 +4180,36 @@ var FT=[["Aceite de coco",884,0,"F","Otros",null,null,0,100],["Aceite de girasol
       put("ch-lab",a.length?[el("span",L[1]+" en el tiempo, "+L[2],"label"),lineChart({x:a.map(function(x){return dShort(x.d);}),s:[{v:a.map(function(x){return x.v;}),dots:1,fmt:fv}],band:r?[r[0]||0,r[1]===null?Math.max.apply(null,a.map(function(x){return x.v;}))*1.2:r[1]]:null,h:130,aria:L[1]+" en el tiempo"}),cap("Franja verde: rango de referencia. Elegí otro marcador arriba para ver su curva.")]:cap("Cargá valores de "+L[1]+" para ver su curva."));});
     safe(function(){var vol={};MUSCLES.forEach(function(m){vol[m]=0;});cfg.routine.week.forEach(function(kx){var r=RD()[kx];if(!r)return;r.ex.forEach(function(x){var n=setsOf(x[1]);if(vol[x[3]]!==undefined)vol[x[3]]+=n;(x[4]||[]).forEach(function(s2){if(vol[s2]!==undefined)vol[s2]+=n/2;});});});
       put("ch-rut",[el("span","Series fraccionales por semana de tu rutina","label"),hbarChart({rows:MUSCLES.map(function(m){return {l:m.charAt(0).toUpperCase()+m.slice(1),v:vol[m]};}),band:[10,20],bandLabel:"10-20",max:22,aria:"Volumen semanal por músculo de tu rutina"})]);});
+    /* v31.15 */
+    safe(function chFuerza(){if(!$("ch-fza"))return;var LF=lifts().filter(function(nm){return liftSeries(nm,52).some(function(x){return x.v!==null;});});
+      if(!LF.length){put("ch-fza",null);return;}if(LF.indexOf(FZL)<0)FZL=LF[0];
+      var N=cfg.chF||26,S0=liftSeries(FZL,N),v=S0.map(function(x){return x.v;}),nn=v.filter(okv),mx=nn.length?Math.max.apply(null,nn):null,mi=nn.length?v.indexOf(mx):-1,dl=nn.length>=2?nn[nn.length-1]-nn[0]:null;
+      var kg=function(y){return fmt(y)+" kg";};
+      put("ch-fza",[el("span","Máximo estimado por semana","label"),LF.length>1?chSeg("Ejercicio",LF.map(function(nm){return [nm,nm];}),FZL,function(x){FZL=x;}):null,
+        chSeg("Período del gráfico de fuerza",[[8,"8 semanas"],[26,"6 meses"],[52,"1 año"]],N,function(x){cfg.chF=x;lsSet(LSC,cfg);remoteSet("config");}),
+        lineChart({x:S0.map(function(x){return dShort(x.k);}),s:[{v:v,dots:nn.length<=12?1:0,name:FZL,fmt:kg}],marks:nn.length>=3?[{i:mi,v:mx,label:"récord"}]:[],h:160,aria:"Máximo estimado de "+FZL+" por semana",empty:"No hay series de "+FZL+" con kilos y repeticiones en este período."}),
+        cap(dl!==null?(dl>=0?"+":"−")+fmt(Math.abs(dl))+" kg entre la primera y la última semana con datos ("+nn.length+" semanas con datos). Cada punto es la mejor serie de esa semana, no un máximo real.":"Cada punto es la mejor serie de esa semana. Con dos semanas anotadas ya se ve la tendencia.")]);});
+    safe(function chRitmo(){if(!$("ch-ritmo"))return;var A=[];for(var w=0;w<=8;w++){var a=wavg(shift(k,-7*w),7);A.push(a.n>=2?a.v:null);}
+      var v=[],xs=[];for(var w2=7;w2>=0;w2--){v.push(okv(A[w2])&&okv(A[w2+1])?Math.round((A[w2]-A[w2+1])*100)/100:null);xs.push(w2?"−"+w2:"esta");}
+      var p=phaseOf(k),pr=p?Math.round((p.w1-p.w0)/((diff(p.a,p.b)+1)/7)*100)/100:null,goal=cfg.prof.goal,sg=function(y){return (y>0?"+":y<0?"−":"")+dec(Math.abs(y),2)+" kg";};
+      put("ch-ritmo",[el("span","Cuánto cambió el promedio cada semana","label"),divChart({v:v,x:xs,name:"Cambio",fmt:sg,ref:pr?[{y:pr,label:"plan"}]:[],
+        cls:function(i,y){return goal==="perder"?(y>0?"ov":""):goal==="ganar"?(y<0?"ov":""):"";},aria:"Cambio semanal del peso promedio",empty:"Con dos pesajes por semana durante dos semanas aparece el ritmo."}),
+        cap((okv(v[v.length-1])?"Esta semana: "+sg(v[v.length-1])+". ":"")+"Cada barra compara tu promedio de 7 días con el de la semana anterior."+(pr?" La línea es lo que pide "+(p.n.indexOf("Fase")===0?"la "+p.n.toLowerCase():"el "+p.n.toLowerCase())+": "+sg(pr)+" por semana.":"")+(goal==="perder"?" Las barras naranjas son semanas en que subió.":goal==="ganar"?" Las barras naranjas son semanas en que bajó.":"")+" El agua y la sal mueven el peso: mirá varias semanas, no una sola.")]);});
+    safe(function chMacros(){if(!$("ch-sem-m"))return;var N=cfg.chN||14,xs=[],P=[],C=[],F=[],G={p:[],c:[],f:[]},est=0;
+      for(var i=N-1;i>=0;i--){var kk=shift(k,-i),dd=days[kk],s1=dd&&Array.isArray(dd.e)&&dd.e.length?sum(dd):null;xs.push(dShort(kk));
+        G.p.push(s1?s1.p:0);G.c.push(s1?s1.c:0);G.f.push(s1?s1.f:0);P.push(s1?s1.p*4:0);C.push(s1?s1.c*4:0);F.push(s1?s1.f*9:0);if(s1&&s1.est)est++;}
+      var gl=function(arr,kf){return function(i){return fmt(arr[i])+" g · "+fmt(arr[i]*kf)+" kcal";};},sm=function(a){return a.reduce(function(x,y){return x+y;},0);},sP=sm(P),sC=sm(C),sF=sm(F),T0=sP+sC+sF,pc=function(x){return Math.round(x/T0*100);};
+      put("ch-sem-m",[el("span","Macronutrientes, últimos "+N+" días","label"),stackChart({x:xs,s:[{name:"Proteína",cls:"mp",v:P,lab:gl(G.p,4)},{name:"Carbohidratos",cls:"mc",v:C,lab:gl(G.c,4)},{name:"Grasa",cls:"mf",v:F,lab:gl(G.f,9)}],ref:[{y:t.max,label:"tope"}],unit:" kcal",aria:"Calorías de cada macronutriente por día, últimos "+N+" días",empty:"Anotá comidas para ver de dónde vienen tus calorías."}),
+        T0>0?legend([["mp","Proteína"],["mc","Carbohidratos"],["mf","Grasa"]]):null,
+        T0>0?cap("De las calorías del período: proteína "+pc(sP)+"%, carbohidratos "+pc(sC)+"% y grasa "+pc(sF)+"%. Cada macro se pasa a calorías con 4, 4 y 9 kcal por gramo."+(est?" En "+est+(est===1?" día hay":" días hay")+" alimentos sin carbohidratos ni grasa cargados: ahí la app reparte el resto mitad y mitad, así que esa parte es estimada.":"")):null]);});
+    safe(function chSlot(){if(!$("ch-slot"))return;var sa=hbStats().slotAvg,ord=["Desayuno","Antes de entrenar","Almuerzo","Merienda","Después de entrenar","Post entreno","Colación","Colacion","Cena"],
+        ks=Object.keys(sa).sort(function(a,b){var x=ord.indexOf(a),y=ord.indexOf(b);return (x<0?99:x)-(y<0?99:y);}),sh={"Antes de entrenar":"Pre entreno","Después de entrenar":"Post entreno","Colacion":"Colación"};
+      if(!ks.length){put("ch-slot",null);return;}var Wk=WREF||cfg.prof.w0||0;
+      put("ch-slot",[el("span","Calorías promedio por comida, últimos 60 días","label"),hbarChart({rows:ks.map(function(x){return {l:sh[x]||x,v:sa[x].k};}),unit:" kcal",aria:"Calorías promedio de cada comida del día"}),
+        cap("Proteína promedio: "+ks.map(function(x){return (sh[x]||x).toLowerCase()+" "+sa[x].p+" g";}).join(", ")+". Cuenta solo los días en que comiste en ese momento (al menos 3)."+(Wk?" Para aprovechar la proteína sirve repartir unos "+Math.round(Wk*0.4)+" g (0,4 g por kilo) en 3 o 4 comidas (Schoenfeld y Aragon, 2018).":""))]);});
+    safe(function chCal(){if(!$("ch-cal"))return;var hm=heatChart({weeks:16,st:status,pick:hmPick,aria:"Constancia de las últimas 16 semanas"});
+      put("ch-cal",[hm,legend([["hm-ok","cumplido"],["hm-bad","no cumplido"],["hm-miss","sin anotar"]])]);
+      if(HMSEL&&hm.__sel)hm.__sel(HMSEL);else $("ch-cal-sel").textContent="Tocá un día para ver qué comiste y cuánto te faltó.";});
   }
   function progChart(p){var vol={};MUSCLES.forEach(function(m){vol[m]=0;});p.week.forEach(function(kx){var r=p.days[kx];if(!r)return;r.ex.forEach(function(x){var n=setsOf(x[1]);vol[x[3]]+=n;(x[4]||[]).forEach(function(s2){vol[s2]+=n/2;});});});
     var b=el("div",null,"chbox");b.appendChild(el("span","Series fraccionales por semana","label"));b.appendChild(hbarChart({rows:MUSCLES.map(function(m){return {l:m.charAt(0).toUpperCase()+m.slice(1),v:vol[m]};}),band:[10,20],bandLabel:"10-20",max:22,aria:"Volumen semanal por músculo del programa"}));return b;}
@@ -4757,7 +4889,7 @@ var FT=[["Aceite de coco",884,0,"F","Otros",null,null,0,100],["Aceite de girasol
 
 
   /* ---------- v31: indicadores de Mi día, lecturas, papelera, registro, copias automáticas, privacidad, fórmulas ---------- */
-  var APPV="31.14";
+  var APPV="31.15";
   function viewOf(n){var sc=n&&n.closest?n.closest("section.view"):null;return sc?sc.id.slice(2):null;}
   var LST="rendicion-papelera",LSO="rendicion-oplog";
   function opLog(op,d){try{var a=JSON.parse(localStorage.getItem(LSO)||"[]");if(!Array.isArray(a))a=[];a.push({t:new Date().toISOString(),op:String(op).slice(0,30),d:String(d||"").slice(0,200)});if(a.length>300)a=a.slice(-300);localStorage.setItem(LSO,JSON.stringify(a));}catch(e){}safe(renderLog);}
@@ -6465,7 +6597,7 @@ var FT=[["Aceite de coco",884,0,"F","Otros",null,null,0,100],["Aceite de girasol
   }
   window.addEventListener("online",function(){SYNC.fail=0;flush(0);});
   document.addEventListener("visibilitychange",function(){if(!document.hidden&&Object.keys(SYNC.pend).length)flush(0);});
-  if(window.__RD_TEST__)window.RD={days:function(){return days;},cfg:function(){return cfg;},S:function(){return S;},SYNC:SYNC,remoteSet:remoteSet,vDay:vDay,vDays:vDays,sanit:sanit,save:save,rec:rec,today:today,exportData:exportData,importData:importData,encryptText:encryptText,decryptText:decryptText,e1rm:e1rm,dots:dots,wilks:wilks,gl:gl,tdeeReal:tdeeReal,tgt:tgt,labFlags:labFlags,sum:sum,D:D,age:age,frState:frState,FRASES:FRASES,CITAS:CITAS,renderFrase:renderFrase,qaParse:qaParse,qaMac:qaMac,qaFromAI:qaFromAI,greetText:greetText,rcBook:rcBook,fitRec:fitRec,ingCls:ingCls,RECETAS:RECETAS,daySlots:daySlots,scaleRec:scaleRec,slotTarget:slotTarget,RCX:RCX,FEAT:FEAT,lvStats:lvStats,lvLevel:lvLevel,applyLevels:applyLevels,HOWTO:HOWTO,cardOf:cardOf,cmdIndex:cmdIndex,render:render,restPlan:restPlan,linreg:linreg,pearson:pearson,wTrend:wTrend,cookFactor:cookFactor,exportObj:exportObj,signObj:signObj,verifyBk:verifyBk,trashAll:trashAll,trashPut:trashPut,trashRestore:trashRestore,opLog:opLog,insights:insights,dashData:dashData,FORMULAS:FORMULAS,snapTake:snapTake,S:function(){return S;},itemTxt:itemTxt,foodKey:foodKey,showImport:showImport,foFill:foFill,injPlan:injPlan,injHit:injHit,injAlt:injAlt,INJZ:INJZ,wuPlan:wuPlan,wuRamp:wuRamp,INJMAP:INJMAP,QK:QK,e1rm:e1rm,pxKind:pxKind,mealOf:mealOf,renderRec:renderRec,mergeSalud:mergeSalud,grpSync:grpSync,renderQuick:renderQuick,TIPICAS:TIPICAS,PUBS:PUBS,salvaPlan:salvaPlan,trInfo:trInfo,hbStats:hbStats,hbOptions:hbOptions,hbSlotNow:hbSlotNow,renderHB:renderHB,cbBuild:cbBuild,cbWarn:cbWarn,cbRoutine:cbRoutine,CB:CB,PROGS:PROGS,labParse:labParse,labKey:labKey,labNorm:labNorm,LABDEF:LABDEF,trIcs:trIcs,trGcal:trGcal,trNotifyCheck:trNotifyCheck,trDue:trDue,renderSalva:renderSalva,SV:SV,tipMatch:tipMatch,tipMac:tipMac,bSmooth:bSmooth,setSample:function(x){SAMPLE=x;SAMPLEIMG=false;}};
+  if(window.__RD_TEST__)window.RD={days:function(){return days;},cfg:function(){return cfg;},S:function(){return S;},SYNC:SYNC,remoteSet:remoteSet,vDay:vDay,vDays:vDays,sanit:sanit,save:save,rec:rec,today:today,exportData:exportData,importData:importData,encryptText:encryptText,decryptText:decryptText,e1rm:e1rm,dots:dots,wilks:wilks,gl:gl,tdeeReal:tdeeReal,tgt:tgt,labFlags:labFlags,sum:sum,D:D,age:age,frState:frState,FRASES:FRASES,CITAS:CITAS,renderFrase:renderFrase,qaParse:qaParse,qaMac:qaMac,qaFromAI:qaFromAI,greetText:greetText,rcBook:rcBook,fitRec:fitRec,ingCls:ingCls,RECETAS:RECETAS,daySlots:daySlots,scaleRec:scaleRec,slotTarget:slotTarget,RCX:RCX,FEAT:FEAT,lvStats:lvStats,lvLevel:lvLevel,applyLevels:applyLevels,HOWTO:HOWTO,cardOf:cardOf,cmdIndex:cmdIndex,render:render,restPlan:restPlan,linreg:linreg,pearson:pearson,wTrend:wTrend,cookFactor:cookFactor,exportObj:exportObj,signObj:signObj,verifyBk:verifyBk,trashAll:trashAll,trashPut:trashPut,trashRestore:trashRestore,opLog:opLog,insights:insights,dashData:dashData,FORMULAS:FORMULAS,snapTake:snapTake,S:function(){return S;},itemTxt:itemTxt,foodKey:foodKey,showImport:showImport,foFill:foFill,injPlan:injPlan,injHit:injHit,injAlt:injAlt,INJZ:INJZ,wuPlan:wuPlan,wuRamp:wuRamp,INJMAP:INJMAP,QK:QK,e1rm:e1rm,pxKind:pxKind,mealOf:mealOf,renderRec:renderRec,mergeSalud:mergeSalud,grpSync:grpSync,renderQuick:renderQuick,TIPICAS:TIPICAS,PUBS:PUBS,salvaPlan:salvaPlan,trInfo:trInfo,liftSeries:liftSeries,liftWeeks:liftWeeks,stackChart:stackChart,divChart:divChart,heatChart:heatChart,hmPick:hmPick,status:status,lifts:lifts,hbStats:hbStats,hbOptions:hbOptions,hbSlotNow:hbSlotNow,renderHB:renderHB,cbBuild:cbBuild,cbWarn:cbWarn,cbRoutine:cbRoutine,CB:CB,PROGS:PROGS,labParse:labParse,labKey:labKey,labNorm:labNorm,LABDEF:LABDEF,trIcs:trIcs,trGcal:trGcal,trNotifyCheck:trNotifyCheck,trDue:trDue,renderSalva:renderSalva,SV:SV,tipMatch:tipMatch,tipMac:tipMac,bSmooth:bSmooth,setSample:function(x){SAMPLE=x;SAMPLEIMG=false;}};
   connect();
 })();
 </script>
