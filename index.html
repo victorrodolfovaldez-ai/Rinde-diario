@@ -312,7 +312,7 @@ body.big .toggle input{width:30px;height:30px}
 #fx .in{max-width:480px;margin:0 auto;display:flex;flex-direction:column;gap:14px;padding-block:12px 24px}
 #fx .hd{display:flex;align-items:center;justify-content:space-between;gap:8px}
 #fx h2{font-family:var(--display);font-size:28px;margin:0;line-height:1.1}
-#fx svg.exa{width:120px;height:120px;align-self:center}
+#fx svg.exa{width:180px;height:150px;align-self:center;border-radius:14px}
 #fx .meta{font-size:16px;color:var(--muted);margin:0;text-align:center}
 #fx .stp{display:grid;grid-template-columns:72px 1fr 72px;gap:10px;align-items:center}
 #fx .stp button{min-height:72px;font-size:22px;font-weight:700;border-radius:10px;border:2px solid var(--line);background:var(--surface);color:var(--fg)}
@@ -631,18 +631,27 @@ summary{cursor:pointer;font-family:var(--display);font-weight:700;font-size:20px
 .exin{grid-column:2;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;align-items:center}
 .exin input[type=number]{padding:8px 6px;text-align:right}
 .exin .rt-ex{grid-column:1 / -1;justify-self:start}
-.ex.an{grid-template-columns:auto 56px 1fr}
+.ex.an{grid-template-columns:auto 64px 1fr}
 .ex.an .exin{grid-column:2 / -1}
-svg.exa{width:56px;height:56px;display:block;background:var(--bg);border-radius:6px}
-svg.exa .fg{stroke:var(--fg);stroke-width:5;stroke-linecap:round;stroke-linejoin:round;fill:none}
-svg.exa .hd{fill:var(--fg)}
-svg.exa .eq{fill:var(--accent)}
-svg.exa .cb{stroke:var(--accent);stroke-width:2;fill:none}
-svg.exa .pl{stroke:var(--accent);stroke-width:4;stroke-linecap:round}
-svg.exa .st{stroke:var(--muted);stroke-width:3;stroke-linecap:round;fill:none}
-svg.exa .gd{stroke:var(--line);stroke-width:2}
+svg.exa{width:64px;height:54px;display:block;background:var(--surface-2);border-radius:8px}
+svg.exa .xg{stroke:var(--px-ground);stroke-width:1.6;stroke-linecap:round;fill:none}
+svg.exa .xs{fill:none;stroke:var(--px-eq);stroke-width:2.2}
+svg.exa .xe{fill:none;stroke:var(--px-eq);stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
+svg.exa .xw{fill:none;stroke:var(--px-eq);stroke-width:2}
+svg.exa .xc{fill:none;stroke:var(--px-eq);stroke-width:1.4}
+svg.exa .xb{fill:none;stroke:var(--px-acc);stroke-width:1.8;stroke-dasharray:3 2}
+svg.exa .xr{fill:none;stroke:var(--px-eq);stroke-width:1.3}
+svg.exa .xf,svg.exa .xn{fill:none;stroke-linecap:round;stroke-linejoin:round}
+svg.exa .xf{stroke:var(--px-far)}svg.exa .xn{stroke:var(--px-fig)}
+svg.exa .xl{stroke-width:7.5}svg.exa .xf.xl{stroke-width:7}svg.exa .xa{stroke-width:6.2}svg.exa .xt{stroke-width:10.5}
+svg.exa .xh{fill:var(--px-fig)}
+svg.exa .xp{fill:var(--px-acc)}svg.exa .xu{fill:var(--px-bg)}
+svg.exa .xpl{stroke:var(--px-eq);stroke-width:3.5;stroke-linecap:round}
+svg.exa .xar{fill:none;stroke:var(--px-arrow);stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;transition:opacity .2s}
+svg.exa .xlm{fill:none;stroke:var(--px-eq);stroke-width:3.2;stroke-linecap:round}
+svg.exa .xpd{fill:var(--px-eq)}
 .pg-day li{display:flex;align-items:center;gap:8px}
-.pg-day li svg.exa{width:32px;height:32px;flex:none}
+.pg-day li svg.exa{width:44px;height:37px;flex:none;border-radius:6px}
 .ed{display:flex;flex-direction:column;gap:8px;padding:10px 0;border-top:1px solid var(--line)}
 .edrow{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .edrow3{display:grid;grid-template-columns:2fr 1fr auto;gap:8px;align-items:end}
@@ -4283,70 +4292,219 @@ var FT=[["Aceite de coco",884,0,"F","Otros",null,null,0,100],["Aceite de girasol
     var b=el("div",null,"chbox");b.appendChild(el("span","Series fraccionales por semana","label"));b.appendChild(hbarChart({rows:MUSCLES.map(function(m){return {l:m.charAt(0).toUpperCase()+m.slice(1),v:vol[m]};}),band:[10,20],bandLabel:"10-20",max:22,aria:"Volumen semanal por músculo del programa"}));return b;}
 
 
-  /* ---------- Animaciones de ejercicios (SVG propio) ---------- */
-  var NEU={h:[50,17],sh:[50,27],hp:[50,52],kn:[50,72],an:[50,92],el:[50,40],wr:[50,52]};
-  function P2(a,b){return Object.assign({},NEU,a||{},b||{});}
-  var LEG=[["sh","hp"],["hp","kn"],["kn","an"],["sh","el"],["el","wr"]];
-  var BENCH_BODY={h:[22,55],sh:[32,58],hp:[62,58],kn:[74,58],an:[80,92]};
-  var FR={h:[50,15],nk:[50,24],sl:[41,27],sr:[59,27],hp:[50,52],hl:[45,54],hr:[55,54],kl:[45,73],kr:[55,73],al:[45,92],ar:[55,92]};
-  var FRSEG=[["nk","hp"],["sl","sr"],["hl","hr"],["hl","kl"],["kl","al"],["hr","kr"],["kr","ar"],["sl","e1"],["e1","w1"],["sr","e2"],["e2","w2"]];
-  var EXA={
-    squat:{seg:LEG,gd:1,obj:[["plate","bb"]],A:P2({h:[49,17],sh:[49,27],kn:[52,72],el:[40,32],wr:[46,25],bb:[47,25]}),B:P2({h:[55,39],sh:[50,48],hp:[38,70],kn:[64,74],el:[41,53],wr:[48,46],bb:[49,46]})},
-    hinge:{seg:LEG,gd:1,obj:[["plate","bb"]],A:P2({hp:[47,52],wr:[51,52],bb:[51,54]}),B:P2({h:[66,42],sh:[58,46],hp:[34,58],kn:[55,74],el:[58,62],wr:[58,78],bb:[58,84]})},
-    bench:{seg:LEG,st:[["rect",16,62,64,6],["line",22,68,22,92],["line",74,68,74,92]],gd:1,obj:[["plate","bb"]],A:P2(BENCH_BODY,{el:[34,42],wr:[36,26],bb:[36,26]}),B:P2(BENCH_BODY,{el:[26,66],wr:[36,48],bb:[36,48]})},
-    incline:{seg:LEG,st:[["line",18,44,56,68],["line",56,68,78,68],["line",56,68,56,92]],gd:1,obj:[["plate","bb"]],
-      A:P2({h:[28,40],sh:[36,47],hp:[58,64],kn:[72,62],an:[78,92],el:[44,30],wr:[40,16],bb:[40,16]}),B:P2({h:[28,40],sh:[36,47],hp:[58,64],kn:[72,62],an:[78,92],el:[30,58],wr:[44,38],bb:[44,38]})},
-    ohp:{seg:LEG,gd:1,obj:[["plate","bb"]],A:P2({el:[58,36],wr:[56,23],bb:[56,23]}),B:P2({el:[55,14],wr:[52,2],bb:[52,2]})},
-    row:{seg:LEG,gd:1,obj:[["plate","bb"]],A:P2({h:[68,36],sh:[60,40],hp:[36,54],kn:[54,72],el:[62,56],wr:[62,72],bb:[62,74]}),B:P2({h:[68,36],sh:[60,40],hp:[36,54],kn:[54,72],el:[46,42],wr:[56,57],bb:[56,58]})},
-    pull:{seg:LEG,st:[["line",28,6,72,6]],A:P2({h:[50,22],sh:[50,30],el:[50,18],wr:[50,6],hp:[50,56],kn:[52,74],an:[48,90]}),B:P2({h:[54,6],sh:[50,16],el:[40,22],wr:[50,6],hp:[50,42],kn:[52,60],an:[48,76]})},
-    legraise:{seg:LEG,st:[["line",28,6,72,6]],A:P2({h:[50,22],sh:[50,30],el:[50,18],wr:[50,6],hp:[50,56],kn:[52,74],an:[48,90]}),B:P2({h:[50,22],sh:[50,30],el:[50,18],wr:[50,6],hp:[50,56],kn:[66,50],an:[72,66]})},
-    curl:{seg:LEG,gd:1,obj:[["db","wr"]],A:P2({el:[50,42],wr:[52,56]}),B:P2({el:[50,42],wr:[60,31]})},
-    tri:{seg:LEG,gd:1,obj:[["cable","ca","wr"]],A:P2({ca:[70,-4],el:[50,40],wr:[60,30]}),B:P2({ca:[70,-4],el:[50,40],wr:[55,56]})},
-    lateral:{seg:FRSEG,head:"h",gd:1,obj:[["db","w1"],["db","w2"]],A:Object.assign({},FR,{e1:[39,40],w1:[39,52],e2:[61,40],w2:[61,52]}),B:Object.assign({},FR,{e1:[29,29],w1:[17,30],e2:[71,29],w2:[83,30]})},
-    fly:{seg:FRSEG,head:"h",gd:1,obj:[["db","w1"],["db","w2"]],A:Object.assign({},FR,{e1:[30,30],w1:[18,40],e2:[70,30],w2:[82,40]}),B:Object.assign({},FR,{e1:[38,36],w1:[47,42],e2:[62,36],w2:[53,42]})},
-    abd:{seg:FRSEG,head:"h",gd:1,A:Object.assign({},FR,{e1:[39,40],w1:[39,52],e2:[61,40],w2:[61,52]}),B:Object.assign({},FR,{e1:[39,40],w1:[39,52],e2:[61,40],w2:[61,52],kl:[40,72],al:[30,90]})},
-    facepull:{seg:LEG,gd:1,obj:[["cable","ca","wr"]],A:P2({ca:[100,22],el:[66,30],wr:[82,24]}),B:P2({ca:[100,22],el:[42,24],wr:[58,18]})},
-    lunge:{seg:[["sh","hp"],["hp","k1"],["k1","a1"],["hp","k2"],["k2","a2"],["sh","el"],["el","wr"]],gd:1,obj:[["db","wr"]],
-      A:{h:[48,17],sh:[48,27],hp:[48,52],k1:[58,72],a1:[64,92],k2:[40,72],a2:[32,92],el:[48,40],wr:[48,52]},B:{h:[46,31],sh:[46,41],hp:[46,66],k1:[64,72],a1:[64,92],k2:[40,86],a2:[26,92],el:[46,54],wr:[46,66]}},
-    legpress:{seg:LEG,st:[["line",14,40,34,74],["line",34,74,52,74]],obj:[["plat","an"]],A:{h:[16,30],sh:[22,42],hp:[36,72],kn:[58,52],an:[78,36],el:[30,58],wr:[38,66]},B:{h:[16,30],sh:[22,42],hp:[36,72],kn:[44,44],an:[60,40],el:[30,58],wr:[38,66]}},
-    legext:{seg:LEG,st:[["rect",26,66,36,6],["line",30,72,30,92]],gd:1,A:{h:[34,28],sh:[36,38],hp:[40,64],kn:[60,64],an:[62,90],el:[38,52],wr:[44,64]},B:{h:[34,28],sh:[36,38],hp:[40,64],kn:[60,64],an:[82,60],el:[38,52],wr:[44,64]}},
-    legcurl:{seg:LEG,st:[["rect",10,62,70,5],["line",20,67,20,92],["line",70,67,70,92]],gd:1,A:{h:[16,54],sh:[26,58],hp:[54,58],kn:[74,58],an:[94,58],el:[22,66],wr:[16,72]},B:{h:[16,54],sh:[26,58],hp:[54,58],kn:[74,58],an:[80,36],el:[22,66],wr:[16,72]}},
-    thrust:{seg:LEG,st:[["rect",4,56,22,8]],gd:1,obj:[["plate","bb"]],A:{h:[14,50],sh:[24,58],hp:[46,80],kn:[66,66],an:[72,92],el:[34,68],wr:[44,74],bb:[46,74]},B:{h:[14,50],sh:[24,58],hp:[50,58],kn:[68,60],an:[72,92],el:[36,56],wr:[48,52],bb:[50,52]}},
-    calf:{seg:LEG.concat([["an","to"]]),gd:1,A:P2({to:[58,92]}),B:{h:[50,11],sh:[50,21],hp:[50,46],kn:[50,66],an:[51,86],el:[50,34],wr:[50,46],to:[58,92]}},
-    crunch:{seg:LEG,gd:1,A:{h:[22,84],sh:[32,86],hp:[58,86],kn:[70,70],an:[82,88],el:[30,78],wr:[22,76]},B:{h:[34,66],sh:[40,74],hp:[58,86],kn:[70,70],an:[82,88],el:[34,64],wr:[28,62]}},
-    plank:{seg:LEG,gd:1,A:{h:[22,62],sh:[30,68],hp:[58,72],kn:[72,78],an:[86,86],el:[32,86],wr:[42,88]},B:{h:[22,61],sh:[30,67],hp:[58,70],kn:[72,77],an:[86,86],el:[32,86],wr:[42,88]}},
-    pushup:{seg:LEG,gd:1,A:{h:[20,60],sh:[28,64],hp:[56,74],kn:[72,82],an:[88,88],el:[28,76],wr:[28,88]},B:{h:[20,74],sh:[28,78],hp:[56,82],kn:[72,86],an:[88,88],el:[40,80],wr:[28,88]}},
-    dip:{seg:LEG,st:[["line",40,44,64,44],["line",60,44,60,92]],gd:1,A:{h:[50,14],sh:[50,24],el:[50,34],wr:[50,44],hp:[50,48],kn:[44,64],an:[54,76]},B:{h:[52,30],sh:[50,40],el:[36,36],wr:[50,44],hp:[48,62],kn:[42,78],an:[52,90]}},
-    pullover:{seg:LEG,st:[["rect",16,62,64,6],["line",22,68,22,92],["line",74,68,74,92]],gd:1,obj:[["db","wr"]],A:P2(BENCH_BODY,{el:[34,42],wr:[36,28]}),B:P2(BENCH_BODY,{el:[14,56],wr:[2,62]})}};
-  var EXRX=[[/n[oó]rdic/i,"legcurl"],[/prensi[oó]n/i,"curl"],[/salto|sentarse y pararse|escal[oó]n/i,"squat"],[/arranque|cargada/i,"hinge"],[/push press|lanzamiento|ergómetro/i,"ohp"],[/rotaci[oó]n externa/i,"lateral"],[/hip thrust|puente/i,"thrust"],[/abducci/i,"abd"],[/gemelo|pantorrilla/i,"calf"],[/prensa/i,"legpress"],[/extensi[oó]n de cu[aá]driceps/i,"legext"],[/femoral/i,"legcurl"],
-    [/zancada|b[uú]lgara|estocada/i,"lunge"],[/sentadilla|squat|hack/i,"squat"],[/peso muerto|rumano|buenos d|cargada|clean/i,"hinge"],[/pull-?over/i,"pullover"],[/colgad|elevaciones de piernas/i,"legraise"],
-    [/dominada|jal[oó]n|chin/i,"pull"],[/abdominal|crunch/i,"crunch"],[/plancha/i,"plank"],[/flexi[oó]n|push-?up/i,"pushup"],[/fondo/i,"dip"],[/face pull/i,"facepull"],
-    [/p[aá]jaro|posterior|laterales/i,"lateral"],[/apertura|pec deck|cruce|fly/i,"fly"],[/remo/i,"row"],[/curl/i,"curl"],[/tr[ií]ceps|franc[eé]s/i,"tri"],
-    [/militar|hombros|arnold/i,"ohp"],[/inclinad/i,"incline"],[/press|banca/i,"bench"]];
+  /* ---------- v31.17: animaciones de ejercicios con proporciones reales ----------
+     Cada animación se arma con ángulos de articulación (no con puntos sueltos): los segmentos no cambian de largo
+     y las rodillas y codos giran como en el cuerpo. Proporciones de un adulto: tronco 22, muslo 19, pierna 19,
+     brazo 13, antebrazo 12 (unidades del dibujo). Ángulos en grados: 0 = hacia arriba, 90 = hacia adelante. */
+  var XL={t:22,q:19,s:19,u:13,f:12,hd:8.5,ft:6},XG=93.5;
+  function xV(a,l){var r=a*Math.PI/180;return [Math.sin(r)*l,-Math.cos(r)*l];}
+  function xA(p,v){return [p[0]+v[0],p[1]+v[1]];}
+  function xIK(a,b,l1,l2,bend){var dx=b[0]-a[0],dy=b[1]-a[1],d=Math.sqrt(dx*dx+dy*dy)||0.001,dd=Math.max(Math.abs(l1-l2)+0.01,Math.min(d,l1+l2-0.01)),ang=Math.atan2(dy,dx),
+      c=(l1*l1+dd*dd-l2*l2)/(2*l1*dd),A=Math.acos(Math.max(-1,Math.min(1,c)))*(bend<0?-1:1),m=[a[0]+Math.cos(ang+A)*l1,a[1]+Math.sin(ang+A)*l1];
+    return {m:m,e:[a[0]+dx/d*dd,a[1]+dy/d*dd]};}
+  var XDEF={t:0,u:180,f:180,ft:90,hd:0,q:180,s:180,at:[56,89],kb:-1,eb:1};
+  /* Resuelve una pose: piernas por IK entre la cadera (hp) y el tobillo (at), o por ángulos si la pose se ancla en otra articulación */
+  function xPose(P){var j={},k;
+    if(P.anc){j.hp=[0,0];j.h1=j.hp;j.h2=j.hp;j.kn=xA(j.hp,xV(P.q,XL.q));j.an=xA(j.kn,xV(P.s,XL.s));j.kn2=xA(j.hp,xV(P.q2,XL.q));j.an2=xA(j.kn2,xV(P.s2,XL.s));}
+    else{var at=P.at,at2=P.at2||at,hp=P.hp||[at[0]-1,at[1]-37.6];j.hp=hp;var h1=P.fv?xA(hp,[3.5,1]):hp,h2=P.fv?xA(hp,[-3.5,1]):hp,L1=xIK(h1,at,XL.q,XL.s,P.kb),L2=xIK(h2,at2,XL.q,XL.s,P.kb2||(P.fv?-P.kb:P.kb));j.kn=L1.m;j.an=L1.e;j.kn2=L2.m;j.an2=L2.e;}
+    j.h1=P.fv?xA(j.hp,[3.5,1]):j.hp;j.h2=P.fv?xA(j.hp,[-3.5,1]):j.hp;
+    if(P.shf&&!P.anc){var dx=P.shf[0]-j.hp[0],dy=P.shf[1]-j.hp[1];P.t=Math.atan2(dx,-dy)*180/Math.PI;}
+    j.sh=xA(j.hp,xV(P.t,XL.t));j.hd=xA(j.sh,xV(P.t+P.hd,XL.hd));
+    j.s1=P.fv?xA(j.sh,[7,2.5]):j.sh;j.s2=P.fv?xA(j.sh,[-7,2.5]):j.sh;
+    j.el=xA(j.s1,xV(P.u,XL.u));j.wr=xA(j.el,xV(P.f,XL.f));j.el2=xA(j.s2,xV(P.u2,XL.u));j.wr2=xA(j.el2,xV(P.f2,XL.f));
+    if(P.anc){var o=[P.ap[0]-j[P.anc][0],P.ap[1]-j[P.anc][1]];for(k in j)j[k]=xA(j[k],o);}
+    j.bk=xA(xA(j.sh,xV(P.t-90,5.5)),xV(P.t,-0.5));j.fr=xA(xA(j.sh,xV(P.t+90,4.5)),xV(P.t,-1.5));
+    var tgt=function(v){return typeof v[0]==="string"?xA(j[v[0]],[v[1],v[2]]):v;};
+    if(P.ak){var a1=xIK(j.s1,tgt(P.ak),XL.u,XL.f,P.eb);j.el=a1.m;j.wr=a1.e;}
+    if(P.ak2||P.ak){var a2=xIK(j.s2,tgt(P.ak2||P.ak),XL.u,XL.f,P.eb2||P.eb);j.el2=a2.m;j.wr2=a2.e;}
+    if(P.lk){var l1=xIK(j.h1,tgt(P.lk),XL.q,XL.s,P.kb);j.kn=l1.m;j.an=l1.e;}
+    if(P.lk2||P.lk){var l2=xIK(j.h2,tgt(P.lk2||P.lk),XL.q,XL.s,P.kb2||(P.fv?-P.kb:P.kb));j.kn2=l2.m;j.an2=l2.e;}
+    j.to=xA(j.an,xV(P.ft,XL.ft));j.to2=xA(j.an2,xV(P.ft2,XL.ft));
+    return j;}
+  function xLerp(a,b,e){if(typeof a==="number"&&typeof b==="number")return a+(b-a)*e;if(Array.isArray(a)&&Array.isArray(b)&&typeof a[0]==="number"&&typeof b[0]==="number")return a.map(function(v,i){return v+(b[i]-v)*e;});
+    if(Array.isArray(a)&&Array.isArray(b)&&a[0]===b[0])return [a[0],a[1]+(b[1]-a[1])*e,a[2]+(b[2]-a[2])*e];return e<0.5?a:b;}
+  function xFill(P){["q","s","u","f","ft"].forEach(function(k){if(P[k+"2"]==null)P[k+"2"]=P[k];});return P;}
+  function xMix(F,a,b,e){var P={},k,base=Object.assign({},XDEF,F.b||{});var A=Object.assign({},base,a),B=Object.assign({},base,b);
+    var keys={};for(k in A)keys[k]=1;for(k in B)keys[k]=1;for(k in keys){var va=k in A?A[k]:B[k],vb=k in B?B[k]:A[k];P[k]=xLerp(va,vb,e);}return xFill(P);}
+  function xSm(e){return e*e*(3-2*e);}
+  /* Línea de tiempo: «pp» va de la primera pose a la segunda y vuelve, con pausas (bajada lenta, subida más rápida);
+     «lp» recorre las poses en ciclo; F.fn(fase) arma la pose en cada instante (bici, remo, soga). */
+  function xAt(F,ph){var K=F.K;if(F.fn)return xFill(Object.assign({},XDEF,F.b||{},F.fn(ph)));
+    if(F.m==="lp"){var n=K.length,x=ph*n,i=Math.floor(x)%n;return xMix(F,K[i],K[(i+1)%n],xSm(x-Math.floor(x)));}
+    var tp=F.tp||[0.36,0.24],h=(1-tp[0]-tp[1])/3,e,dir=0;
+    if(ph<h)e=0;else if(ph<h+tp[0]){e=xSm((ph-h)/tp[0]);dir=1;}else if(ph<2*h+tp[0])e=1;else if(ph<2*h+tp[0]+tp[1]){e=1-xSm((ph-2*h-tp[0])/tp[1]);dir=-1;}else e=0;
+    var P=xMix(F,K[0],K[1],e);P._dir=dir;return P;}
+  function xPath(pts){return "M"+pts.map(function(p){return p[0].toFixed(1)+" "+p[1].toFixed(1);}).join(" L");}
+  /* Dibujo: suelo, aparatos, lado lejano (más claro), tronco y cabeza, lado cercano, cargas y flecha de movimiento */
+  function xBuild(F,name){var svg=sv("svg",{viewBox:"0 0 120 100","class":"exa",role:"img","aria-label":"Movimiento: "+name}),E={};
+    if(F.gd!==0)sv("path",{d:"M6 "+XG+" L114 "+XG,"class":"xg"},svg);
+    (F.pr||[]).forEach(function(p){if(p[0]==="r")sv("rect",{x:p[1],y:p[2],width:p[3],height:p[4],rx:p[5]||2,"class":"xs"},svg);else if(p[0]==="c")sv("circle",{cx:p[1],cy:p[2],r:p[3],"class":"xw"},svg);else sv("path",{d:p[1],"class":"xe"},svg);});
+    E.cab=(F.ca||[]).map(function(c){var g={a:c[1],j:c[2],n:sv("path",{"class":{b:"xb",l:"xlm",s:"xc"}[c[0]]||"xc"},svg)};if(c[0]==="c")sv("circle",{cx:c[1][0],cy:c[1][1],r:2.6,"class":"xw"},svg);return g;});
+    E.rope=F.rope?sv("path",{"class":"xr"},svg):null;
+    var fc=F.b&&F.b.fv?"xn":"xf";E.fl=sv("path",{"class":fc+" xl"},svg);E.fa=sv("path",{"class":fc+" xa"},svg);
+    E.ld2=(F.ld||[]).filter(function(l){return l[2]===2;}).map(function(l){return {l:l,n:xLoad(l,svg)};});
+    E.tr=sv("path",{"class":"xn xt"},svg);E.hd=sv("circle",{r:6,"class":"xh"},svg);
+    E.nl=sv("path",{"class":"xn xl"},svg);E.na=sv("path",{"class":"xn xa"},svg);
+    E.ld=(F.ld||[]).filter(function(l){return l[2]!==2;}).map(function(l){return {l:l,n:xLoad(l,svg)};});
+    E.ar=F.arw?sv("path",{"class":"xar"},svg):null;
+    svg.__F=F;svg.__E=E;return svg;}
+  function xLoad(l,svg){var g=sv("g",{},svg);if(l[0]==="bar"){sv("circle",{r:9,"class":"xp"},g);sv("circle",{r:2,"class":"xu"},g);}
+    else if(l[0]==="db"){sv("circle",{r:4.2,"class":"xp"},g);sv("circle",{r:1.3,"class":"xu"},g);}
+    else if(l[0]==="ball")sv("circle",{r:6.2,"class":"xp"},g);
+    else if(l[0]==="pad")sv("circle",{r:3.6,"class":"xpd"},g);
+    else if(l[0]==="plat")sv("path",{d:"M0 -11 L0 11","class":"xpl"},g);
+    else if(l[0]==="plate")sv("rect",{x:-2.5,y:-7,width:5,height:14,rx:1.5,"class":"xp"},g);
+    return g;}
+  function xDraw(svg,ph){var F=svg.__F,E=svg.__E,P=xAt(F,ph),j=xPose(P),o=P.fv?[0,0]:[1.8,-1.2],f=function(p){return [p[0]+o[0],p[1]+o[1]];};
+    E.fl.setAttribute("d",xPath([j.h2,j.kn2,j.an2,j.to2].map(f)));E.fa.setAttribute("d",xPath([j.s2,j.el2,j.wr2].map(f)));
+    E.tr.setAttribute("d",P.fv?xPath([j.hp,j.sh])+" M"+xPath([j.s2,j.s1]).slice(1)+" M"+xPath([j.h2,j.h1]).slice(1):xPath([j.hp,j.sh]));E.hd.setAttribute("cx",j.hd[0].toFixed(1));E.hd.setAttribute("cy",j.hd[1].toFixed(1));
+    E.nl.setAttribute("d",xPath([j.h1,j.kn,j.an,j.to]));E.na.setAttribute("d",xPath([j.s1,j.el,j.wr]));
+    E.cab.forEach(function(c){c.n.setAttribute("d",xPath([typeof c.a==="string"?j[c.a]:c.a,j[c.j]]));});
+    if(E.rope){var w=j.wr,c0=[j.hp[0]-1,(j.hd[1]+j.an[1])/2],R=(j.an[1]-j.hd[1])/2+9,an=ph*2*Math.PI,pk=[c0[0]+Math.sin(an)*9,c0[1]-Math.cos(an)*R];E.rope.setAttribute("d","M"+w[0].toFixed(1)+" "+w[1].toFixed(1)+" Q"+(2*pk[0]-w[0]/2-j.wr2[0]/2).toFixed(1)+" "+(2*pk[1]-w[1]/2-j.wr2[1]/2).toFixed(1)+" "+j.wr2[0].toFixed(1)+" "+j.wr2[1].toFixed(1));}
+    E.ld.concat(E.ld2).forEach(function(x){var l=x.l,p=j[l[1]];if(l[2]===2)p=f(p);if(l[3])p=xA(p,l[3]);var r="";if(l[0]==="plat"){var a=l[4]!=null?l[4]:Math.atan2(j.an[1]-j.kn[1],j.an[0]-j.kn[0])*180/Math.PI;r=" rotate("+a.toFixed(1)+")";}
+      x.n.setAttribute("transform","translate("+p[0].toFixed(1)+" "+p[1].toFixed(1)+")"+r);});
+    if(E.ar){var a=F.arw,show=P._dir&&!F.noarw,pA=F._pA||(F._pA=xPose(xMix(F,F.K[0],F.K[0],0))[a[0]]),pB=F._pB||(F._pB=xPose(xMix(F,F.K[1],F.K[1],0))[a[0]]),dx=pB[0]-pA[0],dy=pB[1]-pA[1],d=Math.sqrt(dx*dx+dy*dy)||1;
+      if(show){var s=P._dir,ux=dx/d*s,uy=dy/d*s,c=xA(j[a[0]],a[1]),t0=[c[0]-ux*7,c[1]-uy*7],t1=[c[0]+ux*7,c[1]+uy*7],nx=-uy,ny=ux;
+        E.ar.setAttribute("d",xPath([t0,t1])+" M"+(t1[0]-ux*4+nx*3).toFixed(1)+" "+(t1[1]-uy*4+ny*3).toFixed(1)+" L"+t1[0].toFixed(1)+" "+t1[1].toFixed(1)+" L"+(t1[0]-ux*4-nx*3).toFixed(1)+" "+(t1[1]-uy*4-ny*3).toFixed(1));E.ar.style.opacity="1";}
+      else E.ar.style.opacity="0";}}
+  /* Aparatos: banco plano, barra de dominadas, cajón, silla, asiento, paralelas */
+  var XBENCH=[["r",22,63.5,58,5],["e","M30 68.5 L30 93.5 M72 68.5 L72 93.5"]],XBAR=[["e","M28 8 L92 8"]],XSEAT=[["r",30,69.5,30,4.5],["e","M45 74 L45 93.5"]],
+      XSTD={t:4,hp:[54,51.6]},XHANG={t:24,hp:[49,53.5],ak:["sh",1,24.6],eb:1},XEXT={t:-4,hp:[55,49],at:[57,85],ft:140,ak:["sh",9,-1],eb:-1};
+  function xWalk(sp,lean,arms){return function(ph){var a=ph*2*Math.PI,s=Math.sin(a),c=Math.cos(a);
+    return {t:lean,hp:[55,51.6-Math.abs(s)*sp*0.12],at:[56+sp*s,89-Math.max(0,c)*sp*0.25],at2:[56-sp*s,89-Math.max(0,-c)*sp*0.25],ft:90-Math.max(0,c)*25,ft2:90-Math.max(0,-c)*25,u:arms?arms[0]:180-sp*2.2*s,f:arms?arms[1]:170-sp*2*s,u2:arms?arms[0]:180+sp*2.2*s,f2:arms?arms[1]:170+sp*2*s};};}
+  function xHop(rope){return function(ph){var h=Math.abs(Math.sin(ph*2*Math.PI))*4;return {t:3,hp:[55,51.6-h],at:[56,89-h],ft:90+h*9,ak:rope?["sh",8,20]:["sh",10,12],eb:1};};}
+  var XK={
+    squat:{b:{eb:1,ak:["bk",-3,6]},K:[XSTD,{t:40,hp:[42,69]}],ld:[["bar","bk"]],arw:["bk",[16,0]]},
+    boxsquat:{b:{eb:1,ak:["bk",-3,6]},pr:[["r",28,72,16,21.5]],K:[XSTD,{t:36,hp:[40,69]}],ld:[["bar","bk"]],arw:["bk",[16,0]]},
+    lungebar:{b:{at:[70,89],at2:[38,89],eb:1,ak:["bk",-3,6]},K:[{t:0,hp:[55,51.8]},{t:4,hp:[54,67]}],ld:[["bar","bk"]],arw:["bk",[16,0]]},
+    goblet:{b:{eb:1,ak:["fr",3,4]},K:[{t:3,hp:[54,51.6]},{t:20,hp:[44,71]}],ld:[["db","wr",0,[1,0]]],arw:["wr",[14,0]]},
+    frontsquat:{b:{eb:1,ak:["fr",2,1]},K:[{t:3,hp:[54,51.6]},{t:18,hp:[44,71]}],ld:[["bar","fr",0,[2,0]]],arw:["fr",[16,0]]},
+    wallsit:{b:{hp:[42,70],at:[61,89],u:150,f:40},pr:[["e","M35 22 L35 93.5"]],K:[{t:0},{t:-1,hp:[42,69.5]}],tp:[0.4,0.4]},
+    chair:{b:{eb:1},pr:[["e","M28 72 L47 72 M30 72 L30 93.5 M45 72 L45 93.5 M28 72 L26 48"]],K:[{t:24,hp:[42,68],ak:["sh",20,6]},{t:2,hp:[55,51.6],ak:["sh",18,4]}],tp:[0.24,0.36],arw:["hp",[0,-16]]},
+    jump:{m:"lp",T:1900,K:[XSTD,{t:35,hp:[44,68],u:220,f:215},{t:0,hp:[55,40],at:[56,78],ft:150,u:10,f:5},{t:20,hp:[47,64],u:120,f:110}]},
+    hop:{fn:xHop(0),T:700},
+    rope:{fn:xHop(1),T:800,rope:1},
+    lunge:{b:{at:[70,89],at2:[38,89]},K:[{t:0,hp:[55,51.8]},{t:4,hp:[54,67]}],ld:[["db","wr"],["db","wr",2]],arw:["hp",[0,-15]]},
+    split:{b:{at:[68,89],at2:[24,69],ft2:180},pr:[["r",12,70,22,5],["e","M16 75 L16 93.5 M30 75 L30 93.5"]],K:[{t:4,hp:[50,54]},{t:8,hp:[47,69]}],ld:[["db","wr"],["db","wr",2]],arw:["hp",[0,-15]]},
+    stepup:{b:{at:[76,74.5]},pr:[["r",62,74.5,30,19]],K:[{t:16,hp:[56,64],at2:[48,89]},{t:2,hp:[73,37],at2:[71,72]}],tp:[0.24,0.36],ld:[["db","wr"],["db","wr",2]],arw:["hp",[-14,0]]},
+    deadlift:{b:{eb:1},K:[{t:58,hp:[45,69],ak:[60,84.5]},{t:4,hp:[54,51.6],ak:["sh",1,24.6]}],tp:[0.24,0.36],ld:[["bar","wr"]],arw:["wr",[16,0]]},
+    deadliftdb:{b:{eb:1},K:[{t:52,hp:[45,67],ak:[58,82]},{t:4,hp:[54,51.6],ak:["sh",1,24.6]}],tp:[0.24,0.36],ld:[["db","wr"],["db","wr",2]],arw:["wr",[14,0]]},
+    rdl:{b:{eb:1,u:178,f:178},K:[XSTD,{t:72,hp:[46,53.5]}],ld:[["bar","wr"]],arw:["wr",[14,0]]},
+    rdldb:{b:{eb:1,u:178,f:178},K:[XSTD,{t:72,hp:[46,53.5]}],ld:[["db","wr"],["db","wr",2]],arw:["wr",[14,0]]},
+    rdl1:{b:{eb:1,u:178,f:178,u2:178,f2:178},K:[{t:4,hp:[54,51.6],lk2:["hp",-1,37.6]},{t:80,hp:[50,52.5],lk2:["hp",-36,-6]}],ld:[["db","wr"]],arw:["wr",[14,0]]},
+    goodmorning:{b:{eb:1,ak:["bk",-3,6]},K:[XSTD,{t:75,hp:[46,53]}],ld:[["bar","bk"]],arw:["bk",[0,-14]]},
+    clean:{m:"lp",T:2400,K:[XHANG,XEXT,{t:6,hp:[50,58],ak:["fr",2,1],eb:1},{t:4,hp:[54,51.6],ak:["fr",2,1],eb:1}],ld:[["bar","wr"]]},
+    snatch:{m:"lp",T:2400,K:[{t:28,hp:[48,55],ak:["sh",1,24.6],eb:1},XEXT,{t:10,hp:[48,62],ak:["sh",-3,-24.4],eb:-1},{t:4,hp:[54,51.6],ak:["sh",-1,-24.4],eb:-1}],ld:[["bar","wr"]]},
+    highpull:{K:[XHANG,XEXT],tp:[0.22,0.38],ld:[["bar","wr"]],arw:["wr",[14,0]]},
+    hipthrust:{b:{at:[80,89],shf:[34,63],hd:-10,ak:["hp",1,-5],eb:-1},pr:[["r",12,63,24,5],["e","M16 68 L16 93.5 M32 68 L32 93.5"]],K:[{hp:[52,82]},{hp:[57,62]}],tp:[0.24,0.36],ld:[["bar","hp",0,[0,-5]]],arw:["hp",[0,-15]]},
+    bridge:{b:{at:[74,89],shf:[30,87],hd:-6,u:180,f:120},K:[{hp:[51,87]},{hp:[54,73]}],tp:[0.24,0.36],arw:["hp",[0,-15]]},
+    bridge1:{b:{at:[74,89],shf:[30,87],hd:-6,u:180,f:120},K:[{hp:[51,87],lk2:["hp",36,-4]},{hp:[54,73],lk2:["hp",36,-12]}],tp:[0.24,0.36],arw:["hp",[0,-15]]},
+    calf:{b:{u:178,f:178},pr:[["r",46,89.5,24,4]],K:[{hp:[55,47.6],at:[56,85],ft:80},{hp:[55,42],at:[56,80],ft:150}],tp:[0.24,0.36],ld:[["db","wr"]],arw:["hp",[14,0]]},
+    calfseat:{b:{anc:"hp",ap:[42,66],t:0,q:92,s:180,u:150,f:120},pr:XSEAT,K:[{at:[64,89],ft:85},{at:[64,84],ft:150}],tp:[0.24,0.36],ld:[["plate","kn",0,[0,-4]]]},
+    legpress:{b:{anc:"hp",ap:[38,73],t:-58,hd:-6,u:160,f:110,kb:1},pr:[["e","M20 48 L36 76 L52 76 M54 66 L86 34"]],K:[{lk:[74,44]},{lk:[60,56]}],ld:[["plat","an",0,[2,2],-45]],arw:["an",[10,10]]},
+    legext:{b:{anc:"hp",ap:[42,66],t:-6,q:90,u:160,f:140},pr:[["e","M30 70 L56 70 M34 70 L34 93.5 M30 70 L28 44"]],K:[{s:178},{s:95}],tp:[0.24,0.36],ld:[["pad","an",0,[2,0]]],arw:["an",[12,0]]},
+    legcurl:{b:{anc:"hp",ap:[54,62],t:-90,hd:-8,q:90,u:-130,f:-90},pr:[["r",18,65.5,76,5],["e","M26 70.5 L26 93.5 M86 70.5 L86 93.5"]],K:[{s:92},{s:-15}],tp:[0.24,0.36],ld:[["pad","an",0,[0,-3]]],arw:["an",[12,0]]},
+    legcurls:{b:{anc:"hp",ap:[42,66],t:-6,q:90,u:160,f:140},pr:[["e","M30 70 L56 70 M34 70 L34 93.5 M30 70 L28 44"]],K:[{s:120},{s:210}],tp:[0.24,0.36],ld:[["pad","an",0,[2,0]]],arw:["an",[12,0]]},
+    nordic:{b:{anc:"an",ap:[34,88],s:-90,ft:200,eb:1},pr:[["r",44,89,22,4.5]],K:[{q:182,t:2,u:180,f:180},{q:242,t:62,u:120,f:110}],tp:[0.5,0.18],arw:["sh",[10,-10]]},
+    abd:{b:{fv:1,t:0,hp:[56,51.6],at2:[50,89],u:172,f:176,u2:-172,f2:-176},K:[{at:[62,89]},{at:[85,80]}],tp:[0.24,0.36],arw:["an",[0,-14]]},
+    bench:{b:{anc:"hp",ap:[58,61],t:-90,hd:-4,lk:[80,89],kb:1,eb:1},pr:XBENCH,K:[{ak:["sh",3,-24.5]},{ak:["sh",7,-5]}],ld:[["bar","wr"]],arw:["wr",[14,0]]},
+    benchdb:{b:{anc:"hp",ap:[58,61],t:-90,hd:-4,lk:[80,89],kb:1,eb:1},pr:XBENCH,K:[{ak:["sh",3,-24.5]},{ak:["sh",6,-4]}],ld:[["db","wr"]],arw:["wr",[14,0]]},
+    floorpress:{b:{anc:"hp",ap:[58,86],t:-90,hd:-4,lk:[78,89],kb:1,eb:1},K:[{ak:["sh",3,-24.5]},{ak:["sh",8,-9]}],ld:[["db","wr"]],arw:["wr",[14,0]]},
+    incline:{b:{anc:"hp",ap:[62,68],t:-55,hd:-6,lk:[84,89],kb:1,eb:1},pr:[["e","M36 46 L62 72 L84 72 M62 72 L62 93.5"]],K:[{ak:["sh",3,-24.5]},{ak:["sh",9,-3]}],ld:[["bar","wr"]],arw:["wr",[14,0]]},
+    inclinedb:{b:{anc:"hp",ap:[62,68],t:-55,hd:-6,lk:[84,89],kb:1,eb:1},pr:[["e","M36 46 L62 72 L84 72 M62 72 L62 93.5"]],K:[{ak:["sh",3,-24.5]},{ak:["sh",8,-2]}],ld:[["db","wr"]],arw:["wr",[14,0]]},
+    chestpress:{b:{anc:"hp",ap:[42,66],t:-6,q:90,lk:[64,89],eb:1},pr:[["e","M30 70 L56 70 M34 70 L34 93.5 M30 70 L27 40"]],ca:[["c",[20,38],"wr"]],K:[{ak:["sh",6,3]},{ak:["sh",24.4,3]}],tp:[0.24,0.36],arw:["wr",[0,-12]]},
+    ohp:{b:{eb:-1},K:[{t:-3,ak:["sh",4,-3]},{t:2,ak:["sh",1,-24.5]}],tp:[0.24,0.36],ld:[["bar","wr"]],arw:["wr",[14,0]]},
+    ohpdb:{b:{eb:-1},K:[{t:-3,ak:["sh",3,-3]},{t:2,ak:["sh",1,-24.5]}],tp:[0.24,0.36],ld:[["db","wr"],["db","wr",2]],arw:["wr",[14,0]]},
+    ohpseat:{b:{anc:"hp",ap:[44,66],q:90,lk:[66,89],eb:-1},pr:[["e","M34 70 L56 70 M45 70 L45 93.5 M34 70 L33 40"]],K:[{t:-2,ak:["sh",3,-3]},{t:2,ak:["sh",1,-24.5]}],tp:[0.24,0.36],ld:[["db","wr"],["db","wr",2]],arw:["wr",[14,0]]},
+    pushpress:{m:"lp",T:2300,b:{eb:-1},K:[{t:-3,hp:[54,51.6],ak:["sh",4,-3]},{t:-3,hp:[52,57],ak:["sh",4,-3]},{t:2,hp:[55,49.5],at:[57,86],ft:140,ak:["sh",1,-24.5]},{t:2,hp:[54,51.6],ak:["sh",1,-24.5]}],ld:[["bar","wr"]]},
+    landmine:{b:{t:10,hp:[52,52],at:[60,89],at2:[42,89],eb:1},ca:[["l",[12,92],"wr"]],K:[{ak:["sh",7,-1]},{ak:["sh",17,-17]}],tp:[0.2,0.4],arw:["wr",[8,10]]},
+    pallof:{b:{t:4,hp:[52,54],at:[62,89],at2:[44,89],eb:1},ca:[["c",[14,46],"wr"]],K:[{ak:["sh",7,6]},{ak:["sh",24.4,5]}],tp:[0.24,0.36],arw:["wr",[0,-12]]},
+    pushup:{b:{anc:"an",ap:[98,89],ft:160,hd:-6,ak:[40,89],eb:-1},K:[{q:112,s:112,t:-68},{q:96,s:96,t:-84}],arw:["sh",[0,-16]]},
+    pushupbox:{b:{anc:"an",ap:[100,89],ft:160,hd:-6,ak:[34,76],eb:-1},pr:[["r",22,76,22,17.5]],K:[{q:118,s:118,t:-62},{q:104,s:104,t:-76}],arw:["sh",[0,-16]]},
+    dip:{b:{anc:"wr",ap:[62,52],q:195,s:160},pr:[["e","M48 53 L84 53 M78 53 L78 93.5"]],K:[{t:4,u:180,f:180},{t:20,u:215,f:150}],arw:["sh",[-14,0]],gd:1},
+    fly:{b:{anc:"hp",ap:[58,61],t:-90,hd:-4,lk:[80,89],kb:1,eb:-1},pr:XBENCH,K:[{ak:["sh",3,-24.5]},{ak:["sh",3,-3],eb:-1}],ld:[["db","wr"]],arw:["wr",[14,0]]},
+    pullover:{b:{anc:"hp",ap:[58,61],t:-90,hd:-4,lk:[80,89],kb:1,eb:-1},pr:XBENCH,K:[{ak:["sh",2,-24.5]},{ak:["sh",-24,-3]}],ld:[["db","wr"]],arw:["wr",[0,-14]]},
+    tri:{b:{t:2,u:-2},K:[{f:2},{f:-150}],ld:[["db","wr"]],arw:["wr",[-12,0]]},
+    skull:{b:{anc:"hp",ap:[58,61],t:-90,hd:-4,lk:[80,89],kb:1,u:-8},pr:XBENCH,K:[{f:-6},{f:-140}],ld:[["bar","wr"]],arw:["wr",[0,-14]]},
+    pushdown:{b:{u:172},ca:[["c",[62,2],"wr"]],K:[{f:40},{f:176}],tp:[0.24,0.36],arw:["wr",[12,0]]},
+    curl:{b:{u:178},K:[{f:180},{f:20}],tp:[0.24,0.36],ld:[["db","wr"],["db","wr",2]],arw:["wr",[13,0]]},
+    curlbar:{b:{u:178},K:[{f:180},{f:20}],tp:[0.24,0.36],ld:[["bar","wr"]],arw:["wr",[14,0]]},
+    curlband:{b:{u:178},ca:[["b","an","wr"]],K:[{f:180},{f:20}],tp:[0.24,0.36],arw:["wr",[13,0]]},
+    wrist:{b:{anc:"hp",ap:[42,66],t:14,q:90,lk:[64,89],u:150},pr:XSEAT,K:[{f:110},{f:70}],ld:[["db","wr"]]},
+    grip:{b:{u:180,f:180},K:[{hp:[54,51.6]},{hp:[54,51.2]}],ld:[["plate","wr",0,[0,4]],["plate","wr",2,[0,4]]],tp:[0.4,0.4]},
+    farmer:{fn:xWalk(6,2,[180,180]),T:1400,ld:[["db","wr",0,[0,3]],["db","wr",2,[0,3]]]},
+    sled:{fn:function(ph){var w=xWalk(9,0)(ph);w.t=45;w.hp=[50,56];w.ak=[84,50];w.ak2=[84,50];w.eb=1;return w;},T:1500,pr:[["e","M86 46 L86 60 M80 93 L110 93 L106 74 L84 74 Z"]]},
+    pullup:{b:{anc:"wr",ap:[60,8],q:170,s:200,f:0},pr:XBAR,K:[{t:0,u:0},{t:4,u:150,f:15}],tp:[0.24,0.36],arw:["sh",[16,0]],gd:0},
+    pulldown:{b:{anc:"hp",ap:[48,68],q:88,lk:[66,89],eb:1},pr:[["e","M36 72 L58 72 M46 72 L46 93.5 M56 60 L68 60"]],ca:[["c",[52,2],"wr"]],K:[{t:0,ak:["sh",3,-24.5]},{t:-12,ak:["sh",5,-3]}],tp:[0.24,0.36],ld:[["db","wr"]],arw:["wr",[12,0]]},
+    invrow:{b:{anc:"an",ap:[88,89],q:132,s:132,ft:20,t:-48,hd:-6,eb:1},ca:[["s",[52,2],"wr"]],K:[{ak:[49,28]},{ak:[49,27.4]}],tp:[0.4,0.4]},
+    row:{b:{hp:[48,55],t:70,eb:1},K:[{ak:["sh",1,24.5]},{ak:["sh",-6,11]}],tp:[0.24,0.36],ld:[["bar","wr"]],arw:["wr",[14,0]]},
+    rowdb:{b:{hp:[48,55],t:70,eb:1},K:[{ak:["sh",1,24.5]},{ak:["sh",-7,10]}],tp:[0.24,0.36],ld:[["db","wr"]],arw:["wr",[14,0]]},
+    cablerow:{b:{anc:"hp",ap:[40,80],q:82,lk:[78,82],eb:1},pr:[["r",30,82,20,4],["e","M80 74 L84 92"]],ca:[["c",[104,76],"wr"]],K:[{t:22,ak:["sh",24.4,5]},{t:-6,ak:["sh",6,10]}],tp:[0.24,0.36],arw:["wr",[0,-12]],gd:1},
+    facepull:{b:{t:2,eb:-1},ca:[["c",[106,22],"wr"]],K:[{ak:["sh",24.4,-3]},{ak:["sh",5,-10]}],tp:[0.24,0.36],arw:["wr",[0,-12]]},
+    lateral:{b:{fv:1,t:0,hp:[56,51.6],at:[62,89],at2:[50,89]},K:[{u:170,f:174,u2:-170,f2:-174},{u:96,f:98,u2:-96,f2:-98}],tp:[0.24,0.36],ld:[["db","wr"],["db","wr2"]],arw:["wr",[0,-14]]},
+    lateralband:{b:{fv:1,t:0,hp:[56,51.6],at:[62,89],at2:[50,89]},ca:[["b","an2","wr"]],K:[{u:170,f:174,u2:-176,f2:-176},{u:96,f:98,u2:-176,f2:-176}],tp:[0.24,0.36],arw:["wr",[0,-14]]},
+    extrot:{b:{fv:1,t:0,hp:[56,51.6],at:[62,89],at2:[50,89],u:176,u2:-176,f2:-170},ca:[["c",[14,64],"wr"]],K:[{f:-70},{f:80}],tp:[0.24,0.36],arw:["wr",[0,-12]]},
+    extrot90:{b:{fv:1,t:0,hp:[56,51.6],at:[62,89],at2:[50,89],u:90,u2:-176,f2:-170},ca:[["b",[90,70],"wr"]],K:[{f:150},{f:6}],tp:[0.24,0.36],arw:["wr",[12,0]]},
+    balance:{b:{fv:1,hp:[56,51.6],at:[58,89],u:160,u2:-160,f:150,f2:-150,lk2:["hp",-6,28],kb2:1},K:[{t:-2,hp:[55.5,51.6]},{t:2,hp:[56.5,51.6]}],tp:[0.4,0.4]},
+    bandwalk:{m:"lp",T:2000,b:{fv:1,t:0,u:200,f:150,u2:-200,f2:-150},ca:[["b","kn2","kn"]],K:[{hp:[52,57],at:[62,89],at2:[42,89]},{hp:[56,57],at:[70,89],at2:[42,89]},{hp:[60,57],at:[70,89],at2:[50,89]},{hp:[56,57],at:[66,89],at2:[46,89]}]},
+    reaction:{m:"lp",T:2000,b:{t:16,hd:4,ak:["sh",11,-6],ak2:["sh",8,-4],eb:1},K:[{hp:[52,55],at:[60,89],at2:[44,89]},{hp:[60,55],at:[70,89],at2:[52,89]},{hp:[52,55],at:[60,89],at2:[44,89]},{hp:[44,55],at:[52,89],at2:[36,89]}]},
+    shadow:{m:"lp",T:2200,b:{t:8,hd:4,hp:[52,52.6],at:[60,89],at2:[44,89],eb:1},K:[{ak:["sh",11,-6],ak2:["sh",8,-4]},{ak:["sh",24.5,-2],ak2:["sh",8,-4]},{ak:["sh",11,-6],ak2:["sh",8,-4]},{t:16,ak:["sh",11,-6],ak2:["sh",24.5,-1]}]},
+    bag:{m:"lp",T:1700,b:{t:8,hd:4,hp:[48,52.6],at:[56,89],at2:[40,89],eb:1},pr:[["e","M95 0 L95 12"],["r",88,12,15,42,6]],K:[{ak:["sh",11,-6],ak2:["sh",8,-4]},{ak:["sh",24.5,-2],ak2:["sh",8,-4]},{ak:["sh",11,-6],ak2:["sh",8,-4]},{t:16,ak:["sh",11,-6],ak2:["sh",24.5,-1]}]},
+    isopunch:{b:{hp:[50,52.6],at:[58,89],at2:[42,89],eb:1,hd:4,ak2:["sh",8,-4]},pr:[["r",88,20,8,24,3],["e","M96 32 L112 32"]],K:[{t:16,ak:[86,30]},{t:17,ak:[86.5,30]}],tp:[0.4,0.4]},
+    throw:{m:"lp",T:1800,b:{eb:1},K:[{t:4,hp:[54,51.6],ak:["sh",8,6]},{t:14,hp:[50,57],ak:["sh",7,8]},{t:2,hp:[56,50],at:[58,86],ft:140,ak:["sh",23,-8]},{t:4,hp:[54,51.6],ak:["sh",8,6]}],ld:[["ball","wr",0,[3,-1]]]},
+    rotthrow:{m:"lp",T:1900,b:{at:[62,89],at2:[44,89],eb:1},K:[{t:8,hp:[52,54],ak:["hp",-12,4]},{t:12,hp:[50,56],ak:["hp",-16,0]},{t:6,hp:[56,53],at2:[48,86],ft2:150,ak:["sh",22,-8]},{t:8,hp:[52,54],ak:["sh",14,6]}],ld:[["ball","wr",0,[2,0]]]},
+    lyingthrow:{b:{anc:"hp",ap:[58,86],t:-90,hd:-6,lk:[78,89],kb:1,eb:1},K:[{ak:["sh",4,-5]},{ak:["sh",2,-24.5]}],tp:[0.16,0.44],ld:[["ball","wr",0,[0,-4]]],arw:["wr",[14,0]]},
+    neckext:{b:{hp:[48,55],t:45,u:150,f:150},K:[{hd:45},{hd:-25}],tp:[0.24,0.36],ld:[["plate","hd",0,[2,12]]],arw:["hd",[12,0]]},
+    neckflex:{b:{anc:"hp",ap:[58,61],t:-90,lk:[80,89],kb:1,u:150,f:-40},pr:XBENCH,K:[{hd:10},{hd:55}],tp:[0.24,0.36],ld:[["plate","hd",0,[0,-6]]],arw:["hd",[0,-14]]},
+    neckiso:{b:{t:2,u:178,f:178},ca:[["b",[104,20],"hd"]],K:[{hd:0},{hd:2}],tp:[0.4,0.4]},
+    walk:{fn:xWalk(9,3),T:1300},
+    run:{fn:function(ph){var w=xWalk(13,9)(ph);w.f=w.f-70;w.f2=w.f2-70;return w;},T:900},
+    bike:{b:{anc:"hp",ap:[48,50],t:28,hd:-14,ak:[78,47],eb:1,kb:-1,ft:110},pr:[["c",34,80,12],["c",92,80,12],["e","M34 80 L58 80 L48 52 M58 80 L80 50 L92 80 M80 50 L82 44 M44 49 L52 49"]],
+      fn:function(ph){var a=ph*2*Math.PI,c=[58,80],r=6;return {lk:[c[0]+Math.cos(a)*r,c[1]+Math.sin(a)*r],lk2:[c[0]-Math.cos(a)*r,c[1]-Math.sin(a)*r]};},T:1400,gd:0},
+    rower:{b:{anc:"hp",kb:-1,eb:1,lk:[86,84]},pr:[["e","M24 86 L104 86 M88 78 L90 90"],["c",104,76,6]],ca:[["s",[104,76],"wr"]],
+      fn:function(ph){var d=ph<0.4?xSm(ph/0.4):1-xSm((ph-0.4)/0.6),arm=Math.max(0,(d-0.55)/0.45);return {ap:[66-24*d,82],t:22-42*Math.min(1,d*1.3),ak:["sh",24-18*arm,6+4*arm]};},T:2300},
+    armerg:{b:{anc:"hp",ap:[40,68],t:0,q:90,lk:[62,89],eb:1},pr:[["r",28,72,22,4],["e","M80 52 L80 93.5"],["c",80,46,7]],fn:function(ph){var a=ph*2*Math.PI;return {ak:[80+Math.cos(a)*7,46+Math.sin(a)*7],ak2:[80-Math.cos(a)*7,46-Math.sin(a)*7]};},T:1400},
+    crunch:{b:{anc:"hp",ap:[58,86],hd:6,lk:[78,89],kb:1,ak:["hd",-2,2],eb:-1},K:[{t:-90},{t:-58}],tp:[0.24,0.36],arw:["sh",[0,-14]]},
+    plank:{b:{anc:"an",ap:[98,89],ft:160,hd:-4,u:180,f:-90},K:[{q:104,s:104,t:-76},{q:103,s:103,t:-77}],tp:[0.4,0.4]},
+    legraise:{b:{anc:"wr",ap:[60,8],t:0,u:0,f:0},pr:XBAR,K:[{q:178,s:182},{q:96,s:150}],tp:[0.24,0.36],arw:["kn",[14,0]],gd:0}
+  };
+  /* Qué animación corresponde a cada ejercicio. El orden importa: lo más específico va primero. */
+  var XRX=[[/n[oó]rdic/i,"nordic"],[/prensi[oó]n|pinza/i,"grip"],[/mu[nñ]eca/i,"wrist"],[/cuello/i,null],[/soga/i,"rope"],[/saltitos/i,"hop"],[/dominada/i,"pullup"],
+    [/remo isom[eé]trico|trx/i,"invrow"],[/intervalos de remo|ergómetro de remo|remo ergómetro/i,"rower"],[/erg[oó]metro de brazos/i,"armerg"],
+    [/bici/i,"bike"],[/carrera/i,"run"],[/caminata del granjero|paseo del granjero|granjero/i,"farmer"],[/caminata/i,"walk"],[/trineo/i,"sled"],
+    [/equilibrio|perturbaci/i,"balance"],[/paso lateral con banda/i,"bandwalk"],[/reacci[oó]n a una se[nñ]al/i,"reaction"],
+    [/golpe isom[eé]trico/i,"isopunch"],[/bolsa/i,"bag"],[/sombra/i,"shadow"],
+    [/pase de pecho acostado/i,"lyingthrow"],[/landmine/i,"landmine"],[/rotacional|cross|gancho/i,"rotthrow"],[/bal[oó]n medicinal|pase de pecho/i,"throw"],
+    [/tir[oó]n alto/i,"highpull"],[/arranque/i,"snatch"],[/cargada/i,"clean"],[/push press/i,"pushpress"],
+    [/zancada.*barra/i,"lungebar"],[/zancada|estocada/i,"lunge"],[/salto/i,"jump"],[/en pared/i,"wallsit"],[/sentarse y pararse/i,"chair"],[/escal[oó]n|escalones/i,"stepup"],
+    [/b[uú]lgara/i,"split"],[/al caj[oó]n/i,"boxsquat"],[/goblet/i,"goblet"],[/frontal/i,"frontsquat"],[/sentadilla|squat|hack/i,"squat"],
+    [/rumano a una pierna/i,"rdl1"],[/rumano.*mancuerna/i,"rdldb"],[/rumano/i,"rdl"],[/buenos d/i,"goodmorning"],[/peso muerto.*mancuerna/i,"deadliftdb"],[/peso muerto/i,"deadlift"],
+    [/hip thrust/i,"hipthrust"],[/puente.*una pierna/i,"bridge1"],[/puente/i,"bridge"],[/abducci/i,"abd"],
+    [/gemelos sentado/i,"calfseat"],[/gemelo|pantorrilla|tal[oó]n|talones/i,"calf"],[/prensa/i,"legpress"],[/extensi[oó]n de cu[aá]driceps/i,"legext"],[/femoral sentado/i,"legcurls"],[/femoral/i,"legcurl"],
+    [/pull-?over/i,"pullover"],[/colgad|elevaciones de piernas/i,"legraise"],[/jal[oó]n/i,"pulldown"],
+    [/abdominal|crunch/i,"crunch"],[/plancha/i,"plank"],[/flexiones.*caj[oó]n/i,"pushupbox"],[/flexi[oó]n|flexiones|push-?up/i,"pushup"],[/fondo/i,"dip"],[/face pull/i,"facepull"],
+    [/rotaci[oó]n externa.*90/i,"extrot90"],[/rotaci[oó]n externa/i,"extrot"],[/laterales con banda/i,"lateralband"],[/p[aá]jaro|laterales/i,"lateral"],
+    [/apertura|pec deck|cruce|fly/i,"fly"],[/pallof/i,"pallof"],
+    [/remo sentado|remo en polea|remo con banda sentado/i,"cablerow"],[/remo.*mancuerna|remo a una mano/i,"rowdb"],[/remo/i,"row"],
+    [/curl.*banda/i,"curlband"],[/curl con barra/i,"curlbar"],[/curl/i,"curl"],
+    [/tr[ií]ceps (en polea|con banda)/i,"pushdown"],[/franc[eé]s/i,"skull"],[/tr[ií]ceps/i,"tri"],
+    [/hombros sentado|hombros en m[aá]quina/i,"ohpseat"],[/(militar|hombros).*mancuerna/i,"ohpdb"],[/militar|hombros|arnold/i,"ohp"],
+    [/inclinado.*mancuerna/i,"inclinedb"],[/inclinad/i,"incline"],[/en el piso/i,"floorpress"],
+    [/press de pecho (sentado|en m[aá]quina|con banda)/i,"chestpress"],[/mancuerna/i,"benchdb"],[/press|banca/i,"bench"]];
+  /* Ejercicios de cuello: según el movimiento */
+  function xNeck(n){return /isom[eé]tr/i.test(n)?"neckiso":/arn[eé]s|extensi[oó]n/i.test(n)&&!/flexi[oó]n/i.test(n)?"neckext":"neckflex";}
   var RMO=false;try{RMO=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;}catch(e){}
-  function exKind(n){for(var i=0;i<EXRX.length;i++)if(EXRX[i][0].test(n))return EXRX[i][1];return null;}
-  function exAnim(name){var kd=exKind(name||"");if(!kd)return null;var F=EXA[kd],A=F.A,B=F.B,svg=sv("svg",{viewBox:"-6 -10 112 112","class":"exa",role:"img","aria-label":"Movimiento de "+name});
-    var tw=[],an=function(node,attr,va,vb){if(va===vb)return;if(typeof va==="number")tw.push({n:node,a:attr,p:0,va:va,vb:vb});
-      else tw.push({n:node,a:attr,p:1,va:va.split(/[ ,]/).map(Number),vb:vb.split(/[ ,]/).map(Number)});};
-    var pt=function(P,k){return P[k]||A[k];},ps=function(P,ks){return ks.map(function(k){var p=pt(P,k);return p[0]+","+p[1];}).join(" ");};
-    if(F.gd)sv("line",{x1:-4,y1:94,x2:104,y2:94,"class":"gd"},svg);
-    (F.st||[]).forEach(function(x){if(x[0]==="rect")sv("rect",{x:x[1],y:x[2],width:x[3],height:x[4],rx:2,"class":"st"},svg);else sv("line",{x1:x[1],y1:x[2],x2:x[3],y2:x[4],"class":"st"},svg);});
-    (F.obj||[]).forEach(function(o){if(o[0]==="cable"){var c=sv("polyline",{points:ps(A,[o[1],o[2]]),"class":"cb"},svg);an(c,"points",ps(A,[o[1],o[2]]),ps(B,[o[1],o[2]]));}});
-    F.seg.forEach(function(sg){var l=sv("polyline",{points:ps(A,sg),"class":"fg"},svg);an(l,"points",ps(A,sg),ps(B,sg));});
-    var hk=F.head||"h",ha=pt(A,hk),hb=pt(B,hk),hd=sv("circle",{cx:ha[0],cy:ha[1],r:7.5,"class":"hd"},svg);an(hd,"cx",ha[0],hb[0]);an(hd,"cy",ha[1],hb[1]);
-    (F.obj||[]).forEach(function(o){if(o[0]==="cable")return;var a=pt(A,o[1]),b=pt(B,o[1]);
-      if(o[0]==="plat"){var pa=(a[0]-5)+","+(a[1]-11)+" "+(a[0]+7)+","+(a[1]+9),pb=(b[0]-5)+","+(b[1]-11)+" "+(b[0]+7)+","+(b[1]+9),pl=sv("polyline",{points:pa,"class":"pl"},svg);an(pl,"points",pa,pb);return;}
-      var c=sv("circle",{cx:a[0],cy:a[1],r:o[0]==="plate"?8:4.5,"class":"eq"},svg);an(c,"cx",a[0],b[0]);an(c,"cy",a[1],b[1]);});
-    if(tw.length&&animOn()){ANIMS.push({svg:svg,tw:tw});animStart();}
+  function exKind(n){n=n||"";for(var i=0;i<XRX.length;i++)if(XRX[i][0].test(n))return XRX[i][1]===null?xNeck(n):XRX[i][1];return null;}
+  /* Sin movimiento se muestra la posición más informativa: el final de la bajada o la mitad del ciclo */
+  function xStill(F){if(F.fn||F.m==="lp")return 0.3;var tp=F.tp||[0.36,0.24],h=(1-tp[0]-tp[1])/3;return h+tp[0]+h/2;}
+  function exAnim(name){var kd=exKind(name);if(!kd||!XK[kd])return null;var F=XK[kd],svg=xBuild(F,name);svg.setAttribute("data-kind",kd);xDraw(svg,xStill(F));
+    if(animOn()){ANIMS.push({svg:svg,T:F.T||3400});animStart();}
     return svg;}
   var ANIMS=[],animRun=false;
   function animOn(){var m=cfg.anim||"on";return m==="on"||(m==="auto"&&!RMO);}
   function animLoop(ts){ANIMS=ANIMS.filter(function(x){return x.svg.isConnected;});
     if(!ANIMS.length||!animOn()){animRun=false;return;}
-    if(!document.hidden){var e=(1-Math.cos(2*Math.PI*((ts%2400)/2400)))/2;
-      ANIMS.forEach(function(x){if(!x.svg.getClientRects().length)return;x.tw.forEach(function(t){
-        if(!t.p){t.n.setAttribute(t.a,(t.va+(t.vb-t.va)*e).toFixed(1));return;}
-        var o=[];for(var i=0;i<t.va.length;i+=2)o.push((t.va[i]+(t.vb[i]-t.va[i])*e).toFixed(1)+","+(t.va[i+1]+(t.vb[i+1]-t.va[i+1])*e).toFixed(1));t.n.setAttribute(t.a,o.join(" "));});});}
+    if(!document.hidden)ANIMS.forEach(function(x){if(!x.svg.getClientRects().length)return;xDraw(x.svg,(ts%x.T)/x.T);});
     requestAnimationFrame(animLoop);}
   function animStart(){if(!animRun&&window.requestAnimationFrame){animRun=true;requestAnimationFrame(animLoop);}}
 
@@ -4957,7 +5115,7 @@ var FT=[["Aceite de coco",884,0,"F","Otros",null,null,0,100],["Aceite de girasol
 
 
   /* ---------- v31: indicadores de Mi día, lecturas, papelera, registro, copias automáticas, privacidad, fórmulas ---------- */
-  var APPV="31.16";
+  var APPV="31.17";
   function viewOf(n){var sc=n&&n.closest?n.closest("section.view"):null;return sc?sc.id.slice(2):null;}
   var LST="rendicion-papelera",LSO="rendicion-oplog";
   function opLog(op,d){try{var a=JSON.parse(localStorage.getItem(LSO)||"[]");if(!Array.isArray(a))a=[];a.push({t:new Date().toISOString(),op:String(op).slice(0,30),d:String(d||"").slice(0,200)});if(a.length>300)a=a.slice(-300);localStorage.setItem(LSO,JSON.stringify(a));}catch(e){}safe(renderLog);}
@@ -6665,7 +6823,7 @@ var FT=[["Aceite de coco",884,0,"F","Otros",null,null,0,100],["Aceite de girasol
   }
   window.addEventListener("online",function(){SYNC.fail=0;flush(0);});
   document.addEventListener("visibilitychange",function(){if(!document.hidden&&Object.keys(SYNC.pend).length)flush(0);});
-  if(window.__RD_TEST__)window.RD={days:function(){return days;},cfg:function(){return cfg;},S:function(){return S;},SYNC:SYNC,remoteSet:remoteSet,vDay:vDay,vDays:vDays,sanit:sanit,save:save,rec:rec,today:today,exportData:exportData,importData:importData,encryptText:encryptText,decryptText:decryptText,e1rm:e1rm,dots:dots,wilks:wilks,gl:gl,tdeeReal:tdeeReal,tgt:tgt,labFlags:labFlags,sum:sum,D:D,age:age,frState:frState,FRASES:FRASES,CITAS:CITAS,renderFrase:renderFrase,qaParse:qaParse,qaMac:qaMac,qaFromAI:qaFromAI,greetText:greetText,rcBook:rcBook,fitRec:fitRec,ingCls:ingCls,RECETAS:RECETAS,daySlots:daySlots,scaleRec:scaleRec,slotTarget:slotTarget,RCX:RCX,FEAT:FEAT,lvStats:lvStats,lvLevel:lvLevel,applyLevels:applyLevels,HOWTO:HOWTO,cardOf:cardOf,cmdIndex:cmdIndex,render:render,restPlan:restPlan,linreg:linreg,pearson:pearson,wTrend:wTrend,cookFactor:cookFactor,exportObj:exportObj,signObj:signObj,verifyBk:verifyBk,trashAll:trashAll,trashPut:trashPut,trashRestore:trashRestore,opLog:opLog,insights:insights,dashData:dashData,FORMULAS:FORMULAS,snapTake:snapTake,S:function(){return S;},itemTxt:itemTxt,foodKey:foodKey,showImport:showImport,foFill:foFill,injPlan:injPlan,injHit:injHit,injAlt:injAlt,INJZ:INJZ,wuPlan:wuPlan,wuRamp:wuRamp,INJMAP:INJMAP,QK:QK,e1rm:e1rm,pxKind:pxKind,mealOf:mealOf,renderRec:renderRec,mergeSalud:mergeSalud,grpSync:grpSync,renderQuick:renderQuick,TIPICAS:TIPICAS,PUBS:PUBS,salvaPlan:salvaPlan,trInfo:trInfo,renderLabGrid:renderLabGrid,weekTon:weekTon,labState:labState,liftSeries:liftSeries,liftWeeks:liftWeeks,stackChart:stackChart,divChart:divChart,heatChart:heatChart,hmPick:hmPick,status:status,lifts:lifts,hbStats:hbStats,hbOptions:hbOptions,hbSlotNow:hbSlotNow,renderHB:renderHB,cbBuild:cbBuild,cbWarn:cbWarn,cbRoutine:cbRoutine,CB:CB,PROGS:PROGS,labParse:labParse,labKey:labKey,labNorm:labNorm,LABDEF:LABDEF,trIcs:trIcs,trGcal:trGcal,trNotifyCheck:trNotifyCheck,trDue:trDue,renderSalva:renderSalva,SV:SV,tipMatch:tipMatch,tipMac:tipMac,bSmooth:bSmooth,setSample:function(x){SAMPLE=x;SAMPLEIMG=false;}};
+  if(window.__RD_TEST__)window.RD={days:function(){return days;},cfg:function(){return cfg;},S:function(){return S;},SYNC:SYNC,remoteSet:remoteSet,vDay:vDay,vDays:vDays,sanit:sanit,save:save,rec:rec,today:today,exportData:exportData,importData:importData,encryptText:encryptText,decryptText:decryptText,e1rm:e1rm,dots:dots,wilks:wilks,gl:gl,tdeeReal:tdeeReal,tgt:tgt,labFlags:labFlags,sum:sum,D:D,age:age,frState:frState,FRASES:FRASES,CITAS:CITAS,renderFrase:renderFrase,qaParse:qaParse,qaMac:qaMac,qaFromAI:qaFromAI,greetText:greetText,rcBook:rcBook,fitRec:fitRec,ingCls:ingCls,RECETAS:RECETAS,daySlots:daySlots,scaleRec:scaleRec,slotTarget:slotTarget,RCX:RCX,FEAT:FEAT,lvStats:lvStats,lvLevel:lvLevel,applyLevels:applyLevels,HOWTO:HOWTO,cardOf:cardOf,cmdIndex:cmdIndex,render:render,restPlan:restPlan,linreg:linreg,pearson:pearson,wTrend:wTrend,cookFactor:cookFactor,exportObj:exportObj,signObj:signObj,verifyBk:verifyBk,trashAll:trashAll,trashPut:trashPut,trashRestore:trashRestore,opLog:opLog,insights:insights,dashData:dashData,FORMULAS:FORMULAS,snapTake:snapTake,S:function(){return S;},itemTxt:itemTxt,foodKey:foodKey,showImport:showImport,foFill:foFill,injPlan:injPlan,injHit:injHit,injAlt:injAlt,INJZ:INJZ,wuPlan:wuPlan,wuRamp:wuRamp,INJMAP:INJMAP,QK:QK,e1rm:e1rm,pxKind:pxKind,mealOf:mealOf,renderRec:renderRec,mergeSalud:mergeSalud,grpSync:grpSync,renderQuick:renderQuick,TIPICAS:TIPICAS,PUBS:PUBS,salvaPlan:salvaPlan,trInfo:trInfo,exKind:exKind,exAnim:exAnim,XK:XK,xPose:xPose,xAt:xAt,renderLabGrid:renderLabGrid,weekTon:weekTon,labState:labState,liftSeries:liftSeries,liftWeeks:liftWeeks,stackChart:stackChart,divChart:divChart,heatChart:heatChart,hmPick:hmPick,status:status,lifts:lifts,hbStats:hbStats,hbOptions:hbOptions,hbSlotNow:hbSlotNow,renderHB:renderHB,cbBuild:cbBuild,cbWarn:cbWarn,cbRoutine:cbRoutine,CB:CB,PROGS:PROGS,labParse:labParse,labKey:labKey,labNorm:labNorm,LABDEF:LABDEF,trIcs:trIcs,trGcal:trGcal,trNotifyCheck:trNotifyCheck,trDue:trDue,renderSalva:renderSalva,SV:SV,tipMatch:tipMatch,tipMac:tipMac,bSmooth:bSmooth,setSample:function(x){SAMPLE=x;SAMPLEIMG=false;}};
   connect();
 })();
 </script>
