@@ -236,6 +236,21 @@ tr.past td{color:var(--muted)}
 .chart .hm.today rect{stroke:var(--fg);stroke-width:1.5;stroke-dasharray:2 2}
 .chart .hm.sel rect{stroke:var(--fg);stroke-width:2.5;stroke-dasharray:none}
 .hm-sel{min-height:1.4em}
+.chart .ln.mp{stroke:var(--m-p)}.chart .ln.mc{stroke:var(--m-c);stroke-dasharray:6 4}.chart .ln.mf{stroke:var(--m-f);stroke-dasharray:2 3}
+.chart .dt.mp{fill:var(--m-p)}.chart .dt.mc{fill:var(--m-c)}.chart .dt.mf{fill:var(--m-f)}
+.chart .hd.mp{stroke:var(--m-p)}.chart .hd.mc{stroke:var(--m-c)}.chart .hd.mf{stroke:var(--m-f)}
+.ch-leg i.lmp{border-top:2px solid var(--m-p)}.ch-leg i.lmc{border-top:2px dashed var(--m-c)}.ch-leg i.lmf{border-top:2px dotted var(--m-f)}
+.labgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(148px,1fr));gap:8px;margin:4px 0 12px}
+.labc{display:flex;flex-direction:column;gap:2px;text-align:left;border:1px solid var(--line);background:var(--surface-2);color:var(--fg);border-radius:12px;padding:8px 10px;min-width:0;font:inherit;cursor:pointer}
+.labc[aria-pressed="true"]{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
+.labc .ln0{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:2px 6px;min-width:0}
+.labc .nm{font-size:12px;line-height:1.3;color:var(--muted);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:2.6em}
+.labc .vv{font-size:18px;font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap}
+.labc .vv small{font-size:11px;font-weight:400;color:var(--muted);margin-left:3px}
+.labc .pill{display:inline-block;min-height:0;gap:0;font-size:11px;line-height:1.5;padding:0 7px;background:none;border:1px solid currentColor;flex:none}
+.labc svg{width:100%;height:34px;display:block}
+.labc svg .bd{fill:var(--ok);opacity:.16}.labc svg .ln{fill:none;stroke:var(--accent);stroke-width:1.8;stroke-linejoin:round;stroke-linecap:round}
+.labc svg .dt{fill:var(--accent);stroke:var(--surface-2);stroke-width:1.5}.labc svg .dt.out{fill:var(--warn)}
 svg.mrange{width:84px;height:14px;display:block;margin:0 0 2px auto}
 .adh{border-collapse:collapse;font-size:13px}
 .adh td,.adh th{padding:3px 4px;text-align:center}
@@ -1175,6 +1190,7 @@ h2.sect[id]{scroll-margin-top:12px}
       <p class="sub">Máximo estimado por semana con la serie más pesada: suma las repeticiones en reserva a las hechas y usa la tabla RPE de Tuchscherer hasta 12 repeticiones totales (Epley más arriba). Solo cuenta series de 10 repeticiones o menos. Últimas 8 semanas.</p>
       <div id="f-lifts"></div>
       <div class="chbox" id="ch-fza"></div>
+      <div class="chbox" id="ch-ton"></div>
       <p class="tip" id="f-tip"></p>
     </div>
 <div class="card adv">
@@ -1605,6 +1621,10 @@ h2.sect[id]{scroll-margin-top:12px}
       <div class="chbox" id="ch-cal"></div>
       <p class="note hm-sel" id="ch-cal-sel" aria-live="polite"></p>
     </div>
+<div class="section">
+      <span class="label">Hábitos por semana</span>
+      <div class="chbox" id="ch-hab"></div>
+    </div>
 <p class="note" id="nota"></p>
       </div>
     </details>
@@ -1744,6 +1764,7 @@ h2.sect[id]{scroll-margin-top:12px}
 <div class="card" id="isak-card">
       <h2>Evaluaciones de composición corporal</h2>
       <div class="chbox" id="ch-isak"></div>
+      <div class="chbox" id="ch-comp"></div>
       <details class="more"><summary>Ver evaluaciones anteriores</summary><div class="tbl"><table><thead><tr><th>Fecha</th><th class="num">Peso</th><th class="num">% grasa</th><th class="num">Σ 6 pliegues</th></tr></thead><tbody id="isak-list"></tbody></table></div></details>
       <div class="row3">
         <div class="field"><label for="i-peso">Peso, kg</label><input type="number" id="i-peso" inputmode="decimal" step="0.1"></div>
@@ -1841,6 +1862,7 @@ h2.sect[id]{scroll-margin-top:12px}
       </div>
       <p class="err" id="lv-err" hidden></p>
       <p class="okmsg" id="lv-ok" hidden></p>
+      <div id="ch-labs"></div>
       <div class="tbl"><table><thead><tr><th>Marcador</th><th class="num">Último</th><th class="num">Referencia <span class="sr">(rango poblacional)</span></th><th class="num">Estado</th></tr></thead><tbody id="lv-tbl"></tbody></table></div>
       <div class="chbox" id="ch-lab"></div>
       <p class="note">Rangos de referencia generales (MedlinePlus, Biblioteca Nacional de Medicina de EE. UU., y guías citadas). Cada laboratorio tiene el suyo: el de tu informe manda.</p>
@@ -3948,7 +3970,7 @@ var FT=[["Aceite de coco",884,0,"F","Otros",null,null,0,100],["Aceite de girasol
   function legend(items){var d=el("div",null,"ch-leg");items.forEach(function(x){var s0=el("span");s0.appendChild(el("i",null,x[0]));s0.appendChild(document.createTextNode(x[1]));d.appendChild(s0);});return d;}
   function lineChart(o){var W=320,H=o.h||150,L=34,R=o.r||34,T=12,B=20,n=o.x.length;
     var vals=[];o.s.forEach(function(s0){vals=vals.concat(s0.v);});(o.ref||[]).forEach(function(r){vals.push(r.y);});if(o.band)vals.push(o.band[0],o.band[1]);
-    var has=o.s.some(function(s0){return s0.v.some(okv);}),dm=dom(vals,o.zero);if(!has||!dm)return chEmpty(o.empty||"Todavía no hay datos para graficar.");
+    var has=o.s.some(function(s0){return s0.v.some(okv);}),dm=dom(vals,o.zero);if(!has||!dm)return chEmpty(o.empty||"Todavía no hay datos para graficar.");if(o.span&&dm[1]-dm[0]<o.span){var c0=(dm[0]+dm[1])/2;dm=[c0-o.span/2,c0+o.span/2];}
     var lo=dm[0],hi=dm[1],X=function(i){return L+(n<2?(W-L-R)/2:i*(W-L-R)/(n-1));},Y=function(v){return T+(hi-v)/(hi-lo)*(H-T-B);};
     var svg=sv("svg",{viewBox:"0 0 "+W+" "+H,"class":"chart",role:"img","aria-label":o.aria||""});
     ticks(lo,hi,3).forEach(function(t,j){sv("line",{x1:L,x2:W-R,y1:Y(t),y2:Y(t),"class":"gr"+(j===0&&o.zero?" b0":"")},svg);stx(svg,L-4,Y(t)+3,ffmt(t),null,"end");});
@@ -4129,6 +4151,29 @@ var FT=[["Aceite de coco",884,0,"F","Otros",null,null,0,100],["Aceite de girasol
   function hmPick(kk){HMSEL=kk;var box=$("ch-cal-sel");if(!box)return;var d=days[kk],s1=d&&Array.isArray(d.e)&&d.e.length?sum(d):null,st=status(kk),t=tgt(kk);
     box.textContent=DIA[parse(kk).getDay()].charAt(0).toUpperCase()+DIA[parse(kk).getDay()].slice(1)+" "+fd(kk)+": "+(kk===today()&&st!=="ok"?"hoy, en curso":HMN[st])+
       (s1?". "+fmt(s1.k)+" kcal (objetivo "+fmt(t.min)+" a "+fmt(t.max)+") y "+fmt(s1.p)+" g de proteína (meta "+t.prot+" g)":"")+(d&&typeof d.peso==="number"?". Peso "+dec(d.peso)+" kg":"")+".";}
+
+  /* ---------- v31.16: segunda tanda de gráficos ---------- */
+  function labState(F,k){var bad=F.flags.some(function(f){return f.k===k&&f.l==="bad";}),s0=F.st(k);return bad?["bad","Revisar"]:s0===1&&k!=="hdl"?["warn","Alto"]:s0===-1?["warn","Bajo"]:["ok","Normal"];}
+  function labSpark(a,r){var W=140,H=34,vals=a.map(function(x){return x.v;}),lo=Math.min.apply(null,vals),hi=Math.max.apply(null,vals);
+    if(r){if(r[0]!==null&&r[0]>0)lo=Math.min(lo,r[0]);if(r[1]!==null)hi=Math.max(hi,r[1]);}var pd=(hi-lo)*0.12||Math.abs(hi)*0.1||1;lo-=pd;hi+=pd;
+    var X=function(i){return a.length<2?W/2:4+i*(W-8)/(a.length-1);},Y=function(v){return 3+(hi-v)/(hi-lo)*(H-6);};
+    var svg=sv("svg",{viewBox:"0 0 "+W+" "+H,"aria-hidden":"true",focusable:"false"});
+    if(r){var b0=r[0]===null?lo:Math.max(lo,r[0]),b1=r[1]===null?hi:Math.min(hi,r[1]);if(b1>b0)sv("rect",{x:0,y:Y(b1),width:W,height:Y(b0)-Y(b1),"class":"bd"},svg);}
+    if(a.length>1)sv("polyline",{points:a.map(function(x,i){return X(i).toFixed(1)+","+Y(x.v).toFixed(1);}).join(" "),"class":"ln"},svg);
+    a.forEach(function(x,i){var out=r&&((r[0]!==null&&x.v<r[0])||(r[1]!==null&&x.v>r[1]));if(i===a.length-1||out)sv("circle",{cx:X(i),cy:Y(x.v),r:i===a.length-1?3.5:2.5,"class":"dt"+(out?" out":"")},svg);});
+    return svg;}
+  function renderLabGrid(){var box=$("ch-labs");if(!box)return;box.textContent="";if(!cfg.mods.labs)return;var F=labFlags(),sx=cfg.prof.sex==="f"?4:3,cur=$("lv-k")?$("lv-k").value:"";
+    var keys=LABDEF.filter(function(L){return F.M[L[0]];});if(!keys.length)return;
+    var rank={bad:0,warn:1,ok:2};keys.sort(function(a,b){return rank[labState(F,a[0])[0]]-rank[labState(F,b[0])[0]];});
+    box.appendChild(el("span","Tus marcadores ("+keys.length+"), primero los que conviene mirar","label"));var g=el("div",null,"labgrid");
+    keys.forEach(function(L){var k=L[0],m=F.M[k],a=(S.labv||[]).filter(function(x){return x.k===k;}).sort(function(x,y){return x.d<y.d?-1:x.d>y.d?1:0;}).slice(-8),st=labState(F,k);
+      var b=el("button",null,"labc");b.type="button";b.setAttribute("aria-pressed",k===cur?"true":"false");b.setAttribute("data-k",k);
+      b.setAttribute("aria-label",L[1]+": "+fv(m.v)+" "+L[2]+", "+st[1].toLowerCase()+", referencia "+refTxt(L[sx])+", "+a.length+(a.length===1?" valor":" valores")+". Ver su curva.");
+      b.appendChild(el("span",L[1],"nm"));var l0=el("span",null,"ln0"),vv=el("span",fv(m.v),"vv");vv.appendChild(el("small",L[2]+(m.p?(m.v>m.p.v?" ↑":m.v<m.p.v?" ↓":" ="):"")));l0.appendChild(vv);l0.appendChild(el("span",st[1],"pill "+st[0]));b.appendChild(l0);
+      b.appendChild(labSpark(a,L[sx]));b.appendChild(el("small",fd(m.d)+(a.length>1?" · "+a.length+" valores":""),"muted"));
+      b.addEventListener("click",function(){var sel=$("lv-k");sel.value=k;sel.dispatchEvent(new Event("change"));[].forEach.call(g.children,function(c){c.setAttribute("aria-pressed",c.getAttribute("data-k")===k?"true":"false");});var c2=$("ch-lab");if(c2&&c2.scrollIntoView)c2.scrollIntoView({block:"nearest"});});
+      g.appendChild(b);});box.appendChild(g);}
+  function weekTon(end){var t=0,n=0;for(var i=0;i<7;i++){var d=days[shift(end,-i)];if(!d||!d.g||!d.g.ex)continue;Object.keys(d.g.ex).forEach(function(nm){var e=d.g.ex[nm];if(e&&e.kg>0&&e.r>0){t+=e.kg*e.r*(e.sets>0?e.sets:1);n++;}});}return {t:t,n:n};}
   function renderCharts(){var k=today(),t=tgt(k),d=days[k];
     safe(function(){var s0=sum(d);put("ch-kcal",[bulletChart({v:s0.k,lo:t.min,hi:t.max,max:Math.max(t.max*1.15,s0.k),left:"Comiste "+fmt(s0.k)+" kcal",right:"tope "+fmt(t.max),title:fmt(s0.k)+" kcal",aria:"Calorías de hoy contra la franja que cuenta como cumplido"}),cap("La franja verde es lo que cuenta como día cumplido.")]);});
     safe(function(){var ms=muscleSets(k),xs=[],v=[];for(var i=0;i<=36;i++){xs.push(String(i));v.push(Math.log(1+i)/Math.log(32)*100);}
@@ -4210,6 +4255,29 @@ var FT=[["Aceite de coco",884,0,"F","Otros",null,null,0,100],["Aceite de girasol
     safe(function chCal(){if(!$("ch-cal"))return;var hm=heatChart({weeks:16,st:status,pick:hmPick,aria:"Constancia de las últimas 16 semanas"});
       put("ch-cal",[hm,legend([["hm-ok","cumplido"],["hm-bad","no cumplido"],["hm-miss","sin anotar"]])]);
       if(HMSEL&&hm.__sel)hm.__sel(HMSEL);else $("ch-cal-sel").textContent="Tocá un día para ver qué comiste y cuánto te faltó.";});
+    /* v31.16 */
+    safe(renderLabGrid);
+    safe(function chTon(){if(!$("ch-ton"))return;var v=[],xs=[];for(var w=11;w>=0;w--){var r0=weekTon(shift(k,-7*w));v.push(r0.t>0?Math.round(r0.t/1000*10)/10:0);xs.push(w?"−"+w:"esta");}
+      if(!v.some(function(x){return x>0;})){put("ch-ton",null);return;}var nz=v.slice(0,11).filter(function(x){return x>0;}),av=nz.length?nz.reduce(function(a,b){return a+b;},0)/nz.length:0;
+      put("ch-ton",[el("span","Tonelaje por semana, toneladas","label"),barChart({v:v,x:xs,name:"Tonelaje",unit:" t",fmt:function(x){return dec(x)+"";},ref:av>0?[{y:Math.round(av*10)/10,label:"prom."}]:[],lab:function(i,x){return i===v.length-1&&x>0?dec(x):"";},cls:function(i){return i===v.length-1?"":"lt";},aria:"Tonelaje de entrenamiento de las últimas 12 semanas"}),
+        cap("Kilos × repeticiones × series de cada ejercicio anotado, sumados por semana. Sirve para ver si el volumen sube, se mantiene o baja; no mide la intensidad. La línea es el promedio de las 11 semanas anteriores.")]);});
+    safe(function chComp(){if(!$("ch-comp"))return;var pr=cfg.prof,pts=[];
+      if(pr.start&&pr.w0>0&&pr.bf0>0)pts.push({d:pr.start,w:pr.w0,g:pr.bf0,ini:1});
+      (S.isak||[]).filter(function(x){return typeof x.g==="number";}).forEach(function(x){var w=typeof x.peso==="number"&&x.peso>0?x.peso:(days[x.d]&&typeof days[x.d].peso==="number"?days[x.d].peso:wavg(x.d,7).v);if(w>0)pts.push({d:x.d,w:w,g:x.g});});
+      pts.sort(function(a,b){return a.d<b.d?-1:a.d>b.d?1:(a.ini?-1:1);});pts=pts.filter(function(p,i){return !(p.ini&&pts[i+1]&&pts[i+1].d===p.d);});
+      if(pts.length<2){put("ch-comp",pts.length?cap("Con una evaluación más de % de grasa aparece la evolución de la masa magra y la grasa en kilos."):null);return;}
+      var xs=pts.map(function(p){return dShort(p.d)+(p.ini?" (inicio)":"");}),lean=pts.map(function(p){return Math.round(p.w*(1-p.g/100)*10)/10;}),fat=pts.map(function(p){return Math.round(p.w*p.g/100*10)/10;}),L1=lean[lean.length-1],g0=pr.bfGoal||12,fGoal=Math.round(L1*g0/(100-g0)*10)/10;
+      var sg=function(x){return (x>0?"+":x<0?"−":"")+dec(Math.abs(x))+" kg";},kg=function(x){return dec(x)+" kg";};
+      put("ch-comp",[el("span","Masa grasa, kilos","label"),lineChart({x:xs,s:[{v:fat,dots:1,name:"Masa grasa",fmt:kg}],ref:[{y:fGoal,label:"meta"}],h:120,r:40,aria:"Masa grasa en kilos según tus evaluaciones"}),
+        el("span","Masa magra, kilos","label"),lineChart({x:xs,s:[{v:lean,dots:1,name:"Masa magra",fmt:kg}],span:10,h:120,r:40,aria:"Masa magra en kilos según tus evaluaciones"}),
+        cap("Desde "+(pts[0].ini?"el inicio":fd(pts[0].d))+": grasa "+sg(fat[fat.length-1]-fat[0])+" y masa magra "+sg(L1-lean[0])+". Sale de peso × % de grasa de cada evaluación. La meta es la grasa que tendrías con "+g0+"% manteniendo tu masa magra actual. Los métodos de % de grasa tienen error de 3 a 5 puntos: compará evaluaciones hechas con el mismo método.")]);});
+    safe(function chHab(){if(!$("ch-hab"))return;var xs=[],P0=[],A0=[],Z0=[],has={p:0,a:0,z:0};
+      for(var w=7;w>=0;w--){var end=shift(k,-7*w),n=0,p=0,a=0,z=0,zn=0;for(var i=0;i<7;i++){var kk=shift(end,-i);if(kk>k)continue;var dd=days[kk];if(!dd)continue;n++;if(dd.steps){p++;has.p=1;}if(dd.agua){a++;has.a=1;}if(typeof dd.sueno==="number"){zn++;has.z=1;if(dd.sueno>=7)z++;}}
+        xs.push(w?"−"+w:"esta");P0.push(n?Math.round(p/n*100):null);A0.push(n?Math.round(a/n*100):null);Z0.push(zn?Math.round(z/zn*100):null);}
+      var S1=[];if(has.p)S1.push({v:P0,name:"Pasos hechos",cls:"mp",dots:1,fmt:function(x){return x+"%";}});if(has.a)S1.push({v:A0,name:"Agua",cls:"mc",dots:1,fmt:function(x){return x+"%";}});if(has.z)S1.push({v:Z0,name:"Sueño de 7 h o más",cls:"mf",dots:1,fmt:function(x){return x+"%";}});
+      if(!S1.length){put("ch-hab",cap("Marcá pasos, agua y horas de sueño en Hoy para ver cómo te va cada semana."));return;}
+      put("ch-hab",[lineChart({x:xs,s:S1,area:false,zero:true,h:150,aria:"Porcentaje de días por semana con cada hábito"}),S1.length>1?legend(S1.map(function(x){return ["l"+x.cls,x.name];})):null,
+        cap("Porcentaje de los días anotados de cada semana (el sueño, de las noches anotadas). Arriba de 80% es un hábito armado.")]);});
   }
   function progChart(p){var vol={};MUSCLES.forEach(function(m){vol[m]=0;});p.week.forEach(function(kx){var r=p.days[kx];if(!r)return;r.ex.forEach(function(x){var n=setsOf(x[1]);vol[x[3]]+=n;(x[4]||[]).forEach(function(s2){vol[s2]+=n/2;});});});
     var b=el("div",null,"chbox");b.appendChild(el("span","Series fraccionales por semana","label"));b.appendChild(hbarChart({rows:MUSCLES.map(function(m){return {l:m.charAt(0).toUpperCase()+m.slice(1),v:vol[m]};}),band:[10,20],bandLabel:"10-20",max:22,aria:"Volumen semanal por músculo del programa"}));return b;}
@@ -4889,7 +4957,7 @@ var FT=[["Aceite de coco",884,0,"F","Otros",null,null,0,100],["Aceite de girasol
 
 
   /* ---------- v31: indicadores de Mi día, lecturas, papelera, registro, copias automáticas, privacidad, fórmulas ---------- */
-  var APPV="31.15";
+  var APPV="31.16";
   function viewOf(n){var sc=n&&n.closest?n.closest("section.view"):null;return sc?sc.id.slice(2):null;}
   var LST="rendicion-papelera",LSO="rendicion-oplog";
   function opLog(op,d){try{var a=JSON.parse(localStorage.getItem(LSO)||"[]");if(!Array.isArray(a))a=[];a.push({t:new Date().toISOString(),op:String(op).slice(0,30),d:String(d||"").slice(0,200)});if(a.length>300)a=a.slice(-300);localStorage.setItem(LSO,JSON.stringify(a));}catch(e){}safe(renderLog);}
@@ -6597,7 +6665,7 @@ var FT=[["Aceite de coco",884,0,"F","Otros",null,null,0,100],["Aceite de girasol
   }
   window.addEventListener("online",function(){SYNC.fail=0;flush(0);});
   document.addEventListener("visibilitychange",function(){if(!document.hidden&&Object.keys(SYNC.pend).length)flush(0);});
-  if(window.__RD_TEST__)window.RD={days:function(){return days;},cfg:function(){return cfg;},S:function(){return S;},SYNC:SYNC,remoteSet:remoteSet,vDay:vDay,vDays:vDays,sanit:sanit,save:save,rec:rec,today:today,exportData:exportData,importData:importData,encryptText:encryptText,decryptText:decryptText,e1rm:e1rm,dots:dots,wilks:wilks,gl:gl,tdeeReal:tdeeReal,tgt:tgt,labFlags:labFlags,sum:sum,D:D,age:age,frState:frState,FRASES:FRASES,CITAS:CITAS,renderFrase:renderFrase,qaParse:qaParse,qaMac:qaMac,qaFromAI:qaFromAI,greetText:greetText,rcBook:rcBook,fitRec:fitRec,ingCls:ingCls,RECETAS:RECETAS,daySlots:daySlots,scaleRec:scaleRec,slotTarget:slotTarget,RCX:RCX,FEAT:FEAT,lvStats:lvStats,lvLevel:lvLevel,applyLevels:applyLevels,HOWTO:HOWTO,cardOf:cardOf,cmdIndex:cmdIndex,render:render,restPlan:restPlan,linreg:linreg,pearson:pearson,wTrend:wTrend,cookFactor:cookFactor,exportObj:exportObj,signObj:signObj,verifyBk:verifyBk,trashAll:trashAll,trashPut:trashPut,trashRestore:trashRestore,opLog:opLog,insights:insights,dashData:dashData,FORMULAS:FORMULAS,snapTake:snapTake,S:function(){return S;},itemTxt:itemTxt,foodKey:foodKey,showImport:showImport,foFill:foFill,injPlan:injPlan,injHit:injHit,injAlt:injAlt,INJZ:INJZ,wuPlan:wuPlan,wuRamp:wuRamp,INJMAP:INJMAP,QK:QK,e1rm:e1rm,pxKind:pxKind,mealOf:mealOf,renderRec:renderRec,mergeSalud:mergeSalud,grpSync:grpSync,renderQuick:renderQuick,TIPICAS:TIPICAS,PUBS:PUBS,salvaPlan:salvaPlan,trInfo:trInfo,liftSeries:liftSeries,liftWeeks:liftWeeks,stackChart:stackChart,divChart:divChart,heatChart:heatChart,hmPick:hmPick,status:status,lifts:lifts,hbStats:hbStats,hbOptions:hbOptions,hbSlotNow:hbSlotNow,renderHB:renderHB,cbBuild:cbBuild,cbWarn:cbWarn,cbRoutine:cbRoutine,CB:CB,PROGS:PROGS,labParse:labParse,labKey:labKey,labNorm:labNorm,LABDEF:LABDEF,trIcs:trIcs,trGcal:trGcal,trNotifyCheck:trNotifyCheck,trDue:trDue,renderSalva:renderSalva,SV:SV,tipMatch:tipMatch,tipMac:tipMac,bSmooth:bSmooth,setSample:function(x){SAMPLE=x;SAMPLEIMG=false;}};
+  if(window.__RD_TEST__)window.RD={days:function(){return days;},cfg:function(){return cfg;},S:function(){return S;},SYNC:SYNC,remoteSet:remoteSet,vDay:vDay,vDays:vDays,sanit:sanit,save:save,rec:rec,today:today,exportData:exportData,importData:importData,encryptText:encryptText,decryptText:decryptText,e1rm:e1rm,dots:dots,wilks:wilks,gl:gl,tdeeReal:tdeeReal,tgt:tgt,labFlags:labFlags,sum:sum,D:D,age:age,frState:frState,FRASES:FRASES,CITAS:CITAS,renderFrase:renderFrase,qaParse:qaParse,qaMac:qaMac,qaFromAI:qaFromAI,greetText:greetText,rcBook:rcBook,fitRec:fitRec,ingCls:ingCls,RECETAS:RECETAS,daySlots:daySlots,scaleRec:scaleRec,slotTarget:slotTarget,RCX:RCX,FEAT:FEAT,lvStats:lvStats,lvLevel:lvLevel,applyLevels:applyLevels,HOWTO:HOWTO,cardOf:cardOf,cmdIndex:cmdIndex,render:render,restPlan:restPlan,linreg:linreg,pearson:pearson,wTrend:wTrend,cookFactor:cookFactor,exportObj:exportObj,signObj:signObj,verifyBk:verifyBk,trashAll:trashAll,trashPut:trashPut,trashRestore:trashRestore,opLog:opLog,insights:insights,dashData:dashData,FORMULAS:FORMULAS,snapTake:snapTake,S:function(){return S;},itemTxt:itemTxt,foodKey:foodKey,showImport:showImport,foFill:foFill,injPlan:injPlan,injHit:injHit,injAlt:injAlt,INJZ:INJZ,wuPlan:wuPlan,wuRamp:wuRamp,INJMAP:INJMAP,QK:QK,e1rm:e1rm,pxKind:pxKind,mealOf:mealOf,renderRec:renderRec,mergeSalud:mergeSalud,grpSync:grpSync,renderQuick:renderQuick,TIPICAS:TIPICAS,PUBS:PUBS,salvaPlan:salvaPlan,trInfo:trInfo,renderLabGrid:renderLabGrid,weekTon:weekTon,labState:labState,liftSeries:liftSeries,liftWeeks:liftWeeks,stackChart:stackChart,divChart:divChart,heatChart:heatChart,hmPick:hmPick,status:status,lifts:lifts,hbStats:hbStats,hbOptions:hbOptions,hbSlotNow:hbSlotNow,renderHB:renderHB,cbBuild:cbBuild,cbWarn:cbWarn,cbRoutine:cbRoutine,CB:CB,PROGS:PROGS,labParse:labParse,labKey:labKey,labNorm:labNorm,LABDEF:LABDEF,trIcs:trIcs,trGcal:trGcal,trNotifyCheck:trNotifyCheck,trDue:trDue,renderSalva:renderSalva,SV:SV,tipMatch:tipMatch,tipMac:tipMac,bSmooth:bSmooth,setSample:function(x){SAMPLE=x;SAMPLEIMG=false;}};
   connect();
 })();
 </script>
