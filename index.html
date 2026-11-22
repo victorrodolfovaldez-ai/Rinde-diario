@@ -653,6 +653,10 @@ svg.exa .xp{fill:var(--px-eq)}svg.exa .xpr{fill:none;stroke:var(--px-bg);stroke-
 svg.exa .xpd{fill:var(--px-eq)}
 svg.exa .xpl{stroke:var(--px-eq);stroke-width:3.5;stroke-linecap:round}
 svg.exa .xar{fill:none;stroke:var(--px-arrow);stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;transition:opacity .2s}
+svg.exa .xli{fill:var(--px-hi);opacity:.45;stroke:none}
+svg.exa .xshoe{fill:var(--px-shoe)}svg.exa .xshoef{opacity:.8}
+svg.exa .xear{fill:var(--px-def)}svg.exa .xeye{fill:var(--px-hair)}
+svg.exa .xgh{fill:var(--px-ground);opacity:.35;display:none}#fx svg.exa .xgh{display:inline}
 .pg-day li{display:flex;align-items:center;gap:8px}
 .pg-day li svg.exa{width:44px;height:37px;flex:none;border-radius:6px}
 .ed{display:flex;flex-direction:column;gap:8px;padding:10px 0;border-top:1px solid var(--line)}
@@ -742,9 +746,9 @@ details.more[open] > summary::after{transform:rotate(225deg);margin-top:4px}
 #tab-nutricion[aria-current="page"]{color:var(--c-nut);background:var(--c-nut-s)}
 #tab-salud[aria-current="page"]{color:var(--c-sal);background:var(--c-sal-s)}
 #tab-mas[aria-current="page"]{color:var(--c-mas);background:var(--c-mas-s)}
-:root{--px-skin:#e2ad88;--px-skin2:#b98463;--px-def:#c98a63;--px-line:#9a6648;--px-shorts:#26303c;--px-shorts2:#3c4756;--px-hair:#3a2a20;--px-mus:#d8342a;--px-mus2:#b8423a;--px-fig:#16324f;--px-far:#9db1c7;--px-eq:#6b7785;--px-acc:var(--accent);--px-bg:var(--surface);--px-arrow:#1c7c54;--px-ground:#c9d2dc}
-@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--px-skin:#d9a37f;--px-skin2:#9c6c50;--px-def:#b97f5b;--px-line:#5d3b29;--px-shorts:#3a4656;--px-shorts2:#2c3542;--px-hair:#1d1510;--px-mus:#ff5a44;--px-mus2:#c94b3e;--px-fig:#e6edf3;--px-far:#5e7286;--px-eq:#9aa6b2;--px-ground:#3b4651;--px-arrow:#5cc38a}}
-:root[data-theme="dark"]{--px-skin:#d9a37f;--px-skin2:#9c6c50;--px-def:#b97f5b;--px-line:#5d3b29;--px-shorts:#3a4656;--px-shorts2:#2c3542;--px-hair:#1d1510;--px-mus:#ff5a44;--px-mus2:#c94b3e;--px-fig:#e6edf3;--px-far:#5e7286;--px-eq:#9aa6b2;--px-ground:#3b4651;--px-arrow:#5cc38a}
+:root{--px-hi:#f3c9a8;--px-shoe:#2f3742;--px-skin:#e2ad88;--px-skin2:#b98463;--px-def:#c98a63;--px-line:#9a6648;--px-shorts:#26303c;--px-shorts2:#3c4756;--px-hair:#3a2a20;--px-mus:#d8342a;--px-mus2:#b8423a;--px-fig:#16324f;--px-far:#9db1c7;--px-eq:#6b7785;--px-acc:var(--accent);--px-bg:var(--surface);--px-arrow:#1c7c54;--px-ground:#c9d2dc}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--px-hi:#ecbd99;--px-shoe:#55606c;--px-skin:#d9a37f;--px-skin2:#9c6c50;--px-def:#b97f5b;--px-line:#5d3b29;--px-shorts:#3a4656;--px-shorts2:#2c3542;--px-hair:#1d1510;--px-mus:#ff5a44;--px-mus2:#c94b3e;--px-fig:#e6edf3;--px-far:#5e7286;--px-eq:#9aa6b2;--px-ground:#3b4651;--px-arrow:#5cc38a}}
+:root[data-theme="dark"]{--px-hi:#ecbd99;--px-shoe:#55606c;--px-skin:#d9a37f;--px-skin2:#9c6c50;--px-def:#b97f5b;--px-line:#5d3b29;--px-shorts:#3a4656;--px-shorts2:#2c3542;--px-hair:#1d1510;--px-mus:#ff5a44;--px-mus2:#c94b3e;--px-fig:#e6edf3;--px-far:#5e7286;--px-eq:#9aa6b2;--px-ground:#3b4651;--px-arrow:#5cc38a}
 /* Cabeceras */
 .hero{position:relative;overflow:hidden;border-radius:var(--r-xl);padding:20px 18px 18px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,42%);gap:8px 12px;align-items:center;color:var(--hero-fg);min-height:180px;box-shadow:var(--shadow)}
 .hero .hero-txt{display:flex;flex-direction:column;gap:6px;min-width:0;position:relative;z-index:1}
@@ -4366,20 +4370,23 @@ var FT=[["Aceite de coco",884,0,"F","Otros",null,null,0,100],["Aceite de girasol
   function xBody(G){var f=[],b=[];XT.forEach(function(t){f.push(G.at(t,1));b.push(G.at(t,-1));});var e0=G.at(-0.03,0),e1=G.at(1.03,0);return xSmooth([e0].concat(f,[e1],b.reverse()),true);}
   function xRegion(G,side,t0,t1){var o=[],i=[],N=5,k;for(k=0;k<=N;k++){var t=t0+(t1-t0)*k/N;if(side==="a"){o.push(G.at(t,0.86));i.push(G.at(t,-0.86));}else{var sg=side==="f"?1:-1;o.push(G.at(t,0.88*sg));i.push(G.at(t,0.05*sg));}}
     return xSmooth(o.concat(i.reverse()),true);}
+  function xRim(G){var o=[],i=[],k;for(k=0;k<=6;k++){var t=0.06+0.86*k/6;o.push(G.at(t,0.92));i.push(G.at(t,0.42));}return xSmooth(o.concat(i.reverse()),true);}
   function xCover(G,t1){var f=[],k=[],i;for(i=0;i<=5;i++){var t=-0.05+(t1+0.05)*i/5;f.push(G.at(t,1.06));k.push(G.at(t,-1.06));}return xSmooth(f.concat(k.reverse()),true);}
   function xBuild(F,name,mus,sec){var W=xMus(F,mus,sec),lst=Object.keys(W),svg=sv("svg",{viewBox:"0 0 120 100","class":"exa",role:"img","aria-label":"Movimiento: "+name+(mus?". Trabaja: "+mus+(sec&&sec.length?" (y "+sec.join(", ")+")":""):"")}),E={},fv=F.b&&F.b.fv;
     if(F.gd!==0){sv("path",{d:"M6 "+XG+" L114 "+XG,"class":"xg"},svg);E.sh=sv("ellipse",{rx:15,ry:2.2,"class":"xsh"},svg);}
     (F.pr||[]).forEach(function(p){if(p[0]==="r")sv("rect",{x:p[1],y:p[2],width:p[3],height:p[4],rx:p[5]||2,"class":"xs"},svg);else if(p[0]==="c")sv("circle",{cx:p[1],cy:p[2],r:p[3],"class":"xw"},svg);else sv("path",{d:p[1],"class":"xe"},svg);});
+    if(F.K&&!F.fn&&F.m!=="lp"){var J=xPose(xMix(F,F.K[1],F.K[1],0)),gh=sv("g",{"class":"xgh"},svg),gp=function(a2,b2,pf2,fl){sv("path",{d:xBody(xProf(a2,b2,pf2,fl,fv))},gh);};
+      gp(J.h2,J.kn2,XPF.th);gp(J.kn2,J.an2,XPF.sn);gp(J.hp,J.sh,fv?XPF.trf:XPF.tr,true);gp(J.h1,J.kn,XPF.th);gp(J.kn,J.an,XPF.sn);gp(J.s1,J.el,XPF.ua);gp(J.el,J.wr,XPF.fa);gp(J.s2,J.el2,XPF.ua);gp(J.el2,J.wr2,XPF.fa);sv("ellipse",{cx:J.hd[0],cy:J.hd[1],rx:5.9,ry:6.5},gh);}
     E.cab=(F.ca||[]).map(function(c){var g={a:c[1],j:c[2],n:sv("path",{"class":{b:"xb",l:"xlm",s:"xc"}[c[0]]||"xc"},svg)};if(c[0]==="c")sv("circle",{cx:c[1][0],cy:c[1][1],r:2.6,"class":"xw"},svg);return g;});
     E.rope=F.rope?sv("path",{"class":"xr"},svg):null;
     /* un segmento: volumen + músculos de ese segmento (definición suave o encendido si trabaja) */
-    var seg=function(key,cl,defs){var g={b:sv("path",{"class":"xv "+cl},svg),m:[]};if(key==="th"||key==="tr")g.sh=sv("path",{"class":"xsho"+(cl==="xvf"?" xshf":"")},svg);
+    var seg=function(key,cl,defs){var g={key:key,b:sv("path",{"class":"xv "+cl},svg),m:[]};if(cl==="xvn"&&key!=="nk")g.li=sv("path",{"class":"xli"},svg);if(key==="th"||key==="tr")g.sh=sv("path",{"class":"xsho"+(cl==="xvf"?" xshf":"")},svg);
       Object.keys(XMS).forEach(function(mk){var M=XMS[mk];if(M[0]!==key)return;var lv=W[mk]||0;if(!lv&&!defs)return;g.m.push({k:mk,lv:lv,n:sv("path",{"class":lv?"xk xk"+lv+(cl==="xvf"?" xkf":""):"xdf"},svg)});});return g;};
     var cf=fv?"xvn":"xvf",df=!!fv;
-    E.F={th:seg("th",cf,df),sn:seg("sn",cf,df),ft:sv("path",{"class":"xv "+cf},svg),ua:seg("ua",cf,df),fa:seg("fa",cf,df),hn:sv("ellipse",{rx:2.6,ry:2.3,"class":"xv "+cf},svg)};
+    E.F={th:seg("th",cf,df),sn:seg("sn",cf,df),ft:sv("path",{"class":"xv xshoe"+(fv?"":" xshoef")},svg),ua:seg("ua",cf,df),fa:seg("fa",cf,df),hn:sv("ellipse",{rx:2.6,ry:2.3,"class":"xv "+cf},svg)};
     E.ld2=(F.ld||[]).filter(function(l){return l[2]===2;}).map(function(l){return {l:l,n:xLoad(l,svg)};});
-    E.nk=seg("nk","xvn",1);E.tr=seg("tr","xvn",1);E.hd=sv("ellipse",{rx:5.9,ry:6.5,"class":"xv xvn xhd"},svg);E.hr=sv("path",{"class":"xhr"},svg);
-    E.N={th:seg("th","xvn",1),sn:seg("sn","xvn",1),ft:sv("path",{"class":"xv xvn"},svg),ua:seg("ua","xvn",1),fa:seg("fa","xvn",1),hn:sv("ellipse",{rx:2.6,ry:2.3,"class":"xv xvn"},svg)};
+    E.nk=seg("nk","xvn",1);E.tr=seg("tr","xvn",1);E.hd=sv("ellipse",{rx:5.9,ry:6.5,"class":"xv xvn xhd"},svg);E.hr=sv("path",{"class":"xhr"},svg);E.ear=sv("ellipse",{rx:1.3,ry:1.8,"class":"xear"},svg);E.eye=sv("circle",{r:0.75,"class":"xeye"},svg);E.eye2=fv?sv("circle",{r:0.75,"class":"xeye"},svg):null;E.nose=fv?null:sv("path",{"class":"xv xvn"},svg);
+    E.N={th:seg("th","xvn",1),sn:seg("sn","xvn",1),ft:sv("path",{"class":"xv xshoe"},svg),ua:seg("ua","xvn",1),fa:seg("fa","xvn",1),hn:sv("ellipse",{rx:2.6,ry:2.3,"class":"xv xvn"},svg)};
     E.ld=(F.ld||[]).filter(function(l){return l[2]!==2;}).map(function(l){return {l:l,n:xLoad(l,svg)};});
     E.ar=F.arw?sv("path",{"class":"xar"},svg):null;
     svg.__F=F;svg.__E=E;svg.__W=lst;return svg;}
@@ -4394,7 +4401,8 @@ var FT=[["Aceite de coco",884,0,"F","Otros",null,null,0,100],["Aceite de girasol
     return xSmooth([P(-2.4,1.2),P(1.5,2.2),P(L+0.6,1.1),P(L+1.4,-0.6),P(L,-1.9),P(-2.2,-1.9)],true);}
   function xDraw(svg,ph){var F=svg.__F,E=svg.__E,P=xAt(F,ph),j=xPose(P),fv=!!P.fv,o=fv?[0,0]:[1.8,-1.2],f=function(p){return [p[0]+o[0],p[1]+o[1]];};
     var tens=F.fn||F.m==="lp"?0.8+0.2*Math.sin(ph*2*Math.PI):(function(){var tp=F.tp||[0.36,0.24],h=(1-tp[0]-tp[1])/3,e=ph<h?0:ph<h+tp[0]?(ph-h)/tp[0]:ph<2*h+tp[0]?1:ph<2*h+tp[0]+tp[1]?1-(ph-2*h-tp[0])/tp[1]:0;return 0.62+0.38*xSm(Math.max(0,Math.min(1,e)));})();
-    var put=function(g,a,b,pf,flip){var G=xProf(a,b,pf,flip,fv);g.b.setAttribute("d",xBody(G));if(g.sh)g.sh.setAttribute("d",xCover(G,pf===XPF.th?0.4:0.19));g.m.forEach(function(m){var M=XMS[m.k];m.n.setAttribute("d",xRegion(G,M[1],M[2],M[3]));if(m.lv)m.n.style.opacity=(m.lv===2?tens:0.35+0.25*tens).toFixed(2);});};
+    var put=function(g,a,b,pf,flip){var wk=g.m.some(function(m){return m.lv===2;});if(wk){var kx=1+0.1*(tens-0.62);pf=pf.map(function(r){return [r[0],r[1]*kx,r[2]*kx];});}
+      var G=xProf(a,b,pf,flip,fv);g.b.setAttribute("d",xBody(G));if(g.li)g.li.setAttribute("d",xRim(G));if(g.sh)g.sh.setAttribute("d",xCover(G,g.key==="th"?0.4:0.19));g.m.forEach(function(m){var M=XMS[m.k],t0=M[2];if(!m.lv&&g.sh){t0=Math.max(t0,g.key==="th"?0.43:0.2);}if(t0>=M[3]-0.05){m.n.setAttribute("d","");return;}m.n.setAttribute("d",xRegion(G,M[1],t0,M[3]));if(m.lv)m.n.style.opacity=(m.lv===2?tens:0.35+0.25*tens).toFixed(2);});};
     var side=function(S,h,k,a,t,s,e,w){put(S.th,h,k,XPF.th);put(S.sn,k,a,XPF.sn);S.ft.setAttribute("d",xFoot(a,t));put(S.ua,s,e,XPF.ua);put(S.fa,e,w,XPF.fa);
       var dx=w[0]-e[0],dy=w[1]-e[1],L=Math.sqrt(dx*dx+dy*dy)||1;S.hn.setAttribute("cx",(w[0]+dx/L*1.6).toFixed(1));S.hn.setAttribute("cy",(w[1]+dy/L*1.6).toFixed(1));};
     side(E.F,f(j.h2),f(j.kn2),f(j.an2),f(j.to2),f(j.s2),f(j.el2),f(j.wr2));
@@ -4404,6 +4412,10 @@ var FT=[["Aceite de coco",884,0,"F","Otros",null,null,0,100],["Aceite de girasol
     if(fv){for(ha=-80;ha<=80;ha+=20){var r1=ha*Math.PI/180;hp.push([j.hd[0]+Math.sin(r1)*6.3,j.hd[1]-Math.cos(r1)*6.9]);}hp.push([j.hd[0]+4.5,j.hd[1]-3],[j.hd[0]-4.5,j.hd[1]-3]);}
     else{for(ha=30;ha<=215;ha+=23){var r2=ha*Math.PI/180;hp.push([j.hd[0]+(Math.cos(r2)*hf[0]+Math.sin(r2)*hu[0])*6.6,j.hd[1]+(Math.cos(r2)*hf[1]+Math.sin(r2)*hu[1])*6.8]);}hp.push([j.hd[0]-hf[0]*2.5+hu[0]*1.5,j.hd[1]-hf[1]*2.5+hu[1]*1.5]);}
     E.hr.setAttribute("d",xSmooth(hp,true));
+    var HP=function(fx,ux){return [j.hd[0]+hf[0]*fx+hu[0]*ux,j.hd[1]+hf[1]*fx+hu[1]*ux];};
+    if(fv){E.ear.style.display="none";E.eye.setAttribute("cx",(j.hd[0]+2.2).toFixed(1));E.eye.setAttribute("cy",(j.hd[1]+0.6).toFixed(1));E.eye2.setAttribute("cx",(j.hd[0]-2.2).toFixed(1));E.eye2.setAttribute("cy",(j.hd[1]+0.6).toFixed(1));}
+    else{var er=HP(-0.8,-0.3),ey=HP(3.6,0.7);E.ear.setAttribute("cx",er[0].toFixed(1));E.ear.setAttribute("cy",er[1].toFixed(1));E.eye.setAttribute("cx",ey[0].toFixed(1));E.eye.setAttribute("cy",ey[1].toFixed(1));
+      E.nose.setAttribute("d",xSmooth([HP(5.2,0.4),HP(6.9,-0.9),HP(5.4,-1.6)],true));}
     side(E.N,j.h1,j.kn,j.an,j.to,j.s1,j.el,j.wr);
     if(E.sh){var lo=Math.max(j.an[1],j.an2[1]);E.sh.setAttribute("cx",((j.an[0]+j.an2[0])/2+3).toFixed(1));E.sh.setAttribute("cy",(XG-0.4).toFixed(1));E.sh.setAttribute("rx",(10+Math.abs(j.an[0]-j.an2[0])/2).toFixed(1));E.sh.style.opacity=lo>84?"":"0";}
     E.cab.forEach(function(c){c.n.setAttribute("d",xPath([typeof c.a==="string"?j[c.a]:c.a,j[c.j]]));});
@@ -5163,7 +5175,7 @@ var FT=[["Aceite de coco",884,0,"F","Otros",null,null,0,100],["Aceite de girasol
 
 
   /* ---------- v31: indicadores de Mi día, lecturas, papelera, registro, copias automáticas, privacidad, fórmulas ---------- */
-  var APPV="31.19";
+  var APPV="31.20";
   function viewOf(n){var sc=n&&n.closest?n.closest("section.view"):null;return sc?sc.id.slice(2):null;}
   var LST="rendicion-papelera",LSO="rendicion-oplog";
   function opLog(op,d){try{var a=JSON.parse(localStorage.getItem(LSO)||"[]");if(!Array.isArray(a))a=[];a.push({t:new Date().toISOString(),op:String(op).slice(0,30),d:String(d||"").slice(0,200)});if(a.length>300)a=a.slice(-300);localStorage.setItem(LSO,JSON.stringify(a));}catch(e){}safe(renderLog);}
