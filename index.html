@@ -849,6 +849,15 @@ svg.exp{width:72px;height:60px;display:block;background:var(--accent-soft);borde
 .ex.an > label{grid-column:3}
 .ex.an > svg.exa{width:72px;height:60px;align-self:start}
 #fx-vid{color:var(--accent);font-weight:600}
+.fx-cues{margin:0;padding:0 0 0 18px;display:flex;flex-direction:column;gap:4px;font-size:15px;line-height:1.35;color:var(--fg)}
+.fx-cues:empty{display:none}
+.fx-pl{margin:-6px 0 0;text-align:center;font-size:15px;color:var(--muted);font-variant-numeric:tabular-nums}
+.pl-set{border:0;margin:6px 0 0;padding:0}.pl-set legend{font-size:13px;color:var(--muted);padding:0;margin-bottom:6px}
+.pl-chk{display:flex;flex-wrap:wrap;gap:6px}.pl-chk label{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:999px;padding:6px 10px;font-size:14px;min-height:36px}
+.pl-out{margin-top:10px}.pl-out svg{width:100%;max-width:420px;height:auto;display:block}
+.pl-out .pl-txt{font-size:16px;font-weight:600;margin:6px 0 0}.pl-out .note{margin:4px 0 0}
+svg.plb .bar{stroke:var(--muted);stroke-width:4;stroke-linecap:round}svg.plb .slv{stroke:var(--muted);stroke-width:7;stroke-linecap:round}
+svg.plb text{font-family:var(--body);font-size:9px;font-weight:700}
 .exvid{grid-column:1 / -1;font-size:13px;color:var(--accent);text-decoration:underline;text-underline-offset:2px;align-self:center}
 .ex.an .exin{grid-column:1 / -1}
 .mrow{display:flex;flex-wrap:wrap;gap:4px;margin:2px 0}
@@ -1236,6 +1245,25 @@ h2.sect[id]{scroll-margin-top:12px}
       </div>
       <div class="field"><label for="gl-cat">Categoría para IPF GL</label><select id="gl-cat"><option value="cl">Powerlifting clásico (sin equipo)</option><option value="eq">Powerlifting equipado</option><option value="bcl">Solo press banca, clásico</option><option value="beq">Solo press banca, equipado</option></select></div>
       <p class="note">Son ajustes estadísticos sobre datos de competencia, no medidas fisiológicas. GL usa los coeficientes de la IPF vigentes desde 2020 para la categoría elegida (en las de banca cuenta solo la banca); 100 GL equivale a nivel récord mundial. DOTS: coeficientes de la BVDK (2019).</p>
+    </div>
+<div class="card" id="pl-card">
+      <h2>Calculadora de discos</h2>
+      <p class="sub">Cuánto poner de cada lado de la barra con los discos de tu gimnasio.</p>
+      <div class="grid2">
+        <div class="field"><label for="pl-kg">Peso total, kg</label><input type="number" id="pl-kg" inputmode="decimal" step="0.5" min="0" max="600"></div>
+        <div class="field"><label for="pl-bar">Barra</label><select id="pl-bar"><option value="20">Olímpica, 20 kg</option><option value="15">Olímpica corta o de mujer, 15 kg</option><option value="10">Técnica o corta, 10 kg</option><option value="25">De sentadilla especial, 25 kg</option><option value="0">Sin barra (solo discos)</option></select></div>
+      </div>
+      <label class="toggle" for="pl-col">Topes de competencia (2,5 kg cada uno)<input type="checkbox" id="pl-col"></label>
+      <fieldset class="pl-set"><legend>Discos que hay en tu gimnasio</legend><div class="pl-chk" id="pl-set"></div></fieldset>
+      <div class="pl-out" id="pl-out" aria-live="polite"></div>
+    </div>
+<div class="card adv" id="att-card">
+      <h2>Intentos para competir<span class="kd kd-est">Estimación</span></h2>
+      <p class="sub">Sale de tus marcas de «Fuerza relativa». Abrí con un peso que levantarías en un mal día; el tercero se decide según cómo salió el segundo.</p>
+      <div class="chseg" role="group" aria-label="Estrategia" id="att-mode"></div>
+      <div class="tbl"><table><caption class="sr">Intentos sugeridos por movimiento</caption><thead><tr><th>Movimiento</th><th class="num">Mejor</th><th class="num">1.º</th><th class="num">2.º</th><th class="num">3.º</th></tr></thead><tbody id="att-tb"></tbody></table></div>
+      <p class="note" id="att-tot"></p>
+      <p class="note">Porcentajes de práctica habitual entre entrenadores (abrir cerca del 90%, segundo cerca del 96%, tercero en tu mejor marca o un poco más), redondeados a 2,5 kg. No salen de un estudio: ajustalos con tu entrenador y con cómo te sentís el día de la competencia.</p>
     </div>
 <button class="ghost adv" type="button" id="dl-go">Empezar una semana de descarga</button>
       </div>
@@ -2346,8 +2374,9 @@ h2.sect[id]{scroll-margin-top:12px}
 <div id="curtain" role="dialog" aria-modal="true" aria-labelledby="curtain-t" hidden><div class="in"><b id="curtain-t">Rinde Diario</b><p>Tapé la pantalla porque no la usaste por un rato. Es solo para que nadie lea tus números de pasada.</p><button class="primary" type="button" id="curtain-go">Continuar</button></div></div>
 <div id="fx" role="dialog" aria-modal="true" aria-labelledby="fx-n" hidden><div class="in">
   <div class="hd"><span class="label" id="fx-pos"></span><button class="ghost" type="button" id="fx-x">Salir</button></div>
-  <h2 id="fx-n"></h2><div id="fx-an"></div><p class="meta" id="fx-meta"></p><p class="meta" id="fx-sug"></p><p class="meta"><a id="fx-vid" target="_blank" rel="noopener">Ver la técnica en video (YouTube)</a></p>
+  <h2 id="fx-n"></h2><div id="fx-an"></div><ul class="fx-cues" id="fx-cues" aria-label="Claves de técnica"></ul><p class="meta" id="fx-meta"></p><p class="meta" id="fx-sug"></p><p class="meta"><a id="fx-vid" target="_blank" rel="noopener">Ver la técnica en video (YouTube)</a></p>
   <div class="stp"><button type="button" id="fx-kgm" aria-label="Menos peso">−2,5</button><div class="val" id="fx-kg" aria-live="polite">0<small>kg</small></div><button type="button" id="fx-kgp" aria-label="Más peso">+2,5</button></div>
+  <p class="fx-pl" id="fx-pl" aria-live="polite" hidden></p>
   <div class="stp"><button type="button" id="fx-rm" aria-label="Una repetición menos">−1</button><div class="val" id="fx-r" aria-live="polite">0<small>repeticiones</small></div><button type="button" id="fx-rp" aria-label="Una repetición más">+1</button></div>
   <span class="label">¿Cuántas te quedaban? (RIR)</span><div class="rirs" id="fx-rir"></div>
   <button class="good done" type="button" id="fx-ok">Serie hecha</button>
@@ -2587,7 +2616,7 @@ var FT=[["Aceite de coco",884,0,"F","Otros",null,null,0,100],["Aceite de girasol
   function opt(sel,val,txt){var o=el("option",txt);o.value=val;sel.appendChild(o);return o;}
 
   /* ---------- Estado ---------- */
-  function cfgDefaults(){return {chW:42,chN:14,chF:26,inj:null,rcFast:false,dash:["peso","adh","semana","salud"],qk:["comidas","peso","entreno","recetas"],fav:[],myrec:[],priv:{blur:false,idle:0},frases:"mixto",ifthen:[],greet:"hora",sched:{wake:"07:00",train:"18:00"},levels:"auto",unlocked:[],lvSeen:false,lvFrom:"",restAuto:true,foods:[],custom:false,max:2200,min:1900,prot:150,sq:0,bp:0,dl:0,palma:145,puno:120,prices:{},plan:null,adapt:true,setup:false,
+  function cfgDefaults(){return {chW:42,chN:14,chF:26,plates:{bar:20,col:false,set:[25,20,15,10,5,2.5,1.25]},att:{mode:"std"},inj:null,rcFast:false,dash:["peso","adh","semana","salud"],qk:["comidas","peso","entreno","recetas"],fav:[],myrec:[],priv:{blur:false,idle:0},frases:"mixto",ifthen:[],greet:"hora",sched:{wake:"07:00",train:"18:00"},levels:"auto",unlocked:[],lvSeen:false,lvFrom:"",restAuto:true,foods:[],custom:false,max:2200,min:1900,prot:150,sq:0,bp:0,dl:0,palma:145,puno:120,prices:{},plan:null,adapt:true,setup:false,
     prof:{name:"",sex:"m",birth:"",height:null,w0:null,bf0:null,bfMid:15,bfGoal:12,goal:"perder",mant:null,rate:0.6,protFFM:2.4,start:today(),steps1:8000,steps2:10000,kcalFloor:null},
     phases:null,special:[],routine:clone(DEF_ROUTINE),mods:{med:false,bp:true,waist:true,isak:true,labs:true,bike:false},
     med:{name:"Medicación",every:7,trt:false,start:""},labsList:["Hemograma completo","Glucemia","Perfil lipídico","Hígado: GPT, GOT y GGT","Riñón: creatinina y urea"],bikeGoal:0,restB:180,restA:120,athlete:true,cycle:true,cycleFrom:"",supl:{},deload:"",glCat:"cl",anim:"on",ax:{},usePlan:true};}
@@ -2602,6 +2631,8 @@ var FT=[["Aceite de coco",884,0,"F","Otros",null,null,0,100],["Aceite de girasol
     if("ifthen" in c)c.ifthen=Array.isArray(c.ifthen)?c.ifthen.filter(function(x){return isObj(x)&&typeof x.si==="string"&&typeof x.ent==="string";}).slice(-20).map(function(x){return {si:x.si.slice(0,90),ent:x.ent.slice(0,90),mom:String(x.mom||"").slice(0,12),d:DKEY.test(x.d||"")?x.d:""};}):[];
     if("inj" in c){var ij=c.inj;c.inj=isObj(ij)&&INJZ[ij.z]&&[1,2,3].indexOf(ij.lvl)>=0&&DKEY.test(ij.d||"")?{z:ij.z,lado:["der","izq"].indexOf(ij.lado)>=0&&INJPAR.indexOf(ij.z)>=0?ij.lado:"",lvl:ij.lvl,d:ij.d}:null;}
     if("chW" in c&&[42,90,180,365].indexOf(c.chW)<0)c.chW=42;if("chN" in c&&[14,30].indexOf(c.chN)<0)c.chN=14;if("chF" in c&&[8,26,52].indexOf(c.chF)<0)c.chF=26;
+    if("plates" in c){var pq=c.plates;if(!pq||typeof pq!=="object")pq={};var okp=[25,20,15,10,5,2.5,1.25,0.5],ps=Array.isArray(pq.set)?pq.set.map(Number).filter(function(v,i,a){return okp.indexOf(v)>=0&&a.indexOf(v)===i;}):[];c.plates={bar:[0,10,15,20,25].indexOf(+pq.bar)>=0?+pq.bar:20,col:pq.col===true,set:ps.length?ps:[25,20,15,10,5,2.5,1.25]};}
+    if("att" in c){c.att={mode:c.att&&["cons","std","agr"].indexOf(c.att.mode)>=0?c.att.mode:"std"};}
     if("dash" in c)c.dash=Array.isArray(c.dash)?c.dash.filter(function(x,i,a){return DASHOK.indexOf(x)>=0&&a.indexOf(x)===i;}):d.dash;
     if("qk" in c){c.qk=Array.isArray(c.qk)?c.qk.filter(function(x,i,a){return QKOK.indexOf(x)>=0&&a.indexOf(x)===i;}).slice(0,4):d.qk;if(!c.qk.length)c.qk=d.qk;}
     if("fav" in c)c.fav=Array.isArray(c.fav)?c.fav.filter(function(x){return typeof x==="string"&&x.trim()&&x.length<=60;}).slice(0,60):[];
@@ -3763,9 +3794,9 @@ var FT=[["Aceite de coco",884,0,"F","Otros",null,null,0,100],["Aceite de girasol
   function fxClose(){FX.on=false;$("fx").hidden=true;document.body.classList.remove("fxon");if(!RT.run)lock(false);if(FX.dict)try{FX.dict.stop();}catch(e){}save();}
   function fxLoad(){var I=fxInfo(),x=I.info.ex[FX.i];if(!x)return;var d=days[I.k],g=d&&d.g&&d.g.s===I.sp?d.g:null,e=exOf(g,FX.i,x[0]),p=prevSet(x[0],I.k);
     FX.kg=typeof e.kg==="number"?e.kg:p&&p.kg?p.kg:0;FX.r=typeof e.r==="number"?e.r:repLow(x[1])||8;FX.rir=typeof e.rir==="number"?e.rir:rirTarget(!!x[2]);FX.taps=[];
-    $("fx-pos").textContent="Ejercicio "+(FX.i+1)+" de "+I.info.ex.length;$("fx-n").textContent=x[0];var an=$("fx-an");an.textContent="";var a=exAnim(x[0],x[3],x[4]);if(a)an.appendChild(a);$("fx-vid").href=xVid(x[0]);
+    $("fx-pos").textContent="Ejercicio "+(FX.i+1)+" de "+I.info.ex.length;$("fx-n").textContent=x[0];var an=$("fx-an");an.textContent="";var a=exAnim(x[0],x[3],x[4]);if(a)an.appendChild(a);$("fx-vid").href=xVid(x[0]);var cu=$("fx-cues");cu.textContent="";exCues(x[0]).forEach(function(c){cu.appendChild(el("li",c));});FX.bar=!!(XK[exKind(x[0])]&&(XK[exKind(x[0])].ld||[]).some(function(l){return l[0]==="bar";}));
     $("fx-meta").textContent=x[1]+" · series hechas: "+(e.sets||0)+" de "+setsOf(x[1]);$("fx-sug").textContent=(typeof e.kg!=="number"&&p&&p.kg?"Precargado de tu sesión del "+fd(p.k)+": "+dec0(p.kg)+" kg por "+p.r+". No se guarda hasta que tocás «Serie hecha». ":"")+(suggest(x,I.k)||"");$("fx-vl").textContent="";$("fx-pad").textContent="Tocá para empezar";fxShow();}
-  function fxShow(){$("fx-kg").firstChild.nodeValue=dec0(FX.kg)+" ";$("fx-r").firstChild.nodeValue=FX.r+" ";
+  function fxShow(){$("fx-kg").firstChild.nodeValue=dec0(FX.kg)+" ";var C=plCfg(),pl=$("fx-pl");if(FX.bar&&FX.kg>C.bar+(C.col?5:0)){var R=platesFor(FX.kg,C.bar,C.col,C.set);pl.textContent="Por lado: "+plTxt(R)+(R.ok?"":" (llega a "+fk(R.got)+" kg)");pl.hidden=false;}else pl.hidden=true;$("fx-r").firstChild.nodeValue=FX.r+" ";
     var rb=$("fx-rir");if(!rb.childNodes.length)[0,1,2,3,4].forEach(function(v){var b=el("button",v===4?"4+":String(v));b.type="button";b.dataset.v=v;b.setAttribute("aria-label","Me quedaban "+(v===4?"4 o más":v));b.addEventListener("click",function(){FX.rir=v;fxShow();});rb.appendChild(b);});
     rb.querySelectorAll("button").forEach(function(b){b.setAttribute("aria-pressed",+b.dataset.v===Math.min(4,FX.rir)?"true":"false");});
     var I=fxInfo();$("fx-prev").disabled=FX.i===0;$("fx-next").disabled=FX.i>=I.info.ex.length-1;}
@@ -4193,6 +4224,111 @@ var FT=[["Aceite de coco",884,0,"F","Otros",null,null,0,100],["Aceite de girasol
       b.addEventListener("click",function(){var sel=$("lv-k");sel.value=k;sel.dispatchEvent(new Event("change"));[].forEach.call(g.children,function(c){c.setAttribute("aria-pressed",c.getAttribute("data-k")===k?"true":"false");});var c2=$("ch-lab");if(c2&&c2.scrollIntoView)c2.scrollIntoView({block:"nearest"});});
       g.appendChild(b);});box.appendChild(g);}
   function weekTon(end){var t=0,n=0;for(var i=0;i<7;i++){var d=days[shift(end,-i)];if(!d||!d.g||!d.g.ex)continue;Object.keys(d.g.ex).forEach(function(nm){var e=d.g.ex[nm];if(e&&e.kg>0&&e.r>0){t+=e.kg*e.r*(e.sets>0?e.sets:1);n++;}});}return {t:t,n:n};}
+
+  /* ---------- v31.21: claves de técnica, discos e intentos ---------- */
+  var XCUE={
+    squat:["Pies a la altura de los hombros, puntas un poco afuera; las rodillas siguen la dirección de los pies.","Tomá aire y apretá el abdomen antes de bajar; el pecho mira adelante.","Bajá hasta que la cadera quede a la altura de la rodilla o un poco más abajo y subí empujando el piso."],
+    boxsquat:["Sentate atrás hasta tocar el cajón, sin aflojar el abdomen.","Canillas casi verticales y rodillas hacia afuera.","Subí explosivo empujando el piso."],
+    goblet:["Codos abajo y torso erguido: la carga va pegada al pecho.","Las rodillas siguen la punta de los pies.","Bajá controlado y subí empujando con todo el pie."],
+    frontsquat:["Codos altos y torso erguido: la barra apoya en los hombros, no en las manos.","Las rodillas siguen la punta de los pies.","Bajá controlado y subí empujando con todo el pie."],
+    lunge:["Paso largo: la rodilla de adelante queda sobre el pie.","Torso derecho y abdomen firme.","Bajá hasta que la rodilla de atrás casi toque el piso y empujá con el talón de adelante."],
+    split:["Pie de atrás en el banco y el de adelante lejos, para que la rodilla no se vaya muy adelante.","Bajá en línea recta, sin girar la cadera.","Subí empujando con el pie de adelante."],
+    stepup:["Todo el pie arriba del cajón.","Subí con la pierna de arriba, sin impulsarte con la de abajo.","Bajá lento."],
+    deadlift:["Barra sobre el medio del pie y pegada a las piernas todo el recorrido.","Espalda neutra: pecho arriba, hombros apenas delante de la barra y dorsales firmes.","Empujá el piso con las piernas y terminá con la cadera, sin echarte atrás."],
+    rdl:["Rodillas apenas flexionadas y fijas.","Llevá la cadera atrás con la espalda neutra; la carga baja pegada a las piernas.","Bajá hasta sentir que estiran los isquios y subí apretando los glúteos."],
+    rdl1:["Cadera alineada, sin abrirla hacia el costado.","La pierna de atrás y el torso se mueven como una sola pieza.","Bajá hasta sentir el estiramiento y volvé apretando el glúteo de la pierna de apoyo."],
+    goodmorning:["Barra en la espalda alta y rodillas apenas flexionadas.","Llevá la cadera atrás con la espalda neutra.","Bajá hasta sentir los isquios, sin redondear la espalda."],
+    clean:["Barra pegada al cuerpo.","Extensión explosiva de cadera, rodillas y tobillos antes de tirar con los brazos.","Codos rápidos adelante para recibir en los hombros con las rodillas flexionadas."],
+    snatch:["Agarre ancho y barra pegada al cuerpo.","Extensión explosiva de cadera, rodillas y tobillos antes de tirar con los brazos.","Recibí con los brazos estirados y las rodillas flexionadas."],
+    highpull:["Barra pegada al cuerpo.","Extensión explosiva de cadera, rodillas y tobillos.","Codos altos y por afuera al final."],
+    hipthrust:["Espalda alta en el borde del banco; pies donde las canillas queden verticales arriba.","Mentón abajo y costillas cerradas.","Subí apretando los glúteos hasta alinear rodilla, cadera y hombro, sin arquear la zona lumbar."],
+    bridge:["Pies cerca de la cadera, apoyados en todo el talón.","Mentón abajo y costillas cerradas.","Subí apretando los glúteos, sin arquear la zona lumbar."],
+    bench:["Omóplatos juntos y abajo, pies firmes en el piso.","Bajá controlado hasta el pecho con los codos a unos 45 a 70° del cuerpo.","Empujá hacia arriba y un poco hacia la cara, sin rebotar."],
+    benchdb:["Omóplatos juntos y abajo, pies firmes en el piso.","Bajá las mancuernas a los costados del pecho, codos a unos 45 a 70°.","Subí sin chocarlas arriba."],
+    incline:["Banco a unos 30°, omóplatos juntos y abajo.","Bajá hasta la parte alta del pecho, codos a unos 45 a 70°.","Empujá arriba sin despegar la cadera."],
+    floorpress:["Acostado, rodillas flexionadas y omóplatos juntos.","Bajá hasta que los brazos apoyen en el piso, sin rebotar.","Empujá arriba."],
+    chestpress:["Espalda apoyada y omóplatos juntos.","Empujá al frente sin despegar los hombros del respaldo.","Volvé lento."],
+    ohp:["Glúteos y abdomen firmes, sin arquear la zona lumbar.","La barra sube cerca de la cara: sacá la cabeza atrás al pasar y metela debajo arriba.","Terminá con los brazos estirados y la carga sobre la mitad del pie."],
+    pushpress:["Flexión corta de rodillas con el torso vertical.","Empuje explosivo de piernas y enseguida los brazos.","Bloqueá arriba y bajá controlado a los hombros."],
+    landmine:["Pies firmes y abdomen apretado.","Empujá arriba y adelante siguiendo el arco de la barra.","Bajá controlado al hombro."],
+    pallof:["De costado a la polea, pies a la altura de la cadera.","Llevá las manos al frente sin dejar que el torso gire.","Sostené y volvé al pecho."],
+    pushup:["Manos un poco más anchas que los hombros y cuerpo en línea.","Codos a unos 45° del cuerpo; bajá hasta casi tocar el piso con el pecho.","Empujá el piso sin dejar caer la cadera."],
+    dip:["Hombros abajo, lejos de las orejas.","Bajá hasta que el brazo quede paralelo al piso, sin forzar el hombro.","Subí hasta estirar los codos."],
+    fly:["Codos apenas flexionados y fijos.","Abrí hasta sentir estirar el pecho, sin forzar el hombro.","Cerrá en arco, como abrazando."],
+    pullover:["Codos apenas flexionados.","Llevá la carga detrás de la cabeza hasta sentir los dorsales.","Volvé en arco sobre el pecho."],
+    tri:["Codos apuntando arriba y quietos.","Bajá la carga detrás de la cabeza con control.","Estirá del todo arriba."],
+    skull:["Brazos un poco inclinados hacia la cabeza y codos quietos.","Bajá la barra hacia la frente con control.","Extendé solo el antebrazo."],
+    pushdown:["Codos pegados al cuerpo y quietos.","Empujá hasta estirar del todo.","Volvé lento hasta 90°."],
+    curl:["Codos quietos al costado del cuerpo.","Subí sin balancear el torso.","Bajá lento hasta estirar del todo."],
+    pullup:["Arrancá bajando los hombros, lejos de las orejas.","Tirá con los codos hacia las costillas hasta pasar el mentón por arriba de la barra.","Bajá completo y controlado."],
+    pulldown:["Arrancá bajando los hombros.","Llevá la barra a la parte alta del pecho con los codos hacia las costillas.","Subí controlado hasta estirar."],
+    invrow:["Cuerpo recto de la cabeza a los talones.","Pecho hacia las manos y codos cerca del cuerpo.","Sostené sin dejar caer la cadera."],
+    row:["Espalda neutra y quieta, sin impulso del torso.","Tirá con los codos hacia la cadera.","Juntá los omóplatos al final y bajá controlado."],
+    cablerow:["Torso firme y apenas inclinado.","Tirá con los codos hacia atrás, pegados al cuerpo.","Juntá los omóplatos y volvé controlado."],
+    facepull:["Polea a la altura de la cara.","Tirá hacia la frente separando las manos, con los codos altos.","Sostené un segundo atrás y volvé controlado."],
+    lateral:["Codos apenas flexionados; subí abriendo hacia los costados.","Hasta la altura del hombro, sin encoger los trapecios.","Bajá lento."],
+    extrot:["Codo fijo pegado al cuerpo.","Girá solo el antebrazo hacia afuera.","Lento y sin dolor."],
+    extrot90:["Codo a 90° y a la altura del hombro.","Girá solo el antebrazo hacia arriba.","Lento y sin dolor."],
+    legpress:["Espalda y cadera apoyadas todo el recorrido.","Bajá hasta donde no se despegue la zona lumbar.","Empujá con todo el pie, sin trabar las rodillas de golpe."],
+    legext:["Rodilla alineada con el eje de la máquina.","Estirá del todo y apretá un segundo.","Bajá lento."],
+    legcurl:["Cadera apoyada, sin levantarla.","Llevá el talón hacia el glúteo.","Volvé lento hasta casi estirar."],
+    nordic:["Rodillas acolchadas y tobillos bien sujetos.","Cuerpo recto de la rodilla a la cabeza: bajá lo más lento que puedas.","Frená con las manos y volvé ayudándote."],
+    calf:["Subí lo más alto posible y sostené un segundo.","Bajá hasta estirar el gemelo.","Sin rebotar."],
+    abd:["Torso quieto.","Abrí la pierna hacia el costado sin rotar el pie.","Volvé lento."],
+    plank:["Codos debajo de los hombros.","Línea recta: apretá glúteos y abdomen.","Respirá sin dejar caer la cadera."],
+    crunch:["Zona lumbar apoyada.","Subí enrollando el tronco, sin tirar del cuello.","Bajá lento."],
+    legraise:["Colgado con los hombros activos.","Subí las piernas sin balancearte.","Bajá controlado."],
+    boxing:["Guardia alta: manos a la cara y codos cerrados.","El golpe sale de la pierna y la cadera, no solo del brazo.","Volvé rápido a la guardia después de cada golpe."],
+    isopunch:["Posición de cross con el puño contra el soporte.","Empujá con todo el cuerpo, desde la pierna de atrás.","No contengas el aire mucho tiempo."],
+    farmer:["Hombros abajo y atrás, mirada al frente.","Pasos cortos y firmes.","No dejes que la carga te incline hacia un lado."],
+    sled:["Torso inclinado y espalda neutra.","Empujá el piso con pasos cortos y potentes.","Brazos firmes."],
+    rope:["Saltos bajos, sobre la parte delantera del pie.","Las muñecas giran la soga, no los brazos.","Respiración rítmica."],
+    jump:["Bajada rápida y corta antes del salto.","Brazos atrás y arriba para impulsarte.","Caé suave sobre la parte delantera del pie, con las rodillas alineadas."],
+    throw:["Abdomen firme.","La fuerza nace en las piernas y la cadera.","Lanzá explosivo y recibí controlado."],
+    chair:["Pies firmes y un poco atrás.","Inclinate adelante y levantate empujando el piso.","Sentate lento, sin dejarte caer."],
+    wallsit:["Espalda contra la pared y rodillas a 90°.","Rodillas sobre los tobillos.","Respirá y sostené."],
+    neck:["Movimientos lentos y sin dolor.","Empezá liviano.","Si aparece mareo, hormigueo o dolor que baja al brazo, pará y consultá."],
+    balance:["Mirada fija en un punto.","Rodilla de apoyo apenas flexionada.","Abdomen firme."],
+    bandwalk:["Semisentadilla con la banda tensa.","Pasos laterales cortos, sin juntar los pies.","Rodillas hacia afuera."],
+    grip:["Agarrá firme sin encoger los hombros.","Movimiento controlado.","Pará si hay dolor en el codo o la muñeca."],
+    cardio:["Ritmo en el que puedas hablar en frases cortas, salvo que el plan pida intervalos.","Postura erguida y hombros relajados.","Respiración rítmica."]};
+  var XCUEA={deadliftdb:"deadlift",rdldb:"rdl",bridge1:"bridge",inclinedb:"incline",ohpdb:"ohp",ohpseat:"ohp",pushupbox:"pushup",rowdb:"row",curlbar:"curl",curlband:"curl",legcurls:"legcurl",calfseat:"calf",
+    lateralband:"lateral",lungebar:"lunge",shadow:"boxing",bag:"boxing",reaction:"boxing",hop:"jump",rotthrow:"throw",lyingthrow:"throw",neckext:"neck",neckflex:"neck",neckiso:"neck",wrist:"grip",walk:"cardio",run:"cardio",bike:"cardio",rower:"cardio",armerg:"cardio"};
+  function exCues(name){var k=exKind(name);if(!k)return [];return XCUE[k]||XCUE[XCUEA[k]]||[];}
+  /* Discos: el más pesado que entra primero; si no se llega exacto, lo más cercano por debajo */
+  var PLC={25:"#d32f2f",20:"#1565c0",15:"#f9a825",10:"#2e7d32",5:"#eceff1",2.5:"#37474f",1.25:"#b0bec5",0.5:"#cfd8dc"},PLH={25:46,20:46,15:40,10:32,5:24,2.5:20,1.25:16,0.5:12},PLW={25:9,20:8,15:7,10:6,5:5,2.5:4,1.25:3.5,0.5:3};
+  function platesFor(total,bar,col,set){var side=(total-bar-(col?5:0))/2,out=[],r=side;if(!(side>0))return {side:Math.max(0,side),list:[],got:bar+(col&&side>=0?5:0),ok:side===0};
+    set.slice().sort(function(a,b){return b-a;}).forEach(function(p){while(r>=p-1e-9){out.push(p);r=Math.round((r-p)*1000)/1000;}});
+    var got=bar+(col?5:0)+2*(side-r);return {side:side,list:out,got:Math.round(got*100)/100,ok:r<1e-6};}
+  function fk(v){return String(Math.round(v*100)/100).replace(".",",");}
+  function plTxt(R){return R.list.length?R.list.map(function(p){return fk(p);}).join(" + "):"sin discos";}
+  function plSvg(R,bar,col){var W=320,H=64,c=H/2,x=18,svg=sv("svg",{viewBox:"0 0 "+W+" "+H,"class":"plb",role:"img","aria-label":"Un lado de la barra: "+plTxt(R)+(col?", más el tope":"")});
+    sv("line",{x1:4,y1:c,x2:24,y2:c,"class":"bar"},svg);sv("line",{x1:24,y1:c,x2:W-6,y2:c,"class":"slv"},svg);x=28;
+    R.list.forEach(function(p){var w=PLW[p]*2.2,h=PLH[p]*1.2,r=sv("rect",{x:x,y:c-h/2,width:w,height:h,rx:2,fill:PLC[p],stroke:"rgba(0,0,0,.35)","stroke-width":1},svg);ttl(r,fk(p)+" kg");
+      var t=sv("text",{x:x+w/2,y:c+3,"text-anchor":"middle",fill:p===5||p===15||p===1.25||p===0.5?"#1a1a1a":"#fff"},svg);t.textContent=fk(p);if(w<11)t.setAttribute("font-size","7");x+=w+1.5;});
+    if(col){sv("rect",{x:x+1,y:c-8,width:8,height:16,rx:2,fill:"#78909c"},svg);}
+    return svg;}
+  function plCfg(){var p=cfg.plates;return {bar:p.bar,col:!!p.col,set:p.set};}
+  function renderPL(){var box=$("pl-out");if(!box)return;var st=$("pl-set");
+    if(!st.childNodes.length)[25,20,15,10,5,2.5,1.25,0.5].forEach(function(p){var l=el("label"),c=el("input");c.type="checkbox";c.id="pl-p-"+String(p).replace(".","_");c.value=p;l.htmlFor=c.id;l.appendChild(c);l.appendChild(document.createTextNode(fk(p)+" kg"));st.appendChild(l);
+      c.addEventListener("change",function(){var s2=[].filter.call(st.querySelectorAll("input"),function(i){return i.checked;}).map(function(i){return +i.value;});if(!s2.length){c.checked=true;return;}cfg.plates.set=s2;saveCfg();});});
+    var C=plCfg();[].forEach.call(st.querySelectorAll("input"),function(i){i.checked=C.set.indexOf(+i.value)>=0;});setIf("pl-bar",String(C.bar));$("pl-col").checked=C.col;
+    var kg=num("pl-kg");box.textContent="";if(!(kg>0)){box.appendChild(el("p","Escribí el peso total que querés levantar.","note"));return;}
+    var R=platesFor(kg,C.bar,C.col,C.set);
+    if(kg<C.bar+(C.col?5:0)){box.appendChild(el("p","Con la barra"+(C.col?" y los topes":"")+" ya son "+dec0(C.bar+(C.col?5:0))+" kg.","note"));return;}
+    box.appendChild(plSvg(R,C.bar,C.col));box.appendChild(el("p","Por lado: "+plTxt(R)+(C.col?" y el tope":""),"pl-txt"));
+    box.appendChild(el("p",R.ok?"Total "+fk(kg)+" kg: barra "+fk(C.bar)+(C.col?" + topes 5":"")+" + "+fk(R.side)+" kg por lado.":"Con tus discos no llega exacto: lo más cerca por debajo es "+fk(R.got)+" kg ("+fk(kg-R.got)+" kg menos).","note"));}
+  /* Intentos: porcentajes sobre la mejor marca, redondeados a 2,5 kg (el tercero, al más cercano) */
+  var ATTM={cons:["Conservador",[0.88,0.94,0.99]],std:["Estándar",[0.91,0.96,1.005]],agr:["Agresivo",[0.93,0.98,1.025]]};
+  function attR(v,mode){return (mode==="near"?Math.round(v/2.5):Math.floor(v/2.5+1e-9))*2.5;}
+  function attFor(best,mode){var pc=ATTM[mode]||ATTM.std;return best>0?[attR(best*pc[1][0]),attR(best*pc[1][1]),attR(best*pc[1][2],"near")]:null;}
+  function renderATT(){var tb=$("att-tb");if(!tb)return;var mode=cfg.att.mode,box=$("att-mode");box.textContent="";
+    Object.keys(ATTM).forEach(function(k){var b=el("button",ATTM[k][0]);b.type="button";b.setAttribute("aria-pressed",k===mode?"true":"false");b.addEventListener("click",function(){cfg.att.mode=k;saveCfg();});box.appendChild(b);});
+    tb.textContent="";var L=[["Sentadilla",cfg.sq],["Banca",cfg.bp],["Peso muerto",cfg.dl]],tot=[0,0,0],all=true;
+    L.forEach(function(x){var a=attFor(x[1],mode),tr=el("tr");tr.appendChild(el("td",x[0]));tr.appendChild(el("td",x[1]>0?dec0(x[1]):"–","num"));
+      [0,1,2].forEach(function(i){tr.appendChild(el("td",a?dec0(a[i]):"–","num"));if(a)tot[i]+=a[i];});if(!a)all=false;tb.appendChild(tr);});
+    var w7=wavg(today(),7),bw=w7.n?w7.v:cfg.prof.w0,sx=cfg.prof.sex==="f"?"f":"m";
+    $("att-tot").textContent=all&&bw>0?"Total con los segundos: "+dec0(tot[1])+" kg (DOTS "+dec(dots(tot[1],bw,sx))+"). Con los terceros: "+dec0(tot[2])+" kg: DOTS "+dec(dots(tot[2],bw,sx))+", IPF GL "+dec(gl(tot[2],bw,sx))+" y Wilks "+dec(wilks(tot[2],bw,sx))+", con "+dec(bw)+" kg de peso corporal.":"Cargá las tres marcas en «Fuerza relativa» para ver el total.";}
   function renderCharts(){var k=today(),t=tgt(k),d=days[k];
     safe(function(){var s0=sum(d);put("ch-kcal",[bulletChart({v:s0.k,lo:t.min,hi:t.max,max:Math.max(t.max*1.15,s0.k),left:"Comiste "+fmt(s0.k)+" kcal",right:"tope "+fmt(t.max),title:fmt(s0.k)+" kcal",aria:"Calorías de hoy contra la franja que cuenta como cumplido"}),cap("La franja verde es lo que cuenta como día cumplido.")]);});
     safe(function(){var ms=muscleSets(k),xs=[],v=[];for(var i=0;i<=36;i++){xs.push(String(i));v.push(Math.log(1+i)/Math.log(32)*100);}
@@ -4274,6 +4410,8 @@ var FT=[["Aceite de coco",884,0,"F","Otros",null,null,0,100],["Aceite de girasol
     safe(function chCal(){if(!$("ch-cal"))return;var hm=heatChart({weeks:16,st:status,pick:hmPick,aria:"Constancia de las últimas 16 semanas"});
       put("ch-cal",[hm,legend([["hm-ok","cumplido"],["hm-bad","no cumplido"],["hm-miss","sin anotar"]])]);
       if(HMSEL&&hm.__sel)hm.__sel(HMSEL);else $("ch-cal-sel").textContent="Tocá un día para ver qué comiste y cuánto te faltó.";});
+    /* v31.21 */
+    safe(renderPL);safe(renderATT);
     /* v31.16 */
     safe(renderLabGrid);
     safe(function chTon(){if(!$("ch-ton"))return;var v=[],xs=[];for(var w=11;w>=0;w--){var r0=weekTon(shift(k,-7*w));v.push(r0.t>0?Math.round(r0.t/1000*10)/10:0);xs.push(w?"−"+w:"esta");}
@@ -5175,7 +5313,7 @@ var FT=[["Aceite de coco",884,0,"F","Otros",null,null,0,100],["Aceite de girasol
 
 
   /* ---------- v31: indicadores de Mi día, lecturas, papelera, registro, copias automáticas, privacidad, fórmulas ---------- */
-  var APPV="31.20";
+  var APPV="31.21";
   function viewOf(n){var sc=n&&n.closest?n.closest("section.view"):null;return sc?sc.id.slice(2):null;}
   var LST="rendicion-papelera",LSO="rendicion-oplog";
   function opLog(op,d){try{var a=JSON.parse(localStorage.getItem(LSO)||"[]");if(!Array.isArray(a))a=[];a.push({t:new Date().toISOString(),op:String(op).slice(0,30),d:String(d||"").slice(0,200)});if(a.length>300)a=a.slice(-300);localStorage.setItem(LSO,JSON.stringify(a));}catch(e){}safe(renderLog);}
@@ -6333,7 +6471,7 @@ var FT=[["Aceite de coco",884,0,"F","Otros",null,null,0,100],["Aceite de girasol
     ["Observaciones de salud","obs-t","salud","nota sintoma observacion consulta medico"],["Privacidad: modo discreto y tapar la pantalla","pv-blur","mas","privacidad ocultar difuminar inactividad"],
     ["Papelera: recuperar lo que borré","tr-card","mas","borrado recuperar eliminar papelera"],["Registro de operaciones","log-card","mas","historial auditoria cambios log"],
     ["Copias automáticas del navegador","snap-card","mas","respaldo indexeddb recuperacion"],["Fórmulas que usa la app","fm-card","mas","formula calculo ecuacion fuente dots wilks e1rm"],
-    ["Acerca de: versión y espacio usado","ab-card","mas","version almacenamiento espacio info"],["Instalar la app en el teléfono o la computadora","pwa-card","mas","instalar aplicacion pantalla de inicio pwa sin conexion offline"],["Cargar análisis: pegar el informe o leer una captura","lp-box","salud","analisis laboratorio resultados pegar informe captura foto valores sangre hemograma ionograma hepatograma"],["Ocultar el plan del nutricionista","plan-hide","nutricion","plan nutricionista ocultar no sigo el plan dieta"],["Mostrar el plan del nutricionista","plan-show","nutricion","plan nutricionista mostrar volver al plan dieta"],["Completar el día con lo que solés comer","hb-card","hoy","habitos comidas habituales lo que como aprender sugerir completar dia repetir frecuentes no sigo el plan"],["Combinar rutinas para entrenar 6 días","cb-card","entreno","combinar mezclar juntar rutinas programas 6 dias semana armar"],["Rutinas para boxeo: fuerza, potencia y rounds","lib-card","entreno","boxeo box golpe pegar mas fuerte rounds bolsa sparring combate potencia"],["TRT: cada cuántos días, próxima aplicación y aviso","trav-card","salud","trt testosterona aplicacion inyeccion aviso recordatorio notificacion calendario cada cuantos dias"],["Salvar el día: cómo cerrar las calorías y la proteína que faltan","sv-open","hoy","salvar dia noche faltan calorias proteina me pase revertir cerrar el dia cena"],["Kepi, hummus y comidas árabes, del norte y caseras","zn-card","nutricion","alfajor maicena medialuna factura panaderia pan galletitas pepsi levite aquarius gatorade speed monster cindor gaseosa coca cola sprite fanta 7up manaos paso de los toros sin azucar light zero kepi kepe hummus falafel niños envueltos tabule lajmayin fatay empanada salteña locro carbonada cabrito milanesa ñoquis puchero fernet cerveza mcdonalds mostaza"],["Accesos rápidos de Mi día","qk-card","mas","atajos botones inicio personalizar accesos rapidos"],["Evolución del peso: promedio, esperado y semanas","peso-card","salud","peso balanza promedio tendencia grafico"],["Racha y últimos 14 días","s-racha","nutricion","racha cumplido constancia dias seguidos historial"],["Tendencias y análisis: entrenamiento, nutrición, cuerpo y salud","tendencias","salud","analisis tendencias graficos estadisticas evolucion progreso resumen"],["Exportar solo una parte de mis datos","dt-parts","mas","exportar parcial seleccionar copia"]];
+    ["Acerca de: versión y espacio usado","ab-card","mas","version almacenamiento espacio info"],["Instalar la app en el teléfono o la computadora","pwa-card","mas","instalar aplicacion pantalla de inicio pwa sin conexion offline"],["Cargar análisis: pegar el informe o leer una captura","lp-box","salud","analisis laboratorio resultados pegar informe captura foto valores sangre hemograma ionograma hepatograma"],["Calculadora de discos","pl-card","entreno","discos barra cargar kilos por lado calculadora placas"],["Intentos para competir","att-card","entreno","competencia intentos apertura primer segundo tercer intento torneo"],["Ocultar el plan del nutricionista","plan-hide","nutricion","plan nutricionista ocultar no sigo el plan dieta"],["Mostrar el plan del nutricionista","plan-show","nutricion","plan nutricionista mostrar volver al plan dieta"],["Completar el día con lo que solés comer","hb-card","hoy","habitos comidas habituales lo que como aprender sugerir completar dia repetir frecuentes no sigo el plan"],["Combinar rutinas para entrenar 6 días","cb-card","entreno","combinar mezclar juntar rutinas programas 6 dias semana armar"],["Rutinas para boxeo: fuerza, potencia y rounds","lib-card","entreno","boxeo box golpe pegar mas fuerte rounds bolsa sparring combate potencia"],["TRT: cada cuántos días, próxima aplicación y aviso","trav-card","salud","trt testosterona aplicacion inyeccion aviso recordatorio notificacion calendario cada cuantos dias"],["Salvar el día: cómo cerrar las calorías y la proteína que faltan","sv-open","hoy","salvar dia noche faltan calorias proteina me pase revertir cerrar el dia cena"],["Kepi, hummus y comidas árabes, del norte y caseras","zn-card","nutricion","alfajor maicena medialuna factura panaderia pan galletitas pepsi levite aquarius gatorade speed monster cindor gaseosa coca cola sprite fanta 7up manaos paso de los toros sin azucar light zero kepi kepe hummus falafel niños envueltos tabule lajmayin fatay empanada salteña locro carbonada cabrito milanesa ñoquis puchero fernet cerveza mcdonalds mostaza"],["Accesos rápidos de Mi día","qk-card","mas","atajos botones inicio personalizar accesos rapidos"],["Evolución del peso: promedio, esperado y semanas","peso-card","salud","peso balanza promedio tendencia grafico"],["Racha y últimos 14 días","s-racha","nutricion","racha cumplido constancia dias seguidos historial"],["Tendencias y análisis: entrenamiento, nutrición, cuerpo y salud","tendencias","salud","analisis tendencias graficos estadisticas evolucion progreso resumen"],["Exportar solo una parte de mis datos","dt-parts","mas","exportar parcial seleccionar copia"]];
   var CMD={items:[],sel:0,ret:null};
   function nrm(t){return String(t).toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"");}
   function shown(node,stop){for(var p=node;p&&p!==stop;p=p.parentNode){if(p.nodeType===1&&(p.hidden||getComputedStyle(p).display==="none"))return false;}return true;}
@@ -6798,6 +6936,9 @@ var FT=[["Aceite de coco",884,0,"F","Otros",null,null,0,100],["Aceite de girasol
     var ho=hs.filter(function(x){return o.mode==="kcal"||x.p>=Math.min(pF,25);}).map(function(x){return {t:"De lo que solés comer: "+x.g.map(function(y){return y.name;}).join(" + "),desc:"aprendido de tus registros",k:x.k,p:x.p,c:x.c,fa:x.f,hb:x.g};});
     if(ho.length){o.opts=ho.concat(o.opts).slice(0,4);}return o;}
 
+  $("pl-kg").addEventListener("input",function(){safe(renderPL);});
+  $("pl-bar").addEventListener("change",function(){cfg.plates.bar=+$("pl-bar").value;saveCfg();});
+  $("pl-col").addEventListener("change",function(){cfg.plates.col=$("pl-col").checked;saveCfg();});
   $("plan-hide").addEventListener("click",function(){cfg.usePlan=false;saveCfg();opLog("plan","Plan del nutricionista oculto");toast("Oculté el plan. Tus planes siguen guardados.",{undo:function(){cfg.usePlan=true;saveCfg();}});});
   $("plan-show").addEventListener("click",function(){cfg.usePlan=true;saveCfg();opLog("plan","Plan del nutricionista visible");toast("El plan vuelve a estar visible.");});
   /* Accesos rápidos configurables: [etiqueta, ícono, destino] */
@@ -6883,7 +7024,7 @@ var FT=[["Aceite de coco",884,0,"F","Otros",null,null,0,100],["Aceite de girasol
   }
   window.addEventListener("online",function(){SYNC.fail=0;flush(0);});
   document.addEventListener("visibilitychange",function(){if(!document.hidden&&Object.keys(SYNC.pend).length)flush(0);});
-  if(window.__RD_TEST__)window.RD={days:function(){return days;},cfg:function(){return cfg;},S:function(){return S;},SYNC:SYNC,remoteSet:remoteSet,vDay:vDay,vDays:vDays,sanit:sanit,save:save,rec:rec,today:today,exportData:exportData,importData:importData,encryptText:encryptText,decryptText:decryptText,e1rm:e1rm,dots:dots,wilks:wilks,gl:gl,tdeeReal:tdeeReal,tgt:tgt,labFlags:labFlags,sum:sum,D:D,age:age,frState:frState,FRASES:FRASES,CITAS:CITAS,renderFrase:renderFrase,qaParse:qaParse,qaMac:qaMac,qaFromAI:qaFromAI,greetText:greetText,rcBook:rcBook,fitRec:fitRec,ingCls:ingCls,RECETAS:RECETAS,daySlots:daySlots,scaleRec:scaleRec,slotTarget:slotTarget,RCX:RCX,FEAT:FEAT,lvStats:lvStats,lvLevel:lvLevel,applyLevels:applyLevels,HOWTO:HOWTO,cardOf:cardOf,cmdIndex:cmdIndex,render:render,restPlan:restPlan,linreg:linreg,pearson:pearson,wTrend:wTrend,cookFactor:cookFactor,exportObj:exportObj,signObj:signObj,verifyBk:verifyBk,trashAll:trashAll,trashPut:trashPut,trashRestore:trashRestore,opLog:opLog,insights:insights,dashData:dashData,FORMULAS:FORMULAS,snapTake:snapTake,S:function(){return S;},itemTxt:itemTxt,foodKey:foodKey,showImport:showImport,foFill:foFill,injPlan:injPlan,injHit:injHit,injAlt:injAlt,INJZ:INJZ,wuPlan:wuPlan,wuRamp:wuRamp,INJMAP:INJMAP,QK:QK,e1rm:e1rm,pxKind:pxKind,mealOf:mealOf,renderRec:renderRec,mergeSalud:mergeSalud,grpSync:grpSync,renderQuick:renderQuick,TIPICAS:TIPICAS,PUBS:PUBS,salvaPlan:salvaPlan,trInfo:trInfo,exKind:exKind,exAnim:exAnim,XK:XK,xPose:xPose,xAt:xAt,renderLabGrid:renderLabGrid,weekTon:weekTon,labState:labState,liftSeries:liftSeries,liftWeeks:liftWeeks,stackChart:stackChart,divChart:divChart,heatChart:heatChart,hmPick:hmPick,status:status,lifts:lifts,hbStats:hbStats,hbOptions:hbOptions,hbSlotNow:hbSlotNow,renderHB:renderHB,cbBuild:cbBuild,cbWarn:cbWarn,cbRoutine:cbRoutine,CB:CB,PROGS:PROGS,labParse:labParse,labKey:labKey,labNorm:labNorm,LABDEF:LABDEF,trIcs:trIcs,trGcal:trGcal,trNotifyCheck:trNotifyCheck,trDue:trDue,renderSalva:renderSalva,SV:SV,tipMatch:tipMatch,tipMac:tipMac,bSmooth:bSmooth,setSample:function(x){SAMPLE=x;SAMPLEIMG=false;}};
+  if(window.__RD_TEST__)window.RD={days:function(){return days;},cfg:function(){return cfg;},S:function(){return S;},SYNC:SYNC,remoteSet:remoteSet,vDay:vDay,vDays:vDays,sanit:sanit,save:save,rec:rec,today:today,exportData:exportData,importData:importData,encryptText:encryptText,decryptText:decryptText,e1rm:e1rm,dots:dots,wilks:wilks,gl:gl,tdeeReal:tdeeReal,tgt:tgt,labFlags:labFlags,sum:sum,D:D,age:age,frState:frState,FRASES:FRASES,CITAS:CITAS,renderFrase:renderFrase,qaParse:qaParse,qaMac:qaMac,qaFromAI:qaFromAI,greetText:greetText,rcBook:rcBook,fitRec:fitRec,ingCls:ingCls,RECETAS:RECETAS,daySlots:daySlots,scaleRec:scaleRec,slotTarget:slotTarget,RCX:RCX,FEAT:FEAT,lvStats:lvStats,lvLevel:lvLevel,applyLevels:applyLevels,HOWTO:HOWTO,cardOf:cardOf,cmdIndex:cmdIndex,render:render,restPlan:restPlan,linreg:linreg,pearson:pearson,wTrend:wTrend,cookFactor:cookFactor,exportObj:exportObj,signObj:signObj,verifyBk:verifyBk,trashAll:trashAll,trashPut:trashPut,trashRestore:trashRestore,opLog:opLog,insights:insights,dashData:dashData,FORMULAS:FORMULAS,snapTake:snapTake,S:function(){return S;},itemTxt:itemTxt,foodKey:foodKey,showImport:showImport,foFill:foFill,injPlan:injPlan,injHit:injHit,injAlt:injAlt,INJZ:INJZ,wuPlan:wuPlan,wuRamp:wuRamp,INJMAP:INJMAP,QK:QK,e1rm:e1rm,pxKind:pxKind,mealOf:mealOf,renderRec:renderRec,mergeSalud:mergeSalud,grpSync:grpSync,renderQuick:renderQuick,TIPICAS:TIPICAS,PUBS:PUBS,salvaPlan:salvaPlan,trInfo:trInfo,platesFor:platesFor,attFor:attFor,exCues:exCues,exKind:exKind,exAnim:exAnim,XK:XK,xPose:xPose,xAt:xAt,renderLabGrid:renderLabGrid,weekTon:weekTon,labState:labState,liftSeries:liftSeries,liftWeeks:liftWeeks,stackChart:stackChart,divChart:divChart,heatChart:heatChart,hmPick:hmPick,status:status,lifts:lifts,hbStats:hbStats,hbOptions:hbOptions,hbSlotNow:hbSlotNow,renderHB:renderHB,cbBuild:cbBuild,cbWarn:cbWarn,cbRoutine:cbRoutine,CB:CB,PROGS:PROGS,labParse:labParse,labKey:labKey,labNorm:labNorm,LABDEF:LABDEF,trIcs:trIcs,trGcal:trGcal,trNotifyCheck:trNotifyCheck,trDue:trDue,renderSalva:renderSalva,SV:SV,tipMatch:tipMatch,tipMac:tipMac,bSmooth:bSmooth,setSample:function(x){SAMPLE=x;SAMPLEIMG=false;}};
   connect();
 })();
 </script>
